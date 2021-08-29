@@ -6,7 +6,7 @@ import { User } from "./user.interface";
 
 
 @ObjectType('user')
-export class UserGraph implements Modify<Partial<User>, {
+export class UserGraph implements Modify<Omit<User, "passwordHASH">, {
     _id: string
 }> {
     @Field()

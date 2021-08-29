@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Token } from "./token.interface"
+import { Token, TokenRoles } from "./token.interface"
 import * as jwt from 'jsonwebtoken';
 import { User } from 'src/modules/user/model/user.interface';
 import { PrivateKey, PublicKey } from './token.keys';
@@ -7,10 +7,11 @@ import { signOption } from './token.signOptions';
 
 @Injectable()
 export class TokenService {
-  create(args: { user: User }): string {
-    const { user } = args;
+  create(args: { user: User, role: TokenRoles }): string {
+    const { user, role } = args;
     const payload: Token = {
-        ...user
+        ...user,
+        role
     };
     const token: string = jwt.sign(payload, PrivateKey, signOption);
     return token;

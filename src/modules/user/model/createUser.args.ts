@@ -4,7 +4,7 @@ import { User } from "./user.interface";
 
 
 @ArgsType()
-export class CreateUser implements Modify<Partial<User>, {
+export class CreateUser implements Modify<Omit<User, "_id" | "passwordHASH">, {
     dateOfBirth: string
 }> {
     @Field()
