@@ -27,6 +27,7 @@
     "@nestjs/graphql": "^8.0.2",
     "@nestjs/platform-express": "^8.0.0",
     "@types/bcryptjs": "^2.4.2",
+    "@types/graphql-upload": "^8.0.7",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/sharp": "^0.28.5",
     "apollo-server-express": "2.x.x",

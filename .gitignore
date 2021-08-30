@@ -37,3 +37,4 @@ lerna-debug.log*
 /ca-certificate.crt
 /privateKey.cer
 /publicKey.cer
+/.env
