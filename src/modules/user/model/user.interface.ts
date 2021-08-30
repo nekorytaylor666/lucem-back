@@ -7,4 +7,5 @@ export interface User {
     email: string;
     dateOfBirth: Date;
     passwordHASH: string;
+    token?: string;
 }

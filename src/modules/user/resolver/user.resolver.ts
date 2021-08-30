@@ -12,7 +12,9 @@ export class UserResolver {
 
   @Mutation(() => UserGraph)
   async registerUser(@Args() args: CreateUser) {
-    
+    const createUser = await this.userService.createUser(args);
+    const userResponce = new UserGraph({ ...createUser });
+    return userResponce;
   }
 
   @Query(() => String)
