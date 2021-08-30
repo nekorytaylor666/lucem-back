@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
-import { AWSModule } from "./aws/AWS.module";
+import { ConfigModule } from "@nestjs/config";
 import { AWSservice } from "./aws/AWS.service";
-
+import { ImageUploadService } from "./imageUpload/imageUpload.service";
 
 
 
 @Module({ 
-    imports: [AWSModule],
-    exports: [AWSModule]
+    providers: [AWSservice, ImageUploadService],
+    exports: [AWSservice, ImageUploadService]
 })
 export class uploadFileModule {}

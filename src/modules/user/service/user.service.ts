@@ -5,12 +5,14 @@ import { CreateUser } from '../model/createUser.args';
 import { User } from '../model/user.interface';
 import * as bcrypt from 'bcryptjs';
 import { TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('DATABASE_CONNECTION') private database: Db,
     private tokenService: TokenService,
+    private photoUploadService: AWSservice,
   ) {}
 
   get userCollection() {
@@ -33,13 +35,19 @@ export class UserService {
   }
 
   async createUser(newUser: CreateUser): Promise<User> {
-    const { password, dateOfBirth: _dateOfBirth } = newUser;
+    const { password, dateOfBirth: _dateOfBirth, avatar } = newUser;
     const passwordHASH = await bcrypt.hash(password, 12);
     const dateOfBirth = new Date(_dateOfBirth);
+    const photoURL =
+      avatar &&
+      (await this.photoUploadService.saveImages(
+        (await avatar).createReadStream(),
+      ));
     const insertUser = await this.insertOne({
       ...newUser,
       dateOfBirth,
       passwordHASH,
+      photoURL
     });
     const token = this.tokenService.create({
       user: { ...insertUser },
