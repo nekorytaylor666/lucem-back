@@ -10,9 +10,12 @@ export const mongodDbFactory: FactoryProvider<Promise<Db>> = {
             const client = await MongoClient.connect(
                 configService.get('MONGO_URL'),
                 {
-                    sslCA: join(process.cwd(), 'ca-certificate.crt'),
                     keepAlive: true,
                     noDelay: true,
+                    sslCA:
+                        process.env.NODE_ENV === 'production'
+                            ? join(process.cwd(), 'ca-certificate.crt')
+                            : null,
                 },
             );
             const database = client.db(configService.get('MONGO_DB_NAME'));
