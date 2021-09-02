@@ -1,5 +1,5 @@
-import { ObjectId } from "mongodb";
-import { PhotoURL } from "src/modules/helpers/uploadFiles/imageUpload/photoURL.interface";
+import { ObjectId } from 'mongodb';
+import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
 
 export interface User {
     _id: ObjectId;

@@ -1,6 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { PhotoURL } from "./photoURL.interface";
-
+import { Field, ObjectType } from '@nestjs/graphql';
+import { PhotoURL } from './photoURL.interface';
 
 @ObjectType('PhotoURL')
 export class PhotoURLGraph implements PhotoURL {

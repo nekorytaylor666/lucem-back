@@ -1,12 +1,18 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { Modify } from "src/utils/modifyType";
-import { User } from "./user.interface";
+import { ArgsType, Field } from '@nestjs/graphql';
+import { Modify } from 'src/utils/modifyType';
+import { User } from './user.interface';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 @ArgsType()
-export class CreateUser implements Modify<Omit<User, "_id" | "passwordHASH">, {
-    dateOfBirth: string
-}> {
+export class CreateUser
+    implements
+        Modify<
+            Omit<User, '_id' | 'passwordHASH'>,
+            {
+                dateOfBirth: string;
+            }
+        >
+{
     @Field()
     fullName: string;
 
@@ -23,8 +29,8 @@ export class CreateUser implements Modify<Omit<User, "_id" | "passwordHASH">, {
     password: string;
 
     @Field(() => GraphQLUpload, {
-        name: "avatar",
-        nullable: true
+        name: 'avatar',
+        nullable: true,
     })
-    avatar: Promise<FileUpload> 
+    avatar: Promise<FileUpload>;
 }
