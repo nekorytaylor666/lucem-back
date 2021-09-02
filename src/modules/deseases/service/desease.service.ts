@@ -14,4 +14,8 @@ export class DeseaseService {
         const createdPerson = new this.deseaseModel(payload);
         return createdPerson.save();
     }
+
+    async list() {
+        return await this.deseaseModel.find();
+    }
 }

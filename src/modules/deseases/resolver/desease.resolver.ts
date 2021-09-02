@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Desease } from '../model/desease.model';
 import { DeseaseService } from '../service/desease.service';
 import { CreateDeseaseInput } from '../model/desease.inputs';
@@ -8,7 +8,12 @@ export class DeseaseResolver {
     constructor(private deseaseSerivce: DeseaseService) {}
 
     @Mutation(() => Desease)
-    async createPerson(@Args('payload') payload: CreateDeseaseInput) {
+    async createDesease(@Args('payload') payload: CreateDeseaseInput) {
         return this.deseaseSerivce.create(payload);
+    }
+
+    @Query(() => [Desease])
+    async getDesease() {
+        return this.deseaseSerivce.list();
     }
 }
