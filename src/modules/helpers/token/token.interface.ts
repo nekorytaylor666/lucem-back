@@ -1,11 +1,11 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 
 export enum TokenRoles {
-    User = "user",
-    Doctor = "doctor",
-    Secretary = "secretary",
-    Nurse = "nurse",
-    Admin = "admin",
+    User = 'user',
+    Doctor = 'doctor',
+    Secretary = 'secretary',
+    Nurse = 'nurse',
+    Admin = 'admin',
 }
 
 export interface Token {

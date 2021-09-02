@@ -1,16 +1,19 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { PhotoURL } from "src/modules/helpers/uploadFiles/imageUpload/photoURL.interface";
-import { PhotoURLGraph } from "src/modules/helpers/uploadFiles/imageUpload/photoURL.model";
-import { Modify } from "src/utils/modifyType";
-import { User } from "./user.interface";
-
-
-
+import { Field, ObjectType } from '@nestjs/graphql';
+import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
+import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
+import { Modify } from 'src/utils/modifyType';
+import { User } from './user.interface';
 
 @ObjectType('User')
-export class UserGraph implements Modify<Omit<User, "passwordHASH">, {
-    _id: string
-}> {
+export class UserGraph
+    implements
+        Modify<
+            Omit<User, 'passwordHASH'>,
+            {
+                _id: string;
+            }
+        >
+{
     @Field()
     _id: string;
 
@@ -39,8 +42,7 @@ export class UserGraph implements Modify<Omit<User, "passwordHASH">, {
         if (user.email) this.email = user.email;
         if (user.dateOfBirth) this.dateOfBirth = user.dateOfBirth;
         if (user.token) this.token = user.token;
-        if (user.photoURL) this.photoURL = new PhotoURLGraph({...user.photoURL});
+        if (user.photoURL)
+            this.photoURL = new PhotoURLGraph({ ...user.photoURL });
     }
-
-
 }

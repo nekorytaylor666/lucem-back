@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join } from 'path';
 import * as fs from 'fs';
 
 const pathToPublicKey = join(process.cwd(), 'publicKey.cer');

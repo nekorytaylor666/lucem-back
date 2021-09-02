@@ -9,25 +9,25 @@ import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true
-    }),
-    MongoModule,
-    TokenModule,
-    GraphQLModule.forRoot({
-      debug: true,
-      playground: true,
-      include: [],
-      autoSchemaFile: true,
-      sortSchema: true,
-      uploads: false,
-      resolvers: {},
-      context: ({ req, res }) => ({ req, res }),
-    }),
-    UserModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        MongoModule,
+        TokenModule,
+        GraphQLModule.forRoot({
+            debug: true,
+            playground: true,
+            include: [],
+            autoSchemaFile: true,
+            sortSchema: true,
+            uploads: false,
+            resolvers: {},
+            context: ({ req, res }) => ({ req, res }),
+        }),
+        UserModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}

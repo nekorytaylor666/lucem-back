@@ -1,7 +1,5 @@
-
-
 export interface PhotoURL {
-    xl: string,
-    m: string,
-    thumbnail: string
+    xl: string;
+    m: string;
+    thumbnail: string;
 }

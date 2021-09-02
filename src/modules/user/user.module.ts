@@ -8,8 +8,8 @@ import { UserResolver } from './resolver/user.resolver';
 import { UserService } from './service/user.service';
 
 @Module({
-  imports: [ConfigModule, MongoModule, TokenModule, uploadFileModule],
-  providers: [UserService, UserResolver],
-  exports: [UserService]
+    imports: [ConfigModule, MongoModule, TokenModule, uploadFileModule],
+    providers: [UserService, UserResolver],
+    exports: [UserService],
 })
 export class UserModule {}
