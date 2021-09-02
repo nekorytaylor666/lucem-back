@@ -7,6 +7,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { MongoModule } from './modules/helpers/database/mongo.module';
 import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
+import { DeseasesModule } from './modules/deseases/deseases.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
     imports: [
@@ -15,6 +17,7 @@ import { UserModule } from './modules/user/user.module';
         }),
         MongoModule,
         TokenModule,
+        MongooseModule.forRoot(process.env.MONGO_URL ?? ''),
         GraphQLModule.forRoot({
             debug: true,
             playground: true,
@@ -26,6 +29,7 @@ import { UserModule } from './modules/user/user.module';
             context: ({ req, res }) => ({ req, res }),
         }),
         UserModule,
+        DeseasesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
