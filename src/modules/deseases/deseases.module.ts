@@ -1,15 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Desease, DeseaseSchema } from './model/desease.model';
+import { ConfigModule } from '@nestjs/config';
+import { MongoModule } from '../helpers/database/mongo.module';
 import { DeseaseResolver } from './resolver/desease.resolver';
 import { DeseaseService } from './service/desease.service';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            { name: Desease.name, schema: DeseaseSchema },
-        ]),
-    ],
+    imports: [ConfigModule, MongoModule],
     providers: [DeseaseService, DeseaseResolver],
     exports: [DeseaseService],
 })

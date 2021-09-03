@@ -1,21 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateDeseaseInput } from '../model/desease.inputs';
-import { Desease, DeseaseDocument } from '../model/desease.model';
+import { Db } from 'mongodb';
+import { Desease } from '../model/desease.interface';
 
 @Injectable()
 export class DeseaseService {
     constructor(
-        @InjectModel(Desease.name) private deseaseModel: Model<DeseaseDocument>,
+        @Inject('DATABASE_CONNECTION')
+        private database: Db,
     ) {}
 
-    create(payload: CreateDeseaseInput) {
-        const createdPerson = new this.deseaseModel(payload);
-        return createdPerson.save();
+    get deseaseCollection() {
+        return this.database.collection<Desease>('desease');
+    }
+
+    async create(desease: CreateDeseaseInput) {
+        try {
+            const insetDesease = await this.deseaseCollection.insertOne(
+                desease,
+            );
+            const deseaseResponce: Desease = {
+                ...desease,
+                _id: insetDesease.insertedId,
+            };
+            return deseaseResponce;
+        } catch (error) {
+            throw new BadRequestException(error);
+        }
     }
 
     async list() {
-        return await this.deseaseModel.find();
+        //!TODO Add pagination for cursor
+        return await this.deseaseCollection.find().toArray();
     }
 }
