@@ -8,6 +8,7 @@ import { MongoModule } from './modules/helpers/database/mongo.module';
 import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
+import { DoctorModule } from './modules/doctor/doctor.module';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { DeseasesModule } from './modules/deseases/deseases.module';
         }),
         UserModule,
         DeseasesModule,
+        DoctorModule
     ],
     controllers: [AppController],
     providers: [AppService],
