@@ -33,4 +33,9 @@ export class DeseaseService {
         //!TODO Add pagination for cursor
         return await this.deseaseCollection.find().toArray();
     }
+
+    async findOne(args: Partial<Desease>) {
+        const desease = await this.deseaseCollection.findOne(args);
+        return desease;
+    }
 }

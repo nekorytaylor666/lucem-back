@@ -4,7 +4,7 @@ import { Doctor } from "./doctor.interface";
 
 
 @ArgsType()
-export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "passwordHASH">, { dateOfBirth: string }>{
+export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "passwordHASH">, { dateOfBirth: string, deseasesIDs?: string[] }>{
     @Field()
     fullName: string;
 
@@ -19,4 +19,7 @@ export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "pass
 
     @Field()
     dateOfBirth: string;
+
+    @Field(() => [String],{ nullable: true })
+    deseasesIDs: string[];
 }
