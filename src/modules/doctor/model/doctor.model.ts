@@ -31,7 +31,7 @@ export class DoctorGraph
     deseases?: DeseaseGraph[];
 
 
-    constructor(doctor: Partial<Doctor> & DoctorAddictives) {
+    constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
         if (doctor.email) this.email = doctor.email;

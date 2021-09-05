@@ -20,7 +20,7 @@ export class ScheduleResolver {
         @CurrentUserGraph() user: User
     ) {
         const insertSchedule = await this.scheduleService.create({ ...args, userId: user._id })
-        const scheduleResponce = new ScheduleGraph({...insertSchedule, appointments: [insertSchedule.appointment]});
+        const scheduleResponce = new ScheduleGraph({...insertSchedule});
         return scheduleResponce;
     }
 }
