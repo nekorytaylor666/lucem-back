@@ -30,6 +30,7 @@ export class DoctorGraph
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
+
     constructor(doctor: Partial<Doctor> & DoctorAddictives) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
