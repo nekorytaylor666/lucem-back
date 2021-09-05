@@ -3,7 +3,9 @@ import { ObjectTypeDefinitionFactory } from '@nestjs/graphql/dist/schema-builder
 import { Db, ObjectId } from 'mongodb';
 import { Appointment } from 'src/modules/appointment/model/appointment.interface';
 import { AppointmentService } from 'src/modules/appointment/service/appointment.service';
+import { ServiceService } from 'src/modules/service/service/service.service';
 import { CreateSchedule } from '../model/createSchedule.args';
+import { ScheduleAddictives } from '../model/schedule.addictive';
 import { Schedule } from '../model/schedule.interface';
 
 @Injectable()
@@ -11,6 +13,7 @@ export class ScheduleService {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         private appointmentService: AppointmentService,
+        private serviceService: ServiceService
     ) {}
 
     private get scheduleCollection() {
@@ -32,7 +35,7 @@ export class ScheduleService {
 
     async create(
         args: CreateSchedule & { userId: ObjectId },
-    ): Promise<Schedule & { appointment: Appointment }> {
+    ): Promise<ScheduleAddictives> {
         const {
             date: _scheduleDate,
             doctorId: _scheduleDoctorId,
@@ -66,10 +69,11 @@ export class ScheduleService {
             appointmentIds: [insertAppointment._id],
             doctorId: scheduleDoctorId,
         };
+        const service = await this.serviceService.findOne({_id: appointmentServiceId });
         const insertSchedule = await this.insert(schedule);
-        const scheduleResponce: Schedule & { appointment: Appointment } = {
+        const scheduleResponce: ScheduleAddictives = {
             ...insertSchedule,
-            appointment: {...insertAppointment}            
+            appointments: [{...insertAppointment, service }]            
         };
         return scheduleResponce;
     }

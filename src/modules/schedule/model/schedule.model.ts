@@ -2,6 +2,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Appointment } from "src/modules/appointment/model/appointment.interface";
 import { AppointmentGraph } from "src/modules/appointment/model/appointment.model";
 import { Modify } from "src/utils/modifyType";
+import { ScheduleAddictives } from "./schedule.addictive";
 import { Schedule } from "./schedule.interface";
 
 
@@ -26,7 +27,7 @@ export class ScheduleGraph implements Modify<Schedule, {
     @Field()
     doctorId: string;
 
-    constructor(schedule: Partial<Schedule> & { appointments?: Appointment[] }) {
+    constructor(schedule: Partial<ScheduleAddictives> ) {
         if (schedule._id) this._id = schedule._id.toHexString()
         if (schedule.date) this.date = schedule.date;
         if (schedule.appointmentIds) this.appointmentIds = schedule.appointmentIds.map((val) => val.toHexString());

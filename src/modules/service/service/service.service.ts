@@ -11,6 +11,11 @@ export class ServiceService {
         return this.database.collection('service');
     }
 
+    async findOne(service: Partial<Service>): Promise<Service> {
+        const serviceResponce = await this.serviceCollection.findOne<Service>(service);
+        return serviceResponce;
+    }
+
     async create(args: CreateService) {
         const { description, name, price } = args;
         const service: Service = {

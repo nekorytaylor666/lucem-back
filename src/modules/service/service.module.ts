@@ -7,6 +7,6 @@ import { ServiceService } from "./service/service.service";
 @Module({ 
     imports: [MongoModule],
     providers: [ServiceService, ServiceResolver],
-    exports: []
+    exports: [ServiceService]
 })
 export class ServiceModule {}
