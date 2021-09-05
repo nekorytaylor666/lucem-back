@@ -10,6 +10,7 @@ import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
 import { DoctorModule } from './modules/doctor/doctor.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
+import { ServiceModule } from './modules/service/service.module';
 
 @Module({
     imports: [
@@ -31,7 +32,8 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
         UserModule,
         DeseasesModule,
         DoctorModule,
-        ScheduleModule
+        ScheduleModule,
+        ServiceModule
     ],
     controllers: [AppController],
     providers: [AppService],

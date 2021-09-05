@@ -9,4 +9,5 @@ export interface Doctor {
     token?: string;
     passwordHASH: string;
     dateOfBirth: Date;
+    serviceIds?: string[];
 };
