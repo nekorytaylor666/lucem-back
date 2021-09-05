@@ -50,7 +50,7 @@ export class UserService {
             photoURL,
         });
         const token = this.tokenService.create({
-            user: { ...insertUser },
+            user: { ...insertUser, _id: insertUser._id.toHexString() },
             role: TokenRoles.User,
         });
         insertUser.token = token;

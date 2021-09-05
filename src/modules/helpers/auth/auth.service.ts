@@ -5,6 +5,7 @@ import {
     Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
 import { UserService } from 'src/modules/user/service/user.service';
 import { TokenService } from '../token/token.service';
 
@@ -28,9 +29,10 @@ export class PreAuthGuardUser implements CanActivate {
         if (!authorization) return false;
         try {
             const payload = this.tokenService.verify({ token: authorization });
-            const user = this.userService.findOne({ _id: payload._id });
+            const user = await this.userService.findOne({ _id: new ObjectId(payload._id) });
             if (!user) return false;
             request.user = user;
+            return true;
         } catch {
             return false;
         }

@@ -6,6 +6,6 @@ import { PreAuthGuardUser } from './auth.service';
 @Module({
     imports: [UserModule, TokenModule],
     providers: [PreAuthGuardUser],
-    exports: [PreAuthGuardUser],
+    exports: [PreAuthGuardUser, UserModule, TokenModule],
 })
 export class PreAuthModule {}

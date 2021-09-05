@@ -9,7 +9,7 @@ export enum TokenRoles {
 }
 
 export interface Token {
-    _id: ObjectId;
+    _id: string;
     email: string;
     fullName: string;
     phoneNumber: string;
