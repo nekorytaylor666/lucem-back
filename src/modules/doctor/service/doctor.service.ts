@@ -48,7 +48,7 @@ export class DoctorService {
       }); 
     }
     const token = this.tokenService.create({ user: {
-      _id: insertDoctor.insertedId,
+      _id: insertDoctor.insertedId.toHexString(),
       email,
       phoneNumber,
       dateOfBirth,

@@ -9,6 +9,7 @@ import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
 import { DoctorModule } from './modules/doctor/doctor.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
 
 @Module({
     imports: [
@@ -29,7 +30,8 @@ import { DoctorModule } from './modules/doctor/doctor.module';
         }),
         UserModule,
         DeseasesModule,
-        DoctorModule
+        DoctorModule,
+        ScheduleModule
     ],
     controllers: [AppController],
     providers: [AppService],
