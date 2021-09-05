@@ -1,8 +1,7 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { CreateDoctor } from "../model/createDoctor.args";
-import { DoctorGraph } from "../model/doctor.model";
-import { DoctorService } from "../service/doctor.service";
-
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateDoctor } from '../model/createDoctor.args';
+import { DoctorGraph } from '../model/doctor.model';
+import { DoctorService } from '../service/doctor.service';
 
 @Resolver()
 export class DoctorResolver {
@@ -12,6 +11,13 @@ export class DoctorResolver {
     async registerDoctor(@Args() args: CreateDoctor) {
         const createDoctor = await this.doctorService.createDoctor(args);
         const doctorResponce = new DoctorGraph({ ...createDoctor });
+        return doctorResponce;
+    }
+
+    @Query(() => DoctorGraph)
+    async loginDoctor(@Args('email', { type: () => String }) email: string, @Args('password', { type: () => String }) password: string) {
+        const doctor = await this.doctorService.login({ email, password });
+        const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
 }
