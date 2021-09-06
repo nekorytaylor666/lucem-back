@@ -9,8 +9,9 @@ import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
 import { DoctorModule } from './modules/doctor/doctor.module';
-import { ScheduleModule } from './modules/schedule/schedule.module';
 import { ServiceModule } from './modules/service/service.module';
+import { TimelineModule } from './modules/timeline/timeline.module';
+import { BookingModule } from './modules/booking/booking.module';
 
 @Module({
     imports: [
@@ -32,8 +33,9 @@ import { ServiceModule } from './modules/service/service.module';
         UserModule,
         DeseasesModule,
         DoctorModule,
-        ScheduleModule,
-        ServiceModule
+        ServiceModule,
+        TimelineModule,
+        BookingModule
     ],
     controllers: [AppController],
     providers: [AppService],
