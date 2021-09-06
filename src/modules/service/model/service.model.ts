@@ -3,7 +3,7 @@ import { Modify } from "src/utils/modifyType";
 import { Service } from "./service.interface";
 
 
-@ObjectType()
+@ObjectType('Service')
 export class ServiceGraph implements Modify<Service, { _id: string }> {
     @Field()
     _id: string;
