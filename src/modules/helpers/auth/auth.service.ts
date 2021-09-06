@@ -22,7 +22,6 @@ export class PreAuthGuardUser implements CanActivate {
         const graphqlRequestName =
             GqlExecutionContext.create(context).getInfo().path.key;
         if (
-            graphqlRequestName === 'registerUser' ||
             graphqlRequestName === 'loginUser'
         )
             return true;

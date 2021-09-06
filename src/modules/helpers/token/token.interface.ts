@@ -10,9 +10,9 @@ export enum TokenRoles {
 
 export interface Token {
     _id: string;
-    email: string;
-    fullName: string;
-    phoneNumber: string;
-    dateOfBirth: Date;
-    role: TokenRoles;
+    email?: string;
+    fullName?: string;
+    phoneNumber?: string;
+    dateOfBirth?: Date;
+    role?: TokenRoles;
 }
