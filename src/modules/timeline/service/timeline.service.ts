@@ -1,8 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { Db, ObjectId } from "mongodb";
-import { CreateTimeline } from "../model/timeline.args";
-import { Timeline } from "../model/timeline.interface";
-
+import { Inject, Injectable } from '@nestjs/common';
+import { AggregationCursor, Db, ObjectId } from 'mongodb';
+import { TimelineAddictive } from '../model/timeline.addictive';
+import { CreateTimeline } from '../model/timeline.args';
+import { Timeline } from '../model/timeline.interface';
 
 @Injectable()
 export class TimelineService {
@@ -12,16 +12,47 @@ export class TimelineService {
         return this.database.collection('timeline');
     }
 
+    async findCursorWithAddictives(
+        args: Partial<Timeline>,
+    ): Promise<AggregationCursor<TimelineAddictive>> {
+        const currentDate = new Date();
+        const timeline = this.timelineCollection.aggregate<TimelineAddictive>([
+            {
+                $match: {
+                    ...args,
+                    endDate: {
+                        $gt: currentDate,
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'booking',
+                    localField: '_id',
+                    foreignField: 'timelineId',
+                    as: 'booking',
+                },
+            },
+        ]);
+        return timeline;
+    }
+
     async create(args: CreateTimeline): Promise<Timeline> {
-        const { doctorId: _doctorId, startDate: _startDate, endDate: _endDate} = args;
+        const {
+            doctorId: _doctorId,
+            startDate: _startDate,
+            endDate: _endDate,
+        } = args;
         const [startDate, endDate] = [new Date(_startDate), new Date(_endDate)];
         const doctorId = new ObjectId(_doctorId);
         const timeline: Timeline = {
             startDate,
             endDate,
-            doctorId
+            doctorId,
         };
-        const insertTimeline = await this.timelineCollection.insertOne(timeline);
+        const insertTimeline = await this.timelineCollection.insertOne(
+            timeline,
+        );
         timeline._id = insertTimeline.insertedId;
         return timeline;
     }
@@ -30,5 +61,4 @@ export class TimelineService {
         const timeline = await this.timelineCollection.findOne<Timeline>(args);
         return timeline;
     }
-    
 }
