@@ -20,7 +20,7 @@ export class BookingGraph implements Modify<Omit<Booking, "serviceId" | "userId"
     @Field()
     user: UserGraph;
 
-    @Field()
+    @Field(() => TimelineGraph)
     timeline: TimelineGraph;
 
     @Field()
