@@ -2,6 +2,8 @@ import {
     CanActivate,
     createParamDecorator,
     ExecutionContext,
+    forwardRef,
+    Inject,
     Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -13,8 +15,8 @@ import { TokenService } from '../token/token.service';
 @Injectable()
 export class PreAuthGuardUser implements CanActivate {
     constructor(
-        private userService: UserService,
         private tokenService: TokenService,
+        private userService: UserService
     ) {}
 
     async canActivate(context: ExecutionContext) {
@@ -42,10 +44,11 @@ export class PreAuthGuardUser implements CanActivate {
 export class PreAuthGuardDoctor implements CanActivate {
     constructor(
         private tokenService: TokenService,
-        private doctorService: DoctorService,
+        private doctorService: DoctorService
     ) {}
 
     async canActivate(context: ExecutionContext) {
+        console.log("ji")
         const request = GqlExecutionContext.create(context).getContext().req;
         const { authorization } = request.headers;
         const graphqlRequestName =

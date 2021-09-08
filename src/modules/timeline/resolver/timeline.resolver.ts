@@ -38,19 +38,14 @@ export class TimelineResolver {
         );
         return timelineResponce;
     }
-}
-
-@Resolver()
-@UseGuards(PreAuthGuardDoctor)
-export class TimelineResolverDoctor {
-    constructor(private timelineService: TimelineService) {}
 
     @Query(() => [TimelineGraph])
+    @UseGuards(PreAuthGuardDoctor)
     async getTimelinesDoctor(
         @CurrentUserGraph() doctor: Doctor,
         @Args('page', { type: () => Int}) page: number
     ) {
-        const timelineCursor = await this.timelineService.findCursorWithAddictives({doctorId: doctor._id });
+        const timelineCursor = await this.timelineService.findCursorWithAddictives({doctorId: doctor._id }); 
         const timeline = await paginate({ cursor: timelineCursor, page, elementsPerPage: 10 });
         const timelineResponce = timeline.map((val) => new TimelineGraph({...val}));
         return timelineResponce;
