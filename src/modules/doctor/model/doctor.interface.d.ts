@@ -11,4 +11,6 @@ export interface Doctor {
     dateOfBirth: Date;
     serviceIds?: string[];
     yearsOfExperience: number;
+    numberOfRatings?: number;
+    sumOfRatings?: number;
 };

@@ -5,7 +5,7 @@ import {
     Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ObjectId } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { UserService } from 'src/modules/user/service/user.service';
 import { TokenService } from '../token/token.service';

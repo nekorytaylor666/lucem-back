@@ -6,4 +6,5 @@ import { Doctor } from "./doctor.interface";
 export interface DoctorAddictives extends Doctor {
     deseases?: Desease[];
     service?: Service[];
+    rating?: number;
 }

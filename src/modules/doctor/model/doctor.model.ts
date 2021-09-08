@@ -7,7 +7,11 @@ import { Doctor } from './doctor.interface';
 
 @ObjectType('Doctor')
 export class DoctorGraph
-    implements Modify<Omit<Doctor, 'passwordHASH'>, { _id: string }>
+    implements
+        Modify<
+            Omit<Doctor, 'passwordHASH' | 'numberOfRatings' | 'sumOfRatings'>,
+            { _id: string, rating: number }
+        >
 {
     @Field()
     _id: string;
@@ -32,6 +36,9 @@ export class DoctorGraph
 
     @Field(() => Int)
     yearsOfExperience: number;
+
+    @Field({ nullable: true, defaultValue: 10 })
+    rating: number;
 
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
