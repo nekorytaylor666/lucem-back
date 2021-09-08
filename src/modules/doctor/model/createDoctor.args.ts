@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "@nestjs/graphql";
+import { ArgsType, Field, Int } from "@nestjs/graphql";
 import { Modify } from "src/utils/modifyType";
 import { Doctor } from "./doctor.interface";
 
@@ -22,4 +22,7 @@ export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "pass
 
     @Field(() => [String],{ nullable: true })
     deseasesIDs: string[];
+
+    @Field(() => Int)
+    yearsOfExperience: number;
 }
