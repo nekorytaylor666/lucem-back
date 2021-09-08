@@ -10,4 +10,5 @@ export interface Doctor {
     passwordHASH: string;
     dateOfBirth: Date;
     serviceIds?: string[];
+    yearsOfExperience: number;
 };

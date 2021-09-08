@@ -1,4 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorService } from '../service/doctor.service';
@@ -18,6 +19,15 @@ export class DoctorResolver {
     async loginDoctor(@Args('email', { type: () => String }) email: string, @Args('password', { type: () => String }) password: string) {
         const doctor = await this.doctorService.login({ email, password });
         const doctorResponce = new DoctorGraph({ ...doctor });
+        return doctorResponce;
+    }
+
+    @Query(() => DoctorGraph)
+    async getDoctorByID(
+        @Args('doctorId', { type: () => String}) doctorId: string
+    ) {
+        const doctor = await this.doctorService.findOne({ _id: new ObjectId(doctorId) });
+        const doctorResponce = new DoctorGraph({...doctor});
         return doctorResponce;
     }
 }

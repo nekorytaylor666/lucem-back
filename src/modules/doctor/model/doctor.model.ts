@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.graph';
 import { Desease } from 'src/modules/deseases/model/desease.interface';
 import { Modify } from 'src/utils/modifyType';
@@ -30,6 +30,8 @@ export class DoctorGraph
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
+    @Field(() => Int)
+    yearsOfExperience: number;
 
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();

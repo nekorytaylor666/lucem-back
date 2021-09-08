@@ -31,6 +31,7 @@ export class DoctorService {
             password,
             dateOfBirth: _dateOfBirth,
             deseasesIDs,
+            yearsOfExperience
         } = args;
         const passwordHASH = await bcrypt.hash(password, 12);
         const dateOfBirth = new Date(_dateOfBirth);
@@ -51,6 +52,7 @@ export class DoctorService {
             passwordHASH,
             dateOfBirth,
             phoneNumber,
+            yearsOfExperience
         };
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
