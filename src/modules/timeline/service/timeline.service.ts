@@ -26,12 +26,50 @@ export class TimelineService {
                 },
             },
             {
+                // $lookup: {
+                //     from: 'booking',
+                //     localField: '_id',
+                //     foreignField: 'timelineId',
+                //     as: 'booking',
+                // },
                 $lookup: {
-                    from: 'booking',
-                    localField: '_id',
-                    foreignField: 'timelineId',
-                    as: 'booking',
-                },
+                    from: "booking",
+                    let: {
+                        id: "$_id"
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$timelineId", "$$id"]
+                                }
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: "service",
+                                localField: "serviceId",
+                                foreignField: "_id",
+                                as: "service"
+                            }
+                        },
+                        {
+                            $project: {
+                                service: {
+                                    $arrayElemAt: ['$service', 0]
+                                },
+                                
+                                _id: 1,
+                                userId: 1,
+                                startDate: 1,
+                                endDate: 1,
+                                timelineId: 1
+                            }
+                        }
+                        
+                    ],
+                    as: "booking"
+                }
             },
         ]);
         return timeline;

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { UserService } from 'src/modules/user/service/user.service';
 import { TokenService } from '../token/token.service';
 
@@ -21,14 +22,41 @@ export class PreAuthGuardUser implements CanActivate {
         const { authorization } = request.headers;
         const graphqlRequestName =
             GqlExecutionContext.create(context).getInfo().path.key;
-        if (
-            graphqlRequestName === 'loginUser'
-        )
-            return true;
+        if (graphqlRequestName === 'loginUser') return true;
         if (!authorization) return false;
         try {
             const payload = this.tokenService.verify({ token: authorization });
-            const user = await this.userService.findOne({ _id: new ObjectId(payload._id) });
+            const user = await this.userService.findOne({
+                _id: new ObjectId(payload._id),
+            });
+            if (!user) return false;
+            request.user = user;
+            return true;
+        } catch {
+            return false;
+        }
+    }
+}
+
+@Injectable()
+export class PreAuthGuardDoctor implements CanActivate {
+    constructor(
+        private tokenService: TokenService,
+        private doctorService: DoctorService,
+    ) {}
+
+    async canActivate(context: ExecutionContext) {
+        const request = GqlExecutionContext.create(context).getContext().req;
+        const { authorization } = request.headers;
+        const graphqlRequestName =
+            GqlExecutionContext.create(context).getInfo().path.key;
+        if (graphqlRequestName === 'loginUser') return true;
+        if (!authorization) return false;
+        try {
+            const payload = this.tokenService.verify({ token: authorization });
+            const user = await this.doctorService.findOne({
+                _id: new ObjectId(payload._id),
+            });
             if (!user) return false;
             request.user = user;
             return true;

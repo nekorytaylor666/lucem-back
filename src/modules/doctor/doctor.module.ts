@@ -10,6 +10,6 @@ import { DoctorService } from "./service/doctor.service";
 @Module({
     imports: [TokenModule, MongoModule, DoctorDeseaseModule, DeseasesModule],
     providers: [DoctorService, DoctorResolver],
-    exports: []
+    exports: [DoctorService]
 })
 export class DoctorModule {}
