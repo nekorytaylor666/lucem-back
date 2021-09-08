@@ -90,13 +90,18 @@ export class DoctorService {
         );
         if (!checkPassword) throw new ApolloError('password or email is wrong');
         const token = await this.tokenService.create({
-          user: {
-            ...doctor,
-            _id: doctor._id.toHexString()
-          },
-          role: TokenRoles.Doctor
+            user: {
+                ...doctor,
+                _id: doctor._id.toHexString(),
+            },
+            role: TokenRoles.Doctor,
         });
         doctor.token = token;
         return doctor;
+    }
+
+    async findOne(args: Partial<Doctor>) {
+      const doctor = await this.doctorCollection.findOne(args);
+      return doctor;
     }
 }

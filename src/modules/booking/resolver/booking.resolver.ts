@@ -1,5 +1,6 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Doctor } from "src/modules/doctor/model/doctor.interface";
 import { CurrentUserGraph, PreAuthGuardUser } from "src/modules/helpers/auth/auth.service";
 import { User } from "src/modules/user/model/user.interface";
 import { BookingGraph } from "../model/booking.model";
