@@ -25,4 +25,7 @@ export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "pass
 
     @Field(() => Int)
     yearsOfExperience: number;
+
+    @Field()
+    description: string;
 }

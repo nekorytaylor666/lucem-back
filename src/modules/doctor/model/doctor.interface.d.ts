@@ -13,4 +13,5 @@ export interface Doctor {
     yearsOfExperience: number;
     numberOfRatings?: number;
     sumOfRatings?: number;
+    description: string;
 };
