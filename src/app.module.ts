@@ -12,6 +12,7 @@ import { DoctorModule } from './modules/doctor/doctor.module';
 import { ServiceModule } from './modules/service/service.module';
 import { TimelineModule } from './modules/timeline/timeline.module';
 import { BookingModule } from './modules/booking/booking.module';
+import { SpecializationModule } from './modules/specialization/specialization.module';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { BookingModule } from './modules/booking/booking.module';
         DoctorModule,
         ServiceModule,
         TimelineModule,
-        BookingModule
+        BookingModule,
+        SpecializationModule
     ],
     controllers: [AppController],
     providers: [AppService],
