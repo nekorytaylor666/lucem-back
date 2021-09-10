@@ -24,13 +24,4 @@ export class CreateUser
 
     @Field()
     phoneNumber: string;
-
-    @Field()
-    password: string;
-
-    @Field(() => GraphQLUpload, {
-        name: 'avatar',
-        nullable: true,
-    })
-    avatar: Promise<FileUpload>;
 }

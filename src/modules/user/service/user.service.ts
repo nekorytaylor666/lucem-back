@@ -75,22 +75,14 @@ export class UserService {
 
     async createUser(newUser: CreateUser & { _id: string }): Promise<User> {
         const {
-            password,
             dateOfBirth: _dateOfBirth,
-            avatar,
             _id,
             phoneNumber: _phoneNumber,
             email,
             fullName,
         } = newUser;
-        const passwordHASH = await bcrypt.hash(password, 12);
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
         const dateOfBirth = new Date(_dateOfBirth);
-        const photoURL =
-            avatar &&
-            (await this.photoUploadService.saveImages(
-                (await avatar).createReadStream(),
-            ));
         const insertUser = await this.userCollection.findOneAndUpdate(
             { _id: new ObjectId(_id), phoneNumber },
             {
@@ -98,8 +90,7 @@ export class UserService {
                     email,
                     fullName,
                     dateOfBirth,
-                    passwordHASH,
-                    photoURL,
+                    phoneNumber
                 },
             },
             {
