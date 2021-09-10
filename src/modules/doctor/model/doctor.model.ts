@@ -43,6 +43,9 @@ export class DoctorGraph
     @Field()
     description: string;
 
+    @Field(() => Int, { defaultValue: 0 })
+    numOfRatings: number;
+
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
@@ -55,5 +58,6 @@ export class DoctorGraph
                 (val) => new DeseaseGraph({ ...val }),
             );
         if (doctor.description) this.description = doctor.description;
+        if (doctor.numOfRatings) this.numOfRatings = doctor.numOfRatings;
     }
 }
