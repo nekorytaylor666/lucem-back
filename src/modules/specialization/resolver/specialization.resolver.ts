@@ -1,18 +1,42 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
-import { CreateSpecialization } from "../model/createSpecialization.args";
-import { SpecializationGraph } from "../model/specialization.model";
-import { SpecializationService } from "../service/specialization.service";
-
-
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
+import { SpecializationDoctorService } from 'src/modules/specializationDoctor/service/specializationDoctor.service';
+import { CreateSpecialization } from '../model/createSpecialization.args';
+import { SpecializationGraph } from '../model/specialization.model';
+import { SpecializationService } from '../service/specialization.service';
 
 @Resolver()
 export class SpecializationResolver {
-    constructor(private specializationService: SpecializationService) {}
+    constructor(
+        private specializationService: SpecializationService,
+        private specializationDoctorService: SpecializationDoctorService,
+    ) {}
 
     @Mutation(() => SpecializationGraph)
     async createSpecialization(@Args() args: CreateSpecialization) {
         const specialization = await this.specializationService.create(args);
-        const specializationResponce = new SpecializationGraph({...specialization});
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
         return specializationResponce;
+    }
+
+    @Mutation(() => String)
+    async attachDoctorToSpecialization(
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+    ) {
+        const createAttachment = await this.specializationDoctorService.create({ doctorId, specializationId });
+        return 'success';
+    }
+
+    @Query(() => SpecializationGraph)
+    async findSpecializationWithDoctors(
+        @Args('specializationId', { type: () => String}) specializationId: string
+    ) {
+        const specialization = await this.specializationService.findOneWithAddictives(specializationId);
+        const specializationResponce = new SpecializationGraph({...specialization});
+        return specializationResponce
     }
 }
