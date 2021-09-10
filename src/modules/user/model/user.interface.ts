@@ -7,7 +7,6 @@ export interface User {
     phoneNumber: string;
     email: string;
     dateOfBirth: Date;
-    passwordHASH: string;
     token?: string;
     photoURL?: PhotoURL;
 }
