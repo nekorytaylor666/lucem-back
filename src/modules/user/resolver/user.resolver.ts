@@ -10,12 +10,12 @@ import { User } from '../model/user.interface';
 
 
 @Resolver()
-@UseGuards(PreAuthGuardUser)
 export class UserResolver {
     constructor(
         private userService: UserService,
         private smsService: SMSService,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
+        // @Inject('SMARTSEARCH_CONNECTION') private searchService
     ) {}
 
     @Mutation(() => String)
@@ -23,6 +23,7 @@ export class UserResolver {
         @Args('phoneNumber', { type: () => String }) phoneNumber: string,
     ) {
         const code = Math.floor(1000 + Math.random() * 9000).toString();
+        // console.log(this.searchService);
         const filteredPhoneNumber = phoneNumber.replace(/\D/g, '');
         this.smsService.sendVerificationSMS({
             code,
@@ -50,6 +51,7 @@ export class UserResolver {
     }
 
     @Mutation(() => UserGraph)
+    @UseGuards(PreAuthGuardUser)
     async registerUser(@Args() args: CreateUser, @CurrentUserGraph() user: User) {
         const createUser = await this.userService.createUser({...args, _id: user._id.toHexString()});
         const userResponce = new UserGraph({ ...createUser });

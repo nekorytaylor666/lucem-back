@@ -9,6 +9,7 @@ import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { DoctorAddictives } from '../model/doctor.addictives';
 import { DoctorDeseaseService } from 'src/modules/doctorDesease/service/doctorDesease.service';
 import { ApolloError } from 'apollo-server-express';
+import { DoctorSearch } from '../model/doctor.schema';
 
 @Injectable()
 export class DoctorService {
@@ -17,10 +18,15 @@ export class DoctorService {
         private tokenService: TokenService,
         private deseaseService: DeseaseService,
         private doctorDeseaseService: DoctorDeseaseService,
+        @Inject('SMARTSEARCH_CONNECTION') private client
     ) {}
 
     private get doctorCollection() {
         return this.database.collection<Doctor>('doctor');
+    }
+
+    private get searchCollection() {
+        return this.client.collections('doctor').documents();
     }
 
     async createDoctor(args: CreateDoctor): Promise<Doctor & DoctorAddictives> {
@@ -59,6 +65,11 @@ export class DoctorService {
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
         });
+        const searchDoctor: DoctorSearch = {
+            ...doctor,
+            _id: doctor._id.toHexString()
+        };
+        await this.searchCollection.create(searchDoctor);
         if (deseases) {
             deseasesIDs.map(async (val) => {
                 this.doctorDeseaseService.create({
