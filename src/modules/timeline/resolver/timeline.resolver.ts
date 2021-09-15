@@ -20,7 +20,7 @@ export class TimelineResolver {
     }
 
     @Query(() => [TimelineGraph])
-    @UseGuards(PreAuthGuardUser)
+    // @UseGuards(PreAuthGuardUser)
     async getTimelinesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,
         @Args('page', { type: () => Int }) page: number,
