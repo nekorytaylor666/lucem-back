@@ -14,11 +14,15 @@ export const doctorSchema = {
         { name: 'numberOfRatings', type: 'int32', optional: true },
         { name: 'sumOfRatings', type: 'int32', optional: true },
         { name: 'dateOfBirth', type: 'string' },
-        { name: 'email', type: 'string'}
+        { name: 'email', type: 'string' },
     ],
     default_sorting_field: 'yearsOfExperience',
 };
 
-export interface DoctorSearch extends Modify<Doctor, {
-    _id: string
-}> { }
+export interface DoctorSearch
+    extends Modify<
+        Doctor,
+        {
+            _id: string;
+        }
+    > {}
