@@ -16,7 +16,6 @@ export class TimelineService {
         args: Partial<Timeline>,
     ): Promise<AggregationCursor<TimelineAddictive>> {
         const currentDate = new Date();
-        // console.log(await this.findOne(args));
         const timeline = this.timelineCollection.aggregate<TimelineAddictive>([
             {
                 $match: {

@@ -48,7 +48,6 @@ export class PreAuthGuardDoctor implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext) {
-        console.log("ji")
         const request = GqlExecutionContext.create(context).getContext().req;
         const { authorization } = request.headers;
         const graphqlRequestName =
