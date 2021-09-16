@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { DeseaseGraph } from 'src/modules/deseases/model/desease.graph';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { ServiceGraph } from 'src/modules/service/model/service.model';
 import { Search } from './search.interface';
@@ -6,10 +7,13 @@ import { Search } from './search.interface';
 @ObjectType()
 export class SearchGraph {
     @Field(() => [DoctorGraph], { nullable: true })
-    doctors: DoctorGraph[];
+    doctors?: DoctorGraph[];
 
     @Field(() => [ServiceGraph], { nullable: true })
-    services: ServiceGraph[];
+    services?: ServiceGraph[];
+
+    @Field(() => [DeseaseGraph], { nullable: true })
+    deseases?: DeseaseGraph[];
 
     constructor(search: Partial<Search>) {
         if (search.doctors)
@@ -19,6 +23,10 @@ export class SearchGraph {
         if (search.services)
             this.services = search.services.map(
                 (val) => new ServiceGraph({ ...val }),
+            );
+        if (search.deseases)
+            this.deseases = search.deseases.map(
+                (val) => new DeseaseGraph({ ...val }),
             );
     }
 }

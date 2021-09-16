@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { deaseaseShema } from 'src/modules/deseases/model/desease.shema';
 import { doctorSchema } from 'src/modules/doctor/model/doctor.schema';
 import { serviceSchema } from 'src/modules/service/model/service.schema';
 const Typesense = require('typesense');
