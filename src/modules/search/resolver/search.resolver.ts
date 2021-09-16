@@ -13,7 +13,6 @@ export class SearchResolver {
     ) {
         const searchResult = await this.searchService.search(searchQuery);
         const searchResponce = new SearchGraph({...searchResult})
-        console.log(searchResponce);
         return searchResponce;
     }
 }
