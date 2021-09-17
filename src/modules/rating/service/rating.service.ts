@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
-import { Db, ObjectId } from 'mongodb';
+import { AggregationCursor, Db, ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { CreateRating } from '../model/createRating.args';
 import { Rating } from '../model/rating.interface';
@@ -14,6 +14,52 @@ export class RatingService {
 
     private get ratingCollection() {
         return this.database.collection('rating');
+    }
+
+    findCursorWithAddictive(args: {
+        findFields: (keyof Rating)[];
+        findValues: any[];
+    }): AggregationCursor<Rating> {
+        const { findFields, findValues } = args;
+        const findQuery: any = {};
+        findFields.map((val, ind) => {
+            findQuery[val] = findValues[ind];
+        });
+        const ratingCursor = this.ratingCollection.aggregate<Rating>([
+            {
+                $match: findQuery,
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'doctorId',
+                    foreignField: '_id',
+                    as: 'doctor',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $project: {
+                    doctor: {
+                        $arrayElemAt: ['$doctor', 0],
+                    },
+                    user: {
+                        $arrayElemAt: ['$user', 0],
+                    },
+                    rating: 1,
+                    comment: 1,
+                    _id: 1,
+                },
+            },
+        ]);
+        return ratingCursor;
     }
 
     async create(
