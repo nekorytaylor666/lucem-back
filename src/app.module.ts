@@ -15,7 +15,8 @@ import { BookingModule } from './modules/booking/booking.module';
 import { SpecializationModule } from './modules/specialization/specialization.module';
 import { SmartSearchModule } from './modules/helpers/smartSearch/search.module';
 import { SearchModule } from './modules/search/search.module';
-
+import { RatingModule } from './modules/rating/rating.module';
+import { PreAuthModule } from './modules/helpers/auth/auth.module';
 
 @Module({
     imports: [
@@ -23,7 +24,7 @@ import { SearchModule } from './modules/search/search.module';
             isGlobal: true,
         }),
         MongoModule,
-        TokenModule,
+        PreAuthModule,
         SmartSearchModule,
         GraphQLModule.forRoot({
             debug: true,
@@ -42,7 +43,8 @@ import { SearchModule } from './modules/search/search.module';
         TimelineModule,
         BookingModule,
         SpecializationModule,
-        SearchModule
+        SearchModule,
+        RatingModule,
     ],
     controllers: [AppController],
     providers: [AppService],

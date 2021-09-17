@@ -15,7 +15,7 @@ export class DoctorResolver {
         const createDoctor = await this.doctorService.createDoctor(args);
         const doctorResponce = new DoctorGraph({ ...createDoctor });
         return doctorResponce;
-    }
+    }       
 
     @Query(() => DoctorGraph)
     async loginDoctor(@Args('email', { type: () => String }) email: string, @Args('password', { type: () => String }) password: string) {

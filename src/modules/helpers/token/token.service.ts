@@ -7,6 +7,7 @@ import { signOption } from './token.signOptions';
 
 @Injectable()
 export class TokenService {
+    constructor() {}
     create<T>(args: { user: Omit<Token, 'role'>; role: TokenRoles }): string {
         const { user, role } = args;
         const payload: Token = {
