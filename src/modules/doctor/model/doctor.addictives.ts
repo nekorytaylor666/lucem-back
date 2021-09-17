@@ -7,5 +7,4 @@ export interface DoctorAddictives extends Doctor {
     deseases?: Desease[];
     service?: Service[];
     rating?: number;
-    numOfRatings?: number;
 }

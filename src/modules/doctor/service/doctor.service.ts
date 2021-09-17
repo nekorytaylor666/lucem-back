@@ -18,7 +18,7 @@ export class DoctorService {
         private tokenService: TokenService,
         private deseaseService: DeseaseService,
         private doctorDeseaseService: DoctorDeseaseService,
-        @Inject('SMARTSEARCH_CONNECTION') private client
+        @Inject('SMARTSEARCH_CONNECTION') private client,
     ) {}
 
     private get doctorCollection() {
@@ -38,7 +38,7 @@ export class DoctorService {
             dateOfBirth: _dateOfBirth,
             deseasesIDs,
             yearsOfExperience,
-            description
+            description,
         } = args;
         const passwordHASH = await bcrypt.hash(password, 12);
         const dateOfBirth = new Date(_dateOfBirth);
@@ -60,14 +60,14 @@ export class DoctorService {
             dateOfBirth,
             phoneNumber,
             yearsOfExperience,
-            description
+            description,
         };
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
         });
         const searchDoctor: DoctorSearch = {
             ...doctor,
-            _id: doctor._id.toHexString()
+            _id: doctor._id.toHexString(),
         };
         await this.searchCollection.create(searchDoctor);
         if (deseases) {
@@ -116,7 +116,29 @@ export class DoctorService {
     }
 
     async findOne(args: Partial<Doctor>) {
-      const doctor = await this.doctorCollection.findOne(args);
-      return doctor;
+        const doctor = await this.doctorCollection.findOne(args);
+        return doctor;
+    }
+
+    async update(args: {
+        findField: (keyof Doctor)[];
+        findValue: any[];
+        updateField: (keyof Doctor)[];
+        updateValue: any[];
+        method: '$inc' | '$set' | '$addToSet'
+    }) {
+        const { findField, findValue, updateField, updateValue, method } = args;
+        const findQuery: any = {};
+        findField.map((val, ind) => {
+            findQuery[val] = findValue[ind];
+        });
+        const preUpdateQuery: any = {};
+        updateField.map((val, ind) => {
+            preUpdateQuery[val] = updateValue[ind];
+        });
+        const updateQuery = {
+            [method]: preUpdateQuery
+        }
+        await this.doctorCollection.updateOne(findQuery, updateQuery);
     }
 }

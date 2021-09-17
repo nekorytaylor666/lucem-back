@@ -16,7 +16,7 @@ import { DoctorService } from './service/doctor.service';
         MongoModule,
         DoctorDeseaseModule,
         DeseasesModule,
-        SmartSearchModule
+        SmartSearchModule,
     ],
     providers: [DoctorService, DoctorResolver],
     exports: [DoctorService],

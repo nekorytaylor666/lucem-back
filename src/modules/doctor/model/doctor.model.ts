@@ -58,6 +58,11 @@ export class DoctorGraph
                 (val) => new DeseaseGraph({ ...val }),
             );
         if (doctor.description) this.description = doctor.description;
-        if (doctor.numOfRatings) this.numOfRatings = doctor.numOfRatings;
+        if (doctor.numberOfRatings) this.numOfRatings = doctor.numberOfRatings;
+        if (doctor.sumOfRatings) {
+            const { numberOfRatings, sumOfRatings } = doctor;
+            const rating = sumOfRatings/numberOfRatings;
+            this.rating = rating;
+        }
     }
 }
