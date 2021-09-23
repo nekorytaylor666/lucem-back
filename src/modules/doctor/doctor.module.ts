@@ -12,7 +12,7 @@ import { DoctorService } from './service/doctor.service';
 @Module({
     imports: [
         TokenModule,
-        UserModule,
+        forwardRef(() => UserModule),
         MongoModule,
         DoctorDeseaseModule,
         DeseasesModule,

@@ -1,7 +1,7 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { Doctor } from "src/modules/doctor/model/doctor.interface";
-import { CurrentUserGraph, PreAuthGuardUser } from "src/modules/helpers/auth/auth.service";
+import { Roles } from "src/modules/helpers/auth/auth.roles";
+import { CurrentUserGraph, PreAuthGuard } from "src/modules/helpers/auth/auth.service";
 import { User } from "src/modules/user/model/user.interface";
 import { BookingGraph } from "../model/booking.model";
 import { CreateBooking } from "../model/createBooking.args";
@@ -14,7 +14,8 @@ export class BookingResolver {
     constructor(private bookingService: BookingService) {}
 
     @Mutation(() => BookingGraph)
-    @UseGuards(PreAuthGuardUser)
+    @Roles('user')
+    @UseGuards(PreAuthGuard)
     async createBooking(
         @Args() args: CreateBooking,
         @CurrentUserGraph() user: User) {

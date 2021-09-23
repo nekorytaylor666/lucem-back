@@ -1,9 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query, Int } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
-    CurrentUserGraph,
-    PreAuthGuardUser,
+    CurrentUserGraph, PreAuthGuard,
+
 } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
@@ -16,7 +17,8 @@ export class RatingResolver {
     constructor(private ratingService: RatingService) {}
 
     @Mutation(() => RatingGraph)
-    @UseGuards(PreAuthGuardUser)
+    @Roles('user')
+    @UseGuards(PreAuthGuard)
     async leaveRating(
         @Args() args: CreateRating,
         @CurrentUserGraph() user: User,
