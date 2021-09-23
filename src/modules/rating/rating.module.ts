@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PreAuthModule } from '../helpers/auth/auth.module';
-import { PreAuthGuardUser } from '../helpers/auth/auth.service';
+
 import { MongoModule } from '../helpers/database/mongo.module';
 
 import { RatingResolver } from './resolver/rating.resolver';

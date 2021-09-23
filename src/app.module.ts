@@ -24,7 +24,6 @@ import { PreAuthModule } from './modules/helpers/auth/auth.module';
             isGlobal: true,
         }),
         MongoModule,
-        PreAuthModule,
         SmartSearchModule,
         GraphQLModule.forRoot({
             debug: true,

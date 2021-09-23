@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
-import { PreAuthGuardUser } from 'src/modules/helpers/auth/auth.service';
+import { Roles } from 'src/modules/helpers/auth/auth.roles';
+import { PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorService } from '../service/doctor.service';
@@ -25,7 +26,8 @@ export class DoctorResolver {
     }
 
     @Query(() => DoctorGraph)
-    @UseGuards(PreAuthGuardUser)
+    @Roles('user')
+    @UseGuards(PreAuthGuard)
     async getDoctorByID(
         @Args('doctorId', { type: () => String}) doctorId: string
     ) {
