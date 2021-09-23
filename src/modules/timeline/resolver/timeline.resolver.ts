@@ -23,17 +23,12 @@ export class TimelineResolver {
     // @UseGuards(PreAuthGuardUser)
     async getTimelinesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,
-        @Args('page', { type: () => Int }) page: number,
     ) {
         const timelineCursor =
             await this.timelineService.findCursorWithAddictives({
                 doctorId: new ObjectId(doctorId),
             });
-        const timelines = await paginate({
-            cursor: timelineCursor,
-            page,
-            elementsPerPage: 5,
-        });
+        const timelines = await timelineCursor.toArray()
         const timelineResponce = timelines.map(
             (val) => new TimelineGraph({ ...val }),
         );

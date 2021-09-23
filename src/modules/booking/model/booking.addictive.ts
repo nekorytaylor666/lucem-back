@@ -6,6 +6,5 @@ import { Booking } from "./booking.interface";
 
 export interface BookingAddictive extends Omit<Booking, "serviceId" | "timelineId" | "userId"> {
     service?: Service;
-    timeline?: Timeline;
     user?: User;
 }

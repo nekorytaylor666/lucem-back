@@ -15,7 +15,6 @@ export class UserResolver {
         private userService: UserService,
         private smsService: SMSService,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
-        // @Inject('SMARTSEARCH_CONNECTION') private searchService
     ) {}
 
     @Mutation(() => String)
@@ -31,7 +30,7 @@ export class UserResolver {
         await this.cacheService.set(`${filteredPhoneNumber}`, `${code}`, {
             ttl: 300,
         });
-        return "success"
+        return 'success';
     }
 
     @Mutation(() => UserGraph)

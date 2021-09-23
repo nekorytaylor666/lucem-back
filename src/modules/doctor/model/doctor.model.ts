@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.graph';
-import { Desease } from 'src/modules/deseases/model/desease.interface';
+import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
 import { DoctorAddictives } from './doctor.addictives';
 import { Doctor } from './doctor.interface';
@@ -46,6 +46,9 @@ export class DoctorGraph
     @Field(() => Int, { defaultValue: 0 })
     numOfRatings: number;
 
+    @Field(() => [TimelineGraph], { nullable: true })
+    timelines: TimelineGraph[];
+
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
@@ -64,5 +67,6 @@ export class DoctorGraph
             const rating = sumOfRatings/numberOfRatings;
             this.rating = rating;
         }
+        if (doctor.timeline) this.timelines = doctor.timeline.map((val) => new TimelineGraph({...val}));
     }
 }

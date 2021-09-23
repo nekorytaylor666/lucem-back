@@ -22,4 +22,6 @@ export class BookingResolver {
         const bookingResponce = new BookingGraph({...createBooking});
         return bookingResponce
     }
+
+    
 }
