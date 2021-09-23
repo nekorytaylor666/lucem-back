@@ -13,9 +13,6 @@ export class TimelineGraph implements Modify<Omit<Timeline, "doctorId">, {
     @Field()
     _id: string;
 
-    @Field({ nullable: true })
-    doctor?: DoctorGraph;
-
     @Field()
     startDate: Date;
 
@@ -27,7 +24,7 @@ export class TimelineGraph implements Modify<Omit<Timeline, "doctorId">, {
 
     constructor(timeline: Partial<TimelineAddictive>) {
         if (timeline._id) this._id = timeline._id.toHexString();
-        if (timeline.doctorId) this.doctor = new DoctorGraph({...timeline.doctor});
+        // if (timeline.doctorId) this.doctor = new DoctorGraph({...timeline.doctor});
         if (timeline.startDate) this.startDate = timeline.startDate;
         if (timeline.endDate) this.endDate = timeline.endDate;
         if (timeline.booking) this.booking = timeline.booking.map((val) => new BookingGraph({...val}));

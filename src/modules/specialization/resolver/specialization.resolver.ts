@@ -39,4 +39,11 @@ export class SpecializationResolver {
         const specializationResponce = new SpecializationGraph({...specialization});
         return specializationResponce
     }
+
+    @Query(() => [SpecializationGraph])
+    async getSpecialization() {
+        const specialization = await this.specializationService.listWithAddictives();
+        const specializationResponce = specialization.map((val) => new SpecializationGraph({...val}));
+        return specializationResponce;
+    }
 }
