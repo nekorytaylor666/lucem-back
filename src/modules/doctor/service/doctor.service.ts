@@ -29,6 +29,11 @@ export class DoctorService {
         return this.client.collections('doctor').documents();
     }
 
+    async list() {
+        const doctors = await this.doctorCollection.find().toArray();
+        return doctors;
+    }
+
     async createDoctor(args: CreateDoctor): Promise<Doctor & DoctorAddictives> {
         const {
             fullName,

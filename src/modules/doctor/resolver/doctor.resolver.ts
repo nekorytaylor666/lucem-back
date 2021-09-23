@@ -35,5 +35,12 @@ export class DoctorResolver {
         const doctorResponce = new DoctorGraph({...doctor});
         return doctorResponce;
     }
+
+    @Query(() => [DoctorGraph])
+    async getAllDoctors() {
+        const doctors = await this.doctorService.list();
+        const doctorResponce = doctors.map((val) => new DoctorGraph({...val}));
+        return doctorResponce;
+    }
 }
 
