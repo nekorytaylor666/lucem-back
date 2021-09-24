@@ -15,6 +15,7 @@ export const doctorSchema = {
         { name: 'sumOfRatings', type: 'int32', optional: true },
         { name: 'dateOfBirth', type: 'string' },
         { name: 'email', type: 'string' },
+        { name: 'acceptableAgeGroup', type: 'string'}
     ],
     default_sorting_field: 'yearsOfExperience',
 };

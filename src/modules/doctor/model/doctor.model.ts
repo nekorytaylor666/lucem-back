@@ -1,9 +1,11 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.graph';
+import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
+import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
 import { DoctorAddictives } from './doctor.addictives';
-import { Doctor } from './doctor.interface';
+import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -49,6 +51,12 @@ export class DoctorGraph
     @Field(() => [TimelineGraph], { nullable: true })
     timelines: TimelineGraph[];
 
+    @Field()
+    acceptableAgeGroup: AcceptableAgeGroup;
+
+    @Field(() => PhotoURLGraph)
+    avatar: PhotoURL;
+
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
@@ -68,5 +76,6 @@ export class DoctorGraph
             this.rating = rating;
         }
         if (doctor.timeline) this.timelines = doctor.timeline.map((val) => new TimelineGraph({...val}));
+        if (doctor.acceptableAgeGroup) this.acceptableAgeGroup = doctor.acceptableAgeGroup;
     }
 }

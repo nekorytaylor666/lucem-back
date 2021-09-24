@@ -1,5 +1,12 @@
+import { registerEnumType } from "@nestjs/graphql";
 import { ObjectId } from "mongodb";
 
+
+export enum AcceptableAgeGroup {
+    Adult = 'adult',
+    Child = 'child',
+    Both = 'both'
+};
 
 export interface Doctor {
     _id?: ObjectId;
@@ -14,4 +21,10 @@ export interface Doctor {
     numberOfRatings?: number;
     sumOfRatings?: number;
     description: string;
+    acceptableAgeGroup: AcceptableAgeGroup;
+    avatar: PhotoURL;
 };
+
+registerEnumType(AcceptableAgeGroup, {
+    name: 'AcceptableAgeGroup'
+});

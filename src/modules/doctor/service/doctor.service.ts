@@ -10,6 +10,7 @@ import { DoctorAddictives } from '../model/doctor.addictives';
 import { DoctorDeseaseService } from 'src/modules/doctorDesease/service/doctorDesease.service';
 import { ApolloError } from 'apollo-server-express';
 import { DoctorSearch } from '../model/doctor.schema';
+import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
 
 @Injectable()
 export class DoctorService {
@@ -19,6 +20,7 @@ export class DoctorService {
         private deseaseService: DeseaseService,
         private doctorDeseaseService: DoctorDeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
+        private fileUploadService: AWSservice,
     ) {}
 
     private get doctorCollection() {
@@ -44,7 +46,12 @@ export class DoctorService {
             deseasesIDs,
             yearsOfExperience,
             description,
+            acceptableAgeGroup,
+            avatar,
         } = args;
+        const avatarURL = await this.fileUploadService.saveImages(
+            (await avatar).createReadStream(),
+        );
         const passwordHASH = await bcrypt.hash(password, 12);
         const dateOfBirth = new Date(_dateOfBirth);
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
@@ -66,6 +73,8 @@ export class DoctorService {
             phoneNumber,
             yearsOfExperience,
             description,
+            acceptableAgeGroup,
+            avatar: avatarURL
         };
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
@@ -130,7 +139,7 @@ export class DoctorService {
         findValue: any[];
         updateField: (keyof Doctor)[];
         updateValue: any[];
-        method: '$inc' | '$set' | '$addToSet'
+        method: '$inc' | '$set' | '$addToSet';
     }) {
         const { findField, findValue, updateField, updateValue, method } = args;
         const findQuery: any = {};
@@ -142,8 +151,8 @@ export class DoctorService {
             preUpdateQuery[val] = updateValue[ind];
         });
         const updateQuery = {
-            [method]: preUpdateQuery
-        }
+            [method]: preUpdateQuery,
+        };
         await this.doctorCollection.updateOne(findQuery, updateQuery);
     }
 }
