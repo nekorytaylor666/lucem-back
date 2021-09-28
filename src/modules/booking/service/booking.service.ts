@@ -24,11 +24,13 @@ export class BookingService {
             timelineId: _timelineId,
             startDate: _startDate,
             endDate: _endDate,
+            doctorId: _doctorId
         } = args;
-        const [serviceId, userId, timelineId, startDate, endDate] = [
+        const [serviceId, userId, timelineId, doctorId,startDate, endDate] = [
             new ObjectId(_serviceId),
             new ObjectId(_userId),
             new ObjectId(_timelineId),
+            new ObjectId(_doctorId),
             new Date(_startDate),
             new Date(_endDate),
         ];
@@ -51,6 +53,7 @@ export class BookingService {
             startDate,
             endDate,
             timelineId,
+            doctorId
         };
         const insertBooking = await this.bookingCollection.insertOne(booking);
         booking._id = insertBooking.insertedId;
