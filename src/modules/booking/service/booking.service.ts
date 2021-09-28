@@ -42,6 +42,7 @@ export class BookingService {
             });
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
+        
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
         });

@@ -12,7 +12,6 @@ import { BookingService } from "../service/booking.service";
 @Resolver()
 export class BookingResolver {
     constructor(private bookingService: BookingService) {}
-
     @Mutation(() => BookingGraph)
     @Roles('user')
     @UseGuards(PreAuthGuard)
@@ -23,6 +22,4 @@ export class BookingResolver {
         const bookingResponce = new BookingGraph({...createBooking});
         return bookingResponce
     }
-
-    
 }
