@@ -1,6 +1,9 @@
 import { CACHE_MANAGER, Inject, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import {
+    CurrentUserGraph,
+    PreAuthGuard,
+} from 'src/modules/helpers/auth/auth.service';
 import { SMSService } from 'src/modules/helpers/SMS/SMS.service';
 import { CreateUser } from '../model/createUser.args';
 import { UserGraph } from '../model/user.model';
@@ -8,7 +11,6 @@ import { UserService } from '../service/user.service';
 import { Cache } from 'cache-manager';
 import { User } from '../model/user.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
-
 
 @Resolver()
 export class UserResolver {
@@ -21,7 +23,7 @@ export class UserResolver {
     @Mutation(() => String)
     async sendVerSMS(
         @Args('phoneNumber', { type: () => String }) phoneNumber: string,
-    ) {
+    ) { 
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         const filteredPhoneNumber = phoneNumber.replace(/\D/g, '');
         this.smsService.sendVerificationSMS({
@@ -29,7 +31,7 @@ export class UserResolver {
             phoneNumber: filteredPhoneNumber,
         });
         await this.cacheService.set(`${filteredPhoneNumber}`, `${code}`, {
-            ttl: 300,
+            ttl: 60,
         });
         return 'success';
     }
@@ -52,8 +54,14 @@ export class UserResolver {
     @Mutation(() => UserGraph)
     @Roles('user')
     @UseGuards(PreAuthGuard)
-    async registerUser(@Args() args: CreateUser, @CurrentUserGraph() user: User) {
-        const createUser = await this.userService.createUser({...args, _id: user._id.toHexString()});
+    async registerUser(
+        @Args() args: CreateUser,
+        @CurrentUserGraph() user: User,
+    ) {
+        const createUser = await this.userService.createUser({
+            ...args,
+            _id: user._id.toHexString(),
+        });
         const userResponce = new UserGraph({ ...createUser });
         return userResponce;
     }
