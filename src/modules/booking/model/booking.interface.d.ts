@@ -8,4 +8,5 @@ export interface Booking {
     timelineId: ObjectId;
     startDate: Date;
     endDate: Date;
+    doctorId: ObjectId;
 }

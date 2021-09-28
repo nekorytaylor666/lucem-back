@@ -1,9 +1,14 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import * as moment from 'moment';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
-import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import {
+    CurrentUserGraph,
+    PreAuthGuard,
+} from 'src/modules/helpers/auth/auth.service';
 import { paginate } from 'src/utils/paginate';
 import { CreateTimeline } from '../model/timeline.args';
 import { TimelineGraph } from '../model/timeline.model';
@@ -11,13 +16,43 @@ import { TimelineService } from '../service/timeline.service';
 
 @Resolver()
 export class TimelineResolver {
-    constructor(private timelineService: TimelineService) {}
+    constructor(
+        private timelineService: TimelineService,
+        private doctorService: DoctorService,
+    ) {}
 
     @Mutation(() => TimelineGraph)
     async createTimeline(@Args() args: CreateTimeline) {
         const createTimeline = await this.timelineService.create(args);
         const timelineResponce = new TimelineGraph({ ...createTimeline });
         return timelineResponce;
+    }
+
+    @Mutation(() => String)
+    async createTimeLineWeek() {
+        const doctors = await this.doctorService.list();
+        await Promise.all(
+            doctors.map(async (val) => {
+                for (let ind = 0; ind < 14; ind++) {
+                    let startDate = moment(
+                        new Date('2021-09-27T09:00:00.000Z'),
+                    ).toISOString();
+                    let endDate = moment(
+                        new Date('2021-09-27T18:00:00.000Z'),
+                    ).toISOString();
+                    if (ind) {
+                        startDate = moment(new Date('2021-09-27T09:00:00.000Z'))
+                            .add(ind, 'day')
+                            .toISOString();
+                        endDate = moment(new Date('2021-09-27T18:00:00.000Z'))
+                            .add(ind, 'day')
+                            .toISOString();
+                    }
+                    await this.timelineService.create({ doctorId: val._id.toHexString(), startDate, endDate });;
+                }
+            }),
+        );
+        return "bitch"
     }
 
     @Query(() => [TimelineGraph])
@@ -28,7 +63,7 @@ export class TimelineResolver {
             await this.timelineService.findCursorWithAddictives({
                 doctorId: new ObjectId(doctorId),
             });
-        const timelines = await timelineCursor.toArray()
+        const timelines = await timelineCursor.toArray();
         const timelineResponce = timelines.map(
             (val) => new TimelineGraph({ ...val }),
         );
@@ -40,11 +75,20 @@ export class TimelineResolver {
     @UseGuards(PreAuthGuard)
     async getTimelinesDoctor(
         @CurrentUserGraph() doctor: Doctor,
-        @Args('page', { type: () => Int}) page: number
+        @Args('page', { type: () => Int }) page: number,
     ) {
-        const timelineCursor = await this.timelineService.findCursorWithAddictives({doctorId: doctor._id }); 
-        const timeline = await paginate({ cursor: timelineCursor, page, elementsPerPage: 10 });
-        const timelineResponce = timeline.map((val) => new TimelineGraph({...val}));
+        const timelineCursor =
+            await this.timelineService.findCursorWithAddictives({
+                doctorId: doctor._id,
+            });
+        const timeline = await paginate({
+            cursor: timelineCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const timelineResponce = timeline.map(
+            (val) => new TimelineGraph({ ...val }),
+        );
         return timelineResponce;
     }
 }

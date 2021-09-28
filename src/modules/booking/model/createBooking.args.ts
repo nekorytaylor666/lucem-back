@@ -8,7 +8,8 @@ export class CreateBooking implements Modify<Omit<Booking, "_id" | "userId">, {
     serviceId?: string,
     timelineId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
+    doctorId: string
 }> {
     @Field({ nullable: true })
     serviceId?: string;
@@ -21,4 +22,7 @@ export class CreateBooking implements Modify<Omit<Booking, "_id" | "userId">, {
 
     @Field()
     endDate: string;
+
+    @Field()
+    doctorId: string
 }

@@ -54,7 +54,7 @@ export class DoctorGraph
     @Field()
     acceptableAgeGroup: AcceptableAgeGroup;
 
-    @Field(() => PhotoURLGraph)
+    @Field(() => PhotoURLGraph, { nullable: true })
     avatar: PhotoURL;
 
     constructor(doctor: Partial<DoctorAddictives>) {

@@ -25,14 +25,14 @@ export class SpecializationGraph
     @Field()
     description: string;
 
-    @Field(() => PhotoURLGraph)
+    @Field(() => PhotoURLGraph, { nullable: true })
     photoURL: PhotoURLGraph;
 
     @Field(() => [DoctorGraph])
     doctors: DoctorGraph[];
 
     constructor(specialization: Partial<SpecializationAddictive>) {
-        if (specialization._id) this._id = specialization._id;
+        if (specialization._id) this._id = specialization._id.toHexString();
         if (specialization.name) this.name = specialization.name;
         if (specialization.description)
             this.description = specialization.description;
