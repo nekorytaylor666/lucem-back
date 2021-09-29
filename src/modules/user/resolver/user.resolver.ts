@@ -31,7 +31,7 @@ export class UserResolver {
             phoneNumber: filteredPhoneNumber,
         });
         await this.cacheService.set(`${filteredPhoneNumber}`, `${code}`, {
-            ttl: 60,
+            ttl: 600000,
         });
         return 'success';
     }
@@ -64,10 +64,5 @@ export class UserResolver {
         });
         const userResponce = new UserGraph({ ...createUser });
         return userResponce;
-    }
-
-    @Query(() => String)
-    async helloWorld() {
-        return 'hello world';
     }
 }

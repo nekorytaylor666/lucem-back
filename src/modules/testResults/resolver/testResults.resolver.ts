@@ -37,4 +37,5 @@ export class TestResultsResolver {
         const testResultsResponce = testResults.map((val) => new TestResultsGraph({...val}));
         return testResultsResponce;
     }
+
 }

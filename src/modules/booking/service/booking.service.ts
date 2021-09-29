@@ -17,6 +17,11 @@ export class BookingService {
         return this.database.collection('booking');
     }
 
+    async findOne(args: Partial<Booking>) {
+        const booking = this.bookingCollection.findOne<Booking>(args);
+        return booking;
+    }
+
     async create(args: CreateBooking & { userId: string }) {
         const {
             serviceId: _serviceId,
@@ -24,9 +29,9 @@ export class BookingService {
             timelineId: _timelineId,
             startDate: _startDate,
             endDate: _endDate,
-            doctorId: _doctorId
+            doctorId: _doctorId,
         } = args;
-        const [serviceId, userId, timelineId, doctorId,startDate, endDate] = [
+        const [serviceId, userId, timelineId, doctorId, startDate, endDate] = [
             new ObjectId(_serviceId),
             new ObjectId(_userId),
             new ObjectId(_timelineId),
@@ -42,7 +47,7 @@ export class BookingService {
             });
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
-        
+
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
         });
@@ -54,7 +59,7 @@ export class BookingService {
             startDate,
             endDate,
             timelineId,
-            doctorId
+            doctorId,
         };
         const insertBooking = await this.bookingCollection.insertOne(booking);
         booking._id = insertBooking.insertedId;

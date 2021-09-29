@@ -1,10 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { BookingGraph } from 'src/modules/booking/model/booking.model';
+import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
+import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
 import { SessionAddictive } from './session.addictive';
 import { Session } from './session.interface';
 
-@ObjectType()
+@ObjectType('Session')
 export class SessionGraph
     implements
         Modify<
