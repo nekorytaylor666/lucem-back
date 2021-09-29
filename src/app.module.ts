@@ -17,6 +17,7 @@ import { SmartSearchModule } from './modules/helpers/smartSearch/search.module';
 import { SearchModule } from './modules/search/search.module';
 import { RatingModule } from './modules/rating/rating.module';
 import { PreAuthModule } from './modules/helpers/auth/auth.module';
+import { SessionModule } from './modules/session/session.module';
 
 @Module({
     imports: [
@@ -44,6 +45,7 @@ import { PreAuthModule } from './modules/helpers/auth/auth.module';
         SpecializationModule,
         SearchModule,
         RatingModule,
+        SessionModule
     ],
     controllers: [AppController],
     providers: [AppService],

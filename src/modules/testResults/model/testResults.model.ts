@@ -7,7 +7,7 @@ import { TestResultsAddictive } from "./testResults.addictive";
 import { TestResults } from "./testResults.interface";
 
 
-@ObjectType()
+@ObjectType('TestResults')
 export class TestResultsGraph implements Modify<Omit<TestResults, "userId" | "bookingId">, {
     _id: string;
     photoURL: PhotoURLGraph[];

@@ -5,7 +5,7 @@ import { Modify } from 'src/utils/modifyType';
 import { SpecializationAddictive } from './specialization.addictive';
 import { Specialization } from './specialization.interface';
 
-@ObjectType()
+@ObjectType('Specialization')
 export class SpecializationGraph
     implements
         Modify<
