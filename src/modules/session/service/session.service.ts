@@ -42,8 +42,8 @@ export class SessionService {
     }
 
     async findActiveSession(userId: string): Promise<SessionAddictive> {
-        const session = await this.sessionCollection
-            .aggregate<SessionAddictive>([
+        const sessionArray = await this.sessionCollection
+            .aggregate([
                 {
                     $match: {
                         endDate: {
@@ -98,6 +98,14 @@ export class SessionService {
                                 },
                             },
                             {
+                                $lookup: {
+                                    from: 'doctor',
+                                    localField: 'doctorId',
+                                    foreignField: '_id',
+                                    as: 'doctor'
+                                }
+                            },
+                            {
                                 $project: {
                                     _id: 1,
                                     startDate: 1,
@@ -110,6 +118,9 @@ export class SessionService {
                                     doctor: {
                                         $arrayElemAt: ['$doctor', 0],
                                     },
+                                    testResults: {
+                                        $arrayElemAt: ['$testResults', 0],
+                                    }
                                 },
                             },
                         ],
@@ -121,8 +132,11 @@ export class SessionService {
                 },
             ])
             .toArray();
-        console.log(session);
-        return session[0];
+        const session: SessionAddictive = {
+            ...sessionArray[0],
+            testResults: sessionArray[0].booking.testResults
+        } as SessionAddictive;
+        return session;
     }
 
     async create(bookingId: string): Promise<Session> {

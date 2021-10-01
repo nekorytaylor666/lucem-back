@@ -1,4 +1,5 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { ObjectId } from "mongodb";
 import { CreateService } from "../model/createService.args";
 import { ServiceGraph } from "../model/service.model";
 import { ServiceService } from "../service/service.service";
@@ -12,6 +13,34 @@ export class ServiceResolver {
     async createService(@Args() args: CreateService) {
         const insertService = await this.serviceService.create(args);
         const serviceResponce = new ServiceGraph({...insertService});
+        return serviceResponce;
+    }
+
+    @Query(() => [ServiceGraph])
+    async getServicesByDoctorId(
+        @Args('doctorId', { type: () => String }) doctorId: string
+    ) {
+        const service = await this.serviceService.findOneWithOptions({
+            fields: ['doctorId'],
+            values: [{$elemMatch: new ObjectId(doctorId) }]
+        })
+        const serviceResponce = new ServiceGraph({...service});
+        return serviceResponce;
+    }
+
+    @Mutation(() => ServiceGraph)
+    async attachServiceToDoctor(
+        @Args('doctorId', { type: () => String}) doctorId: string,
+        @Args('serviceId', { type: () => String}) serviceId: string
+    ) {
+        const attachService = await this.serviceService.updateOne({
+            findField: ['_id'],
+            findValue: [new ObjectId(serviceId)],
+            updateField: ['doctorId'],
+            updateValue: [new ObjectId(doctorId)],
+            method: '$addToSet'
+        });
+        const serviceResponce = new ServiceGraph({...attachService});
         return serviceResponce;
     }
 }

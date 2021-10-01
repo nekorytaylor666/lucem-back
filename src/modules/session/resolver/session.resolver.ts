@@ -38,11 +38,12 @@ export class SessionResolver {
         return sessionResponce;
     }
 
-    @Query(() => String)
+    @Query(() => SessionGraph)
     async getActiveSessionByUserId(
         @Args('userId', { type: () => String}) userId: string
     ) {
         const session = await this.sessionService.findActiveSession(userId);
-        return "bitchhh"
+        const sessionResponce = new SessionGraph({...session});
+        return sessionResponce;
     };
 }

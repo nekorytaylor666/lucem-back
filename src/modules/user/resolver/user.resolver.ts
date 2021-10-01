@@ -52,7 +52,7 @@ export class UserResolver {
     }
 
     @Mutation(() => UserGraph)
-    @Roles('user')
+    @Roles('user', '')
     @UseGuards(PreAuthGuard)
     async registerUser(
         @Args() args: CreateUser,
