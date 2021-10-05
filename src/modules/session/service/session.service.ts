@@ -41,6 +41,81 @@ export class SessionService {
         return session.value as Session;
     }
 
+    findWithAddictives(args: { fields: (keyof Session)[]; values: any[] }) {
+        const { fields, values } = args;
+        const findQuery: any = {};
+        fields.map((val, ind) => (findQuery[val] = values[ind]));
+        const session = this.sessionCollection.aggregate<SessionAddictive>([
+            {
+                $match: findQuery,
+            },
+            {
+                $lookup: {
+                    from: 'booking',
+                    let: {
+                        bookingId: '$bookingId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$_id', '$$bookingId'],
+                                },
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'service',
+                                localField: 'serviceId',
+                                foreignField: '_id',
+                                as: 'service',
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'user',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user',
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: 'doctor',
+                                localField: 'doctorId',
+                                foreignField: '_id',
+                                as: 'doctor',
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                startDate: 1,
+                                user: {
+                                    $arrayElemAt: ['$user', 0],
+                                },
+                                service: {
+                                    $arrayElemAt: ['$service', 0],
+                                },
+                                doctor: {
+                                    $arrayElemAt: ['$doctor', 0],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'booking',
+                },
+            },
+            {
+                $sort: { startDate: -1 },
+            },
+            {
+                $unwind: '$booking',
+            },
+        ]);
+        return session;
+    }
+
     async findActiveSession(userId: string): Promise<SessionAddictive> {
         const sessionArray = await this.sessionCollection
             .aggregate([
