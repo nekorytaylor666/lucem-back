@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongoModule } from './modules/helpers/database/mongo.module';
 import { TokenModule } from './modules/helpers/token/token.module';
@@ -18,9 +17,14 @@ import { SearchModule } from './modules/search/search.module';
 import { RatingModule } from './modules/rating/rating.module';
 import { PreAuthModule } from './modules/helpers/auth/auth.module';
 import { SessionModule } from './modules/session/session.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload/imageUpload.controller';
 
 @Module({
     imports: [
+        MulterModule.register({
+            dest: './uploads'
+        }),
         ConfigModule.forRoot({
             isGlobal: true,
         }),
@@ -47,7 +51,7 @@ import { SessionModule } from './modules/session/session.module';
         RatingModule,
         SessionModule
     ],
-    controllers: [AppController],
+    controllers: [AppController, ImageUploadController],
     providers: [AppService],
 })
 export class AppModule {}

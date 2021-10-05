@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
-import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { TestResultsAddictive } from '../model/testResults.addictive';
 import { CreateTestResults } from '../model/testResults.args';
 import { TestResults } from '../model/testResults.interface';
@@ -10,7 +10,7 @@ export class TestResultsService {
     constructor(
         @Inject('DATABASE_CONNECTION')
         private database: Db,
-        private photoUploadService: AWSservice,
+        private photoUploadService: ImageUploadService,
     ) {}
 
     private get testResultsCollection() {
@@ -107,7 +107,7 @@ export class TestResultsService {
         return testResultsCursor;
     }
 
-    async create(args: CreateTestResults): Promise<TestResults> {
+    async create(args: CreateTestResults, req: string): Promise<TestResults> {
         const {
             description,
             title,
@@ -123,8 +123,9 @@ export class TestResultsService {
         const files = await _files;
         const fileURLs = await Promise.all(
             files.map((val) => {
-                return this.photoUploadService.saveImages(
+                return this.photoUploadService.storeImages(
                     val.createReadStream(),
+                    req
                 );
             }),
         );

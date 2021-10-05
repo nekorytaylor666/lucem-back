@@ -5,9 +5,9 @@ import { CreateUser } from '../model/createUser.args';
 import { User } from '../model/user.interface';
 import * as bcrypt from 'bcryptjs';
 import { TokenRoles } from 'src/modules/helpers/token/token.interface';
-import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
 import { Cache } from 'cache-manager';
 import { ApolloError } from 'apollo-server-express';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
         @Inject('DATABASE_CONNECTION') private database: Db,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
         private tokenService: TokenService,
-        private photoUploadService: AWSservice,
+        private photoUploadService: ImageUploadService,
     ) {}
 
     get userCollection() {

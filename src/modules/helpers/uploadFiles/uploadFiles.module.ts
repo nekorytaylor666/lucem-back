@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AWSservice } from './aws/AWS.service';
+import { ImageUploadController } from './imageUpload/imageUpload.controller';
 import { ImageUploadService } from './imageUpload/imageUpload.service';
 
 @Module({
-    providers: [AWSservice, ImageUploadService],
-    exports: [AWSservice, ImageUploadService],
+    providers: [ImageUploadService],
+    exports: [ImageUploadService],
 })
 export class uploadFileModule {}

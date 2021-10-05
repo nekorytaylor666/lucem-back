@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db, ObjectId } from 'mongodb';
+import { ConnectionClosedEvent, Db, ObjectId } from 'mongodb';
 import { CreateDoctor } from '../model/createDoctor.args';
 import * as bcrypt from 'bcryptjs';
 import { Doctor } from '../model/doctor.interface';
@@ -10,7 +10,7 @@ import { DoctorAddictives } from '../model/doctor.addictives';
 import { DoctorDeseaseService } from 'src/modules/doctorDesease/service/doctorDesease.service';
 import { ApolloError } from 'apollo-server-express';
 import { DoctorSearch } from '../model/doctor.schema';
-import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 
 @Injectable()
 export class DoctorService {
@@ -20,7 +20,7 @@ export class DoctorService {
         private deseaseService: DeseaseService,
         private doctorDeseaseService: DoctorDeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
-        private fileUploadService: AWSservice,
+        private fileUploadService: ImageUploadService,
     ) {}
 
     private get doctorCollection() {
@@ -36,7 +36,7 @@ export class DoctorService {
         return doctors;
     }
 
-    async createDoctor(args: CreateDoctor): Promise<Doctor & DoctorAddictives> {
+    async createDoctor(args: CreateDoctor, req: string): Promise<Doctor & DoctorAddictives> {
         const {
             fullName,
             email,
@@ -49,8 +49,9 @@ export class DoctorService {
             acceptableAgeGroup,
             avatar,
         } = args;
-        const avatarURL = await this.fileUploadService.saveImages(
+        const avatarURL = await this.fileUploadService.storeImages(
             (await avatar).createReadStream(),
+            req
         );
         const passwordHASH = await bcrypt.hash(password, 12);
         const dateOfBirth = new Date(_dateOfBirth);
@@ -76,6 +77,7 @@ export class DoctorService {
             acceptableAgeGroup,
             avatar: avatarURL
         };
+        
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
         });

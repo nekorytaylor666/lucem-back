@@ -1,8 +1,8 @@
-import { UseGuards } from "@nestjs/common";
+import { Controller, UseGuards } from "@nestjs/common";
 import { Args, Mutation, Resolver, Query, Int } from "@nestjs/graphql";
 import { ObjectId } from "mongodb";
 import { Roles } from "src/modules/helpers/auth/auth.roles";
-import { PreAuthGuard } from "src/modules/helpers/auth/auth.service";
+import { CurrentRequestURLGraph, PreAuthGuard } from "src/modules/helpers/auth/auth.service";
 import { paginate } from "src/utils/paginate";
 import { CreateTestResults } from "../model/testResults.args";
 import { TestResultsGraph } from "../model/testResults.model";
@@ -16,8 +16,11 @@ export class TestResultsResolver {
     @Mutation(() => TestResultsGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
-    async createTestResults(@Args() args: CreateTestResults) {
-        const testResults = await this.testResultsService.create(args);
+    async createTestResults(
+        @Args() args: CreateTestResults,
+        @CurrentRequestURLGraph() req: string
+        ) {
+        const testResults = await this.testResultsService.create(args, req);
         const testResultsResponce = new TestResultsGraph({...testResults});
         return testResultsResponce;
     }
@@ -27,7 +30,7 @@ export class TestResultsResolver {
     @UseGuards(PreAuthGuard)
     async getTestResultsOfAUserWithAddictives(
         @Args('userId', { type: () => String}) userId: string,
-        @Args('page', { type: () => Int}) page: number
+        @Args('page', { type: () => Int}) page: number,
         ) {
         const testResultsCursor = this.testResultsService.findCursorWithAddictives({
             findFields: ['userId'],
