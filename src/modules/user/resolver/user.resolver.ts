@@ -11,6 +11,7 @@ import { UserService } from '../service/user.service';
 import { Cache } from 'cache-manager';
 import { User } from '../model/user.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
+import { ObjectId } from 'mongodb';
 
 @Resolver()
 export class UserResolver {
@@ -64,5 +65,14 @@ export class UserResolver {
         });
         const userResponce = new UserGraph({ ...createUser });
         return userResponce;
+    }
+
+    @Query(() => UserGraph)
+    async getUserByID(
+        @Args('userId', { type: () => String }) userId: string
+    ) {
+        const user = await this.userService.findOne({_id: new ObjectId(userId)});
+        const userResponce = new UserGraph({...user});
+        return userResponce
     }
 }
