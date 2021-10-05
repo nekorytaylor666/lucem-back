@@ -1,8 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import { paginate } from 'src/utils/paginate';
 import { SessionGraph } from '../model/session.model';
 import { SessionService } from '../service/session.service';
 
@@ -46,4 +47,17 @@ export class SessionResolver {
         const sessionResponce = new SessionGraph({...session});
         return sessionResponce;
     };
+
+    @Query(() => [SessionGraph])
+    async getHistoryOfSessions(
+        @Args('page', { type: () => Int}) page: number
+    ) {
+        const sessionCursor = this.sessionService.findWithAddictives({
+            fields: ['endDate'],
+            values: [{$exists: true}]
+        });
+        const sessions = await paginate({ cursor: sessionCursor, page, elementsPerPage: 10});
+        const sessionsResponce = sessions.map((val) => new SessionGraph({...val}));
+        return sessionsResponce;
+    }
 }
