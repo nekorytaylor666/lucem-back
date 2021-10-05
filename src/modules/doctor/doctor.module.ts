@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { AdminModule } from '../admin/admin.module';
 import { DeseasesModule } from '../deseases/deseases.module';
 import { DoctorDeseaseModule } from '../doctorDesease/doctorDesease.module';
 import { PreAuthModule } from '../helpers/auth/auth.module';
@@ -18,7 +19,8 @@ import { DoctorService } from './service/doctor.service';
         DoctorDeseaseModule,
         DeseasesModule,
         SmartSearchModule,
-        uploadFileModule
+        uploadFileModule,
+        forwardRef(() => AdminModule)
     ],
     providers: [DoctorService, DoctorResolver],
     exports: [DoctorService],
