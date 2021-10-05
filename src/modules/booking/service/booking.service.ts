@@ -22,6 +22,19 @@ export class BookingService {
         return booking;
     }
 
+    async findWithOptionsCursor(args: {
+        fields: (keyof Booking)[];
+        values: any[];
+    }) {
+        const { fields, values } = args;
+        const findQuery: any = {};
+        fields.map((val, ind) => (findQuery[val] = values[ind]));
+        const bookings = await this.bookingCollection
+            .find(findQuery)
+            .sort({ startDate: 1 });
+        return bookings;
+    }
+
     async create(args: CreateBooking & { userId: string }) {
         const {
             serviceId: _serviceId,
