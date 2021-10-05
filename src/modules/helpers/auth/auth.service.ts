@@ -25,6 +25,8 @@ export class PreAuthGuard implements CanActivate {
         const request = GqlExecutionContext.create(context).getContext().req;
         const { authorization } = request.headers;
         const roles = this.reflector.get<string[]>('roles', context.getHandler());
+        request.requestURL = `${request.protocol}://${request.rawHeaders[1]}`
+        if (roles[0] === 'none') return true;
         if (!authorization) return false;
         try {
             const payload = this.tokenService.verify({ token: authorization });
@@ -37,6 +39,7 @@ export class PreAuthGuard implements CanActivate {
             });
             if (!user) return false;
             request.user = user;
+
             return true;
         } catch {
             return false;
@@ -49,5 +52,12 @@ export const CurrentUserGraph = createParamDecorator(
     async (data: unknown, context: ExecutionContext) => {
         const request = GqlExecutionContext.create(context).getContext().req;
         return request.user;
+    },
+);
+
+export const CurrentRequestURLGraph = createParamDecorator(
+    async (data: unknown, context: ExecutionContext) => {
+        const request = GqlExecutionContext.create(context).getContext().req;
+        return request.requestURL;
     },
 );

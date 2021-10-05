@@ -1,11 +1,16 @@
-import { ArgsType, Field, Int } from "@nestjs/graphql";
-import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { Modify } from "src/utils/modifyType";
-import { AcceptableAgeGroup, Doctor } from "./doctor.interface";
-
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { Modify } from 'src/utils/modifyType';
+import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 
 @ArgsType()
-export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "passwordHASH">, { dateOfBirth: string, deseasesIDs?: string[] }>{
+export class CreateDoctor
+    implements
+        Modify<
+            Omit<Doctor, '_id' | 'token' | 'passwordHASH'>,
+            { dateOfBirth: string; deseasesIDs?: string[], avatar: Promise<FileUpload>}
+        >
+{
     @Field()
     fullName: string;
 
@@ -34,5 +39,5 @@ export class CreateDoctor implements Modify<Omit<Doctor, "_id" | "token" | "pass
     acceptableAgeGroup: AcceptableAgeGroup;
 
     @Field(() => GraphQLUpload)
-    avatar: Promise<FileUpload>
+    avatar: Promise<FileUpload>;
 }

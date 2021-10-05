@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, FindCursor, ObjectId } from 'mongodb';
-import { AWSservice } from 'src/modules/helpers/uploadFiles/aws/AWS.service';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { SpecializationAddictive } from '../model/specialization.addictive';
 import { Specialization } from '../model/specialization.interface';
@@ -9,7 +9,7 @@ import { Specialization } from '../model/specialization.interface';
 export class SpecializationService {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
-        private photoUploadService: AWSservice,
+        private photoUploadService: ImageUploadService,
     ) {}
 
     private get specializationCollection() {
@@ -88,12 +88,13 @@ export class SpecializationService {
         return specializationAddictive;
     }
 
-    async create(args: CreateSpecialization) {
+    async create(args: CreateSpecialization, req: string) {
         const { image, name, description } = args;
         const photoURL =
             image &&
-            (await this.photoUploadService.saveImages(
+            (await this.photoUploadService.storeImages(
                 (await image).createReadStream(),
+                req
             ));
         const specialization: Specialization = {
             photoURL,

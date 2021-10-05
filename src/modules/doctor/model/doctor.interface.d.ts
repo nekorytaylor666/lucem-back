@@ -1,6 +1,6 @@
 import { registerEnumType } from "@nestjs/graphql";
 import { ObjectId } from "mongodb";
-
+import { PhotoURL } from "../../helpers/uploadFiles/imageUpload/photoURL.interface";
 
 export enum AcceptableAgeGroup {
     Adult = 'adult',

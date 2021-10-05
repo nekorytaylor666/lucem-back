@@ -1,5 +1,8 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { Roles } from 'src/modules/helpers/auth/auth.roles';
+import { CurrentRequestURLGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
 import { SpecializationDoctorService } from 'src/modules/specializationDoctor/service/specializationDoctor.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { SpecializationGraph } from '../model/specialization.model';
@@ -13,8 +16,10 @@ export class SpecializationResolver {
     ) {}
 
     @Mutation(() => SpecializationGraph)
-    async createSpecialization(@Args() args: CreateSpecialization) {
-        const specialization = await this.specializationService.create(args);
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async createSpecialization(@Args() args: CreateSpecialization, @CurrentRequestURLGraph() req: string) {
+        const specialization = await this.specializationService.create(args, req);
         const specializationResponce = new SpecializationGraph({
             ...specialization,
         });

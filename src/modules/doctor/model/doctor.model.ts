@@ -55,7 +55,7 @@ export class DoctorGraph
     acceptableAgeGroup: AcceptableAgeGroup;
 
     @Field(() => PhotoURLGraph, { nullable: true })
-    avatar: PhotoURL;
+    avatar: PhotoURLGraph;
 
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
@@ -77,5 +77,6 @@ export class DoctorGraph
         }
         if (doctor.timeline) this.timelines = doctor.timeline.map((val) => new TimelineGraph({...val}));
         if (doctor.acceptableAgeGroup) this.acceptableAgeGroup = doctor.acceptableAgeGroup;
+        if (doctor.avatar) this.avatar = new PhotoURLGraph({...doctor.avatar});
     }
 }
