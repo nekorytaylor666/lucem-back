@@ -1,5 +1,6 @@
 import { CacheModule, forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AdminModule } from '../admin/admin.module';
 import { DoctorModule } from '../doctor/doctor.module';
 import { PreAuthModule } from '../helpers/auth/auth.module';
 import { MongoModule } from '../helpers/database/mongo.module';
@@ -18,6 +19,7 @@ import { UserService } from './service/user.service';
         uploadFileModule,
         SMSModule,
         CacheModule.register(),
+        forwardRef(() => AdminModule)
     ],
     providers: [UserService, UserResolver],
     exports: [UserService],

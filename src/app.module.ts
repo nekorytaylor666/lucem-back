@@ -19,6 +19,7 @@ import { PreAuthModule } from './modules/helpers/auth/auth.module';
 import { SessionModule } from './modules/session/session.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload/imageUpload.controller';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
     imports: [
@@ -49,7 +50,8 @@ import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload
         SpecializationModule,
         SearchModule,
         RatingModule,
-        SessionModule
+        SessionModule,
+        AdminModule
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
