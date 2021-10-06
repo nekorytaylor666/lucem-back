@@ -64,4 +64,13 @@ export class AdminService {
         admin.token = token;
         return admin;
     }
-}
+
+    async edit(args: Partial<Omit<Admin, '_id'>> & { _id: ObjectId }): Promise<Admin> {
+        const admin = await this.adminCollection.findOneAndUpdate(
+            { _id: args._id },
+            args as Partial<Omit<Admin, '_id'>>,
+            { returnDocument: 'after' },
+        );
+        return admin.value as Admin;
+    };
+};
