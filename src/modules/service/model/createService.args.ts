@@ -13,4 +13,7 @@ export class CreateService implements Omit<Service, "_id"> {
 
     @Field()
     description: string;
+
+    @Field(() => Boolean, { nullable: true })
+    isShown: false;
 }

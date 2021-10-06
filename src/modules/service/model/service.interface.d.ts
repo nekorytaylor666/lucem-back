@@ -7,4 +7,5 @@ export interface Service {
     price: number;
     description: string;
     doctorId?: ObjectId[]
+    isShown?: false;
 }

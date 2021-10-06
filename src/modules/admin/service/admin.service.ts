@@ -7,6 +7,7 @@ import { Admin } from '../model/admin.interface';
 import { CreateAdmin } from '../model/createAdmin.args';
 import * as bcrypt from 'bcryptjs';
 import { ApolloError } from 'apollo-server-express';
+import { EditAdmin } from '../model/editAdmin.args';
 
 @Injectable()
 export class AdminService {
@@ -16,7 +17,7 @@ export class AdminService {
     ) {}
 
     private get adminCollection() {
-        return this.database.collection('admin');
+        return this.database.collection<Admin>('admin');
     }
 
     async createAdmin(args: CreateAdmin) {
@@ -65,12 +66,38 @@ export class AdminService {
         return admin;
     }
 
-    async edit(args: Partial<Omit<Admin, '_id'>> & { _id: ObjectId }): Promise<Admin> {
+    async edit(args: EditAdmin & { _id: ObjectId }): Promise<Admin> {
+        const {
+            phoneNumber: _phoneNumber,
+            newPassword,
+            oldPassword,
+            email,
+            fullName,
+            _id,
+        } = args;
+        if (newPassword) {
+            const admin = await this.adminCollection.findOne<Admin>({ _id });
+            const checkPassword = await bcrypt.compare(
+                oldPassword,
+                admin.passwordHASH,
+            );
+            if (!checkPassword)
+                throw new ApolloError('the old password is wrong');
+        }
+        const passwordHASH =
+            newPassword && (await bcrypt.hash(newPassword, 12));
+        const phoneNumber = _phoneNumber && _phoneNumber.replace(/\D/g, '');
+        const updateQuery: Partial<Admin> = {
+            passwordHASH,
+            phoneNumber,
+            email,
+            fullName,
+        };
         const admin = await this.adminCollection.findOneAndUpdate(
-            { _id: args._id },
-            args as Partial<Omit<Admin, '_id'>>,
-            { returnDocument: 'after' },
+            { _id },
+            updateQuery,
+            { returnDocument: 'after', ignoreUndefined: true },
         );
-        return admin.value as Admin;
-    };
-};
+        return admin.value;
+    }
+}
