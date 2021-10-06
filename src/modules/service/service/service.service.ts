@@ -12,7 +12,7 @@ export class ServiceService {
     ) {}
 
     private get serviceCollection() {
-        return this.database.collection('service');
+        return this.database.collection<Service>('service');
     }
 
     private get searchCollection() {
@@ -58,18 +58,19 @@ export class ServiceService {
         const { fields, values } = args;
         const findQuery: any = {};
         fields.map((val, ind) => (findQuery[val] = values[ind]));
-        const service = (await this.serviceCollection.findOne(
+        const service = await this.serviceCollection.findOne<Service>(
             findQuery,
-        )) as any as Service;
+        );
         return service;
     }
 
     async create(args: CreateService) {
-        const { description, name, price } = args;
+        const { description, name, price, isShown } = args;
         const service: Service = {
             name,
             description,
             price,
+            isShown
         };
         const insertService = await this.serviceCollection.insertOne(service);
         const searchService: ServiceSearch = {
@@ -79,5 +80,16 @@ export class ServiceService {
         await this.searchCollection.create(searchService);
         service._id = insertService.insertedId;
         return service;
+    }
+
+    async findWithOptions(args: {
+        fields: (keyof Service)[],
+        values: any[]
+    }) {
+        const { fields, values } = args;
+        const findQuery: { [index: string]: any } = {};
+        fields.map((val, ind) => findQuery[val] = values[ind]);
+        const services = await this.serviceCollection.find(findQuery).toArray();
+        return services;
     }
 }
