@@ -25,4 +25,7 @@ export class CreateBooking implements Modify<Omit<Booking, "_id" | "userId">, {
 
     @Field()
     doctorId: string
+
+    @Field({ nullable: true })
+    userId: string
 }

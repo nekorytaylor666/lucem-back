@@ -36,6 +36,7 @@ export class PreAuthGuard implements CanActivate {
         if (!authorization) return false;
         try {
             const payload = this.tokenService.verify({ token: authorization });
+            request.tokenPayload = payload;
             const checkRoles = matchRoles(payload.role, roles);
             if (!checkRoles) return false;
             const user =
@@ -52,7 +53,6 @@ export class PreAuthGuard implements CanActivate {
                       });
             if (!user) return false;
             request.user = user;
-
             return true;
         } catch {
             return false;
@@ -71,5 +71,12 @@ export const CurrentRequestURLGraph = createParamDecorator(
     async (data: unknown, context: ExecutionContext) => {
         const request = GqlExecutionContext.create(context).getContext().req;
         return request.requestURL;
+    },
+);
+
+export const CurrentTokenPayload = createParamDecorator(
+    async (data: unknown, context: ExecutionContext) => {
+        const request = GqlExecutionContext.create(context).getContext().req;
+        return request.tokenPayload;
     },
 );

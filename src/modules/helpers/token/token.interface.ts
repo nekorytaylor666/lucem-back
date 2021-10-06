@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-
 export enum TokenRoles {
     User = 'user',
     Doctor = 'doctor',
