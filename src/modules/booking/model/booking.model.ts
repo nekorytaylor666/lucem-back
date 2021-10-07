@@ -5,7 +5,7 @@ import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
 import { BookingAddictive } from './booking.addictive';
-import { Booking } from './booking.interface';
+import { Booking, BookingProgress } from './booking.interface';
 
 @ObjectType('Booking')
 export class BookingGraph
@@ -35,6 +35,9 @@ export class BookingGraph
     @Field(() => DoctorGraph)
     doctor: DoctorGraph;
 
+    @Field(() => BookingProgress)
+    progress: BookingProgress;
+
     constructor(booking: Partial<BookingAddictive>) {
         if (booking._id) this._id = booking._id.toHexString();
         if (booking.service)
@@ -43,5 +46,6 @@ export class BookingGraph
         if (booking.startDate) this.startDate = booking.startDate;
         if (booking.endDate) this.endDate = booking.endDate;
         if (booking.doctor) this.doctor = new DoctorGraph({...booking.doctor})
+        if (booking.progress != null) this.progress = booking.progress;
     }
 }

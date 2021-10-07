@@ -1,16 +1,21 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { Modify } from "src/utils/modifyType";
-import { Booking } from "./booking.interface";
-
+import { ArgsType, Field } from '@nestjs/graphql';
+import { Modify } from 'src/utils/modifyType';
+import { Booking } from './booking.interface';
 
 @ArgsType()
-export class CreateBooking implements Modify<Omit<Booking, "_id" | "userId">, {
-    serviceId?: string,
-    timelineId: string,
-    startDate: string,
-    endDate: string,
-    doctorId: string
-}> {
+export class CreateBooking
+    implements
+        Modify<
+            Omit<Booking, '_id' | 'userId' | 'progress'>,
+            {
+                serviceId?: string;
+                timelineId: string;
+                startDate: string;
+                endDate: string;
+                doctorId: string;
+            }
+        >
+{
     @Field({ nullable: true })
     serviceId?: string;
 
@@ -24,8 +29,8 @@ export class CreateBooking implements Modify<Omit<Booking, "_id" | "userId">, {
     endDate: string;
 
     @Field()
-    doctorId: string
+    doctorId: string;
 
     @Field({ nullable: true })
-    userId: string
+    userId: string;
 }
