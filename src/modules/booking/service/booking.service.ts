@@ -60,7 +60,6 @@ export class BookingService {
             });
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
-
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
         });
@@ -74,8 +73,14 @@ export class BookingService {
             timelineId,
             doctorId,
         };
+
         const insertBooking = await this.bookingCollection.insertOne(booking);
         booking._id = insertBooking.insertedId;
         return booking;
+    }
+
+    async find(args: Partial<Booking>) {
+        const bookings = await this.bookingCollection.find<Booking>(args).toArray();
+        return bookings;
     }
 }

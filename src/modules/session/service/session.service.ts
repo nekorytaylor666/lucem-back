@@ -9,6 +9,8 @@ export class SessionService {
     constructor(
         @Inject('DATABASE_CONNECTION')
         private database: Db,
+        private bookingService: BookingService
+
     ) {}
 
     private get sessionCollection() {
@@ -177,8 +179,8 @@ export class SessionService {
                                     from: 'doctor',
                                     localField: 'doctorId',
                                     foreignField: '_id',
-                                    as: 'doctor'
-                                }
+                                    as: 'doctor',
+                                },
                             },
                             {
                                 $project: {
@@ -195,7 +197,7 @@ export class SessionService {
                                     },
                                     testResults: {
                                         $arrayElemAt: ['$testResults', 0],
-                                    }
+                                    },
                                 },
                             },
                         ],
@@ -209,18 +211,60 @@ export class SessionService {
             .toArray();
         const session: SessionAddictive = {
             ...sessionArray[0],
-            testResults: sessionArray[0].booking.testResults
+            testResults: sessionArray[0].booking.testResults,
         } as SessionAddictive;
         return session;
     }
 
     async create(bookingId: string): Promise<Session> {
         const currentDate = new Date();
+        const booking = await this.bookingService.findOne({
+            _id: new ObjectId(bookingId),
+        });
+        const previousSessions = await this.sessionCollection.aggregate([
+            {
+                $match: {
+                    endDate: {
+                        $exists: true,
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'booking',
+                    let: {
+                        bookingId: '$bookingId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$userId', booking.userId] },
+                                        {
+                                            $eq: [
+                                                '$doctorId',
+                                                booking.doctorId,
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'bookings',
+                },
+            },
+            {
+                $unwind: '$bookings'
+            }
+        ]).toArray();
         const session: Session = {
             bookingId: new ObjectId(bookingId),
             startDate: currentDate,
+            count: previousSessions.length !== 0 ? previousSessions.length + 1 : undefined,
         };
-        const insertSession = await this.sessionCollection.insertOne(session);
+        const insertSession = await this.sessionCollection.insertOne(session, { ignoreUndefined: true });
         session._id = insertSession.insertedId;
         return session;
     }

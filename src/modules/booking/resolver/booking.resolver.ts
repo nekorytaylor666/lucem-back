@@ -17,7 +17,7 @@ import { Token, TokenRoles } from '../../helpers/token/token.interface';
 export class BookingResolver {
     constructor(private bookingService: BookingService) {}
     @Mutation(() => BookingGraph)
-    @Roles('user')
+    @Roles('user', 'doctor')
     @UseGuards(PreAuthGuard)
     async createBooking(
         @Args() args: CreateBooking,

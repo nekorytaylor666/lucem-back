@@ -5,4 +5,5 @@ export interface Session {
     bookingId: ObjectId;
     startDate: Date;
     endDate?: Date;
+    count: number;
 }
