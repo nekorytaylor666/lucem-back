@@ -4,4 +4,4 @@ import { Module } from "@nestjs/common";
 @Module({
     
 })
-export class TestResultsModule {}
+export class AppointmentBlankModule {}

@@ -169,14 +169,6 @@ export class SessionService {
                             },
                             {
                                 $lookup: {
-                                    from: 'testResults',
-                                    localField: 'userId',
-                                    foreignField: 'userId',
-                                    as: 'testResults',
-                                },
-                            },
-                            {
-                                $lookup: {
                                     from: 'doctor',
                                     localField: 'doctorId',
                                     foreignField: '_id',
@@ -196,9 +188,6 @@ export class SessionService {
                                     doctor: {
                                         $arrayElemAt: ['$doctor', 0],
                                     },
-                                    testResults: {
-                                        $arrayElemAt: ['$testResults', 0],
-                                    },
                                 },
                             },
                         ],
@@ -212,7 +201,6 @@ export class SessionService {
             .toArray();
         const session: SessionAddictive = {
             ...sessionArray[0],
-            testResults: sessionArray[0].booking.testResults,
         } as SessionAddictive;
         return session;
     }
