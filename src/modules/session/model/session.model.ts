@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { BookingGraph } from 'src/modules/booking/model/booking.model';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { TestResultsGraph } from 'src/modules/testResults/model/testResults.model';
@@ -34,12 +34,19 @@ export class SessionGraph
     @Field()
     endDate: string;
 
+    @Field(() => Int, { defaultValue: 1 })
+    count: number;
+
     constructor(session: Partial<SessionAddictive>) {
         if (session._id) this._id = session._id.toHexString();
         if (session.booking)
             this.booking = new BookingGraph({ ...session.booking });
         if (session.startDate) this.startDate = session.startDate.toISOString();
         if (session.endDate) this.endDate = session.endDate.toISOString();
-        if (session.testResults) this.testResults = session.testResults.map((val) => new TestResultsGraph({...val}));
+        if (session.testResults)
+            this.testResults = session.testResults.map(
+                (val) => new TestResultsGraph({ ...val }),
+            );
+        if (session.count) this.count = session.count;
     }
 }

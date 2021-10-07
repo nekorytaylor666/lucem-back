@@ -9,6 +9,6 @@ import { HttpModule } from "@nestjs/axios"
 @Module({
     imports: [MongoModule, PreAuthModule, TimelineModule],
     providers: [BookingResolver, BookingService],
-    exports: []
+    exports: [BookingService]
 })
 export class BookingModule {}
