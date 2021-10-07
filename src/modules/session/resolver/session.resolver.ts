@@ -1,6 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
 import { paginate } from 'src/utils/paginate';
@@ -28,13 +27,7 @@ export class SessionResolver {
     async endSession(
         @Args('sessionId', { type: () => String}) sessionId: string
     ) {
-        const session = await this.sessionService.updateOne({
-            findFields: ['_id'],
-            findValues: [new ObjectId(sessionId)],
-            updateFields: ['endDate'],
-            updateValues: [new Date()],
-            method: '$set'
-        });
+        const session = await this.sessionService.endSession(sessionId);
         const sessionResponce = new SessionGraph({...session});
         return sessionResponce;
     }

@@ -3,7 +3,7 @@ import { ApolloError } from 'apollo-server-express';
 import { Db, ObjectId } from 'mongodb';
 import { Timeline } from 'src/modules/timeline/model/timeline.interface';
 import { TimelineService } from 'src/modules/timeline/service/timeline.service';
-import { Booking } from '../model/booking.interface';
+import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class BookingService {
     ) {}
 
     private get bookingCollection() {
-        return this.database.collection('booking');
+        return this.database.collection<Booking>('booking');
     }
 
     async findOne(args: Partial<Booking>) {
@@ -72,15 +72,36 @@ export class BookingService {
             endDate,
             timelineId,
             doctorId,
+            progress: BookingProgress.Upcoming,
         };
-
         const insertBooking = await this.bookingCollection.insertOne(booking);
         booking._id = insertBooking.insertedId;
         return booking;
     }
 
     async find(args: Partial<Booking>) {
-        const bookings = await this.bookingCollection.find<Booking>(args).toArray();
+        const bookings = await this.bookingCollection
+            .find<Booking>(args)
+            .toArray();
         return bookings;
+    }
+
+    async updateOne(args: {
+        findFields: (keyof Booking)[];
+        findValue: any[];
+        updateFields: (keyof Booking)[];
+        updateValues: any[];
+        method: '$set' | '$inc' | '$addToSet';
+    }) {
+        const { findFields, findValue, updateFields, updateValues, method } = args;
+        const findQuery: { [index: string]: any } = {};
+        findFields.map((val, ind) => findQuery[val] = findValue[ind]);
+        const updateFieldsValues: { [index: string]: any } = {};
+        updateFields.map((val, ind) => updateFieldsValues[val] = updateValues[ind]);
+        const updateQuery = {
+            [method]: updateFieldsValues
+        };
+        const booking = await this.bookingCollection.findOneAndUpdate(findQuery, updateQuery, { returnDocument: 'after' });
+        return booking.value;  
     }
 }

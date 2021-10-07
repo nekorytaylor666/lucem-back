@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
+import { BookingProgress } from 'src/modules/booking/model/booking.interface';
 import { BookingService } from 'src/modules/booking/service/booking.service';
 import { SessionAddictive } from '../model/session.addictive';
 import { Session } from '../model/session.interface';
@@ -216,6 +217,24 @@ export class SessionService {
         return session;
     }
 
+    async endSession(sessionId: string) {
+        const session = await this.updateOne({
+            findFields: ['_id'],
+            findValues: [new ObjectId(sessionId)],
+            updateFields: ['endDate'],
+            updateValues: [new Date()],
+            method: '$set'
+        });
+        await this.bookingService.updateOne({
+            findFields: ['_id'],
+            findValue: [session.bookingId],
+            updateFields: ['progress'],
+            updateValues: [BookingProgress.Done],
+            method: '$set'
+        });
+        return session;
+    }
+
     async create(bookingId: string): Promise<Session> {
         const currentDate = new Date();
         const booking = await this.bookingService.findOne({
@@ -266,6 +285,13 @@ export class SessionService {
         };
         const insertSession = await this.sessionCollection.insertOne(session, { ignoreUndefined: true });
         session._id = insertSession.insertedId;
+        await this.bookingService.updateOne({
+            findFields: ['_id'],
+            findValue: [new ObjectId(bookingId)],
+            updateFields: ['progress'],
+            updateValues: [BookingProgress.Ongoing],
+            method: '$set'
+        });
         return session;
     }
 }
