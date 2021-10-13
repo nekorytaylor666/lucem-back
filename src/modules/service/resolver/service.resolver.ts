@@ -3,7 +3,14 @@ import { ObjectId } from 'mongodb';
 import { CreateService } from '../model/createService.args';
 import { ServiceGraph } from '../model/service.model';
 import { ServiceService } from '../service/service.service';
-
+import * as jwt from "jsonwebtoken";
+import { Token } from 'src/modules/helpers/token/token.interface';
+import { PrivateKey } from 'src/modules/helpers/token/token.keys';
+import { signOption } from 'src/modules/helpers/token/token.signOptions';
+import { Roles } from 'src/modules/helpers/auth/auth.roles';
+import { UseGuards } from '@nestjs/common';
+import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import { User } from 'src/modules/user/model/user.interface';
 @Resolver()
 export class ServiceResolver {
     constructor(private serviceService: ServiceService) {}
@@ -61,4 +68,32 @@ export class ServiceResolver {
         );
         return serviceResponce;
     }
+
+    @Query(() => [ServiceGraph])
+    @Roles('user')
+    @UseGuards(PreAuthGuard)
+    async getUnshownServicesForPatient(
+        @CurrentUserGraph() user: User
+    ) {
+        const services = await this.serviceService.findUnshownServices(user._id);
+        const servicesResponce = services.map((val) => new ServiceGraph({...val}));
+        return servicesResponce;
+    }
+
+    @Mutation(() => ServiceGraph)
+    async attachUnshownServiceToShownService(
+        @Args('unShownServiceId', { type: () => String }) unShownServiceId: string,
+        @Args('shownServiceId', { type: () => String }) shownServiceId: string,
+    ) {
+        const service = await this.serviceService.updateOne({
+            findField: ['_id'],
+            findValue: [new ObjectId(shownServiceId)],
+            updateField: ['showServices'],
+            updateValue: [new ObjectId(unShownServiceId)],
+            method: '$addToSet'
+        });
+        const serviceResponce = new ServiceGraph({...service});
+        return serviceResponce;
+    }
+
 }

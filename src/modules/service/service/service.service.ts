@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { CreateService } from '../model/createService.args';
 import { Service } from '../model/service.interface';
 import { ServiceSearch } from '../model/service.schema';
@@ -64,13 +64,65 @@ export class ServiceService {
         return service;
     }
 
+    async findUnshownServices(userId: ObjectId) {
+        const service = await this.serviceCollection
+            .aggregate<Service>([
+                {
+                    $match: {
+                        showServices: { $exists: true },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'booking',
+                        let: {
+                            serviceId: '$_id',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            {
+                                                $eq: [
+                                                    '$serviceId',
+                                                    '$$serviceId',
+                                                ],
+                                            },
+                                            { $eq: ['$userId', userId] },
+                                        ],
+                                    },
+                                    progress: 'done',
+                                },
+                            },
+                        ],
+                        as: 'booking',
+                    },
+                },
+            ])
+            .toArray();
+        const unshownServicesMatrix = await Promise.all(
+            service.map(async (val) => {
+                return await Promise.all(
+                    val.showServices.map(async (val) => {
+                        return await this.serviceCollection.findOne({
+                            _id: val,
+                        });
+                    }),
+                );
+            }),
+        );
+        const unshownServicesArray = [].concat(...unshownServicesMatrix);
+        return unshownServicesArray;
+    }
+
     async create(args: CreateService) {
         const { description, name, price, isShown } = args;
         const service: Service = {
             name,
             description,
             price,
-            isShown
+            isShown,
         };
         const insertService = await this.serviceCollection.insertOne(service);
         const searchService: ServiceSearch = {
@@ -82,13 +134,10 @@ export class ServiceService {
         return service;
     }
 
-    async findWithOptions(args: {
-        fields: (keyof Service)[],
-        values: any[]
-    }) {
+    async findWithOptions(args: { fields: (keyof Service)[]; values: any[] }) {
         const { fields, values } = args;
         const findQuery: { [index: string]: any } = {};
-        fields.map((val, ind) => findQuery[val] = values[ind]);
+        fields.map((val, ind) => (findQuery[val] = values[ind]));
         const services = await this.serviceCollection.find(findQuery).toArray();
         return services;
     }
