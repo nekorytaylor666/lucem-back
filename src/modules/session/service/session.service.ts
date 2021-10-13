@@ -10,12 +10,16 @@ export class SessionService {
     constructor(
         @Inject('DATABASE_CONNECTION')
         private database: Db,
-        private bookingService: BookingService
-
+        private bookingService: BookingService,
     ) {}
 
     private get sessionCollection() {
         return this.database.collection('session');
+    }
+
+    async findOne(args: Partial<Session>) {
+        const session = await this.sessionCollection.findOne(args);
+        return session;
     }
 
     async updateOne(args: {
@@ -211,14 +215,14 @@ export class SessionService {
             findValues: [new ObjectId(sessionId)],
             updateFields: ['endDate'],
             updateValues: [new Date()],
-            method: '$set'
+            method: '$set',
         });
         await this.bookingService.updateOne({
             findFields: ['_id'],
             findValue: [session.bookingId],
             updateFields: ['progress'],
             updateValues: [BookingProgress.Done],
-            method: '$set'
+            method: '$set',
         });
         return session;
     }
@@ -228,57 +232,69 @@ export class SessionService {
         const booking = await this.bookingService.findOne({
             _id: new ObjectId(bookingId),
         });
-        const previousSessions = await this.sessionCollection.aggregate([
-            {
-                $match: {
-                    endDate: {
-                        $exists: true,
+        const previousSessions = await this.sessionCollection
+            .aggregate([
+                {
+                    $match: {
+                        endDate: {
+                            $exists: true,
+                        },
                     },
                 },
-            },
-            {
-                $lookup: {
-                    from: 'booking',
-                    let: {
-                        bookingId: '$bookingId',
-                    },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ['$userId', booking.userId] },
-                                        {
-                                            $eq: [
-                                                '$doctorId',
-                                                booking.doctorId,
-                                            ],
-                                        },
-                                    ],
+                {
+                    $lookup: {
+                        from: 'booking',
+                        let: {
+                            bookingId: '$bookingId',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            {
+                                                $eq: [
+                                                    '$userId',
+                                                    booking.userId,
+                                                ],
+                                            },
+                                            {
+                                                $eq: [
+                                                    '$doctorId',
+                                                    booking.doctorId,
+                                                ],
+                                            },
+                                        ],
+                                    },
                                 },
                             },
-                        },
-                    ],
-                    as: 'bookings',
+                        ],
+                        as: 'bookings',
+                    },
                 },
-            },
-            {
-                $unwind: '$bookings'
-            }
-        ]).toArray();
+                {
+                    $unwind: '$bookings',
+                },
+            ])
+            .toArray();
         const session: Session = {
             bookingId: new ObjectId(bookingId),
             startDate: currentDate,
-            count: previousSessions.length !== 0 ? previousSessions.length + 1 : undefined,
+            count:
+                previousSessions.length !== 0
+                    ? previousSessions.length + 1
+                    : undefined,
         };
-        const insertSession = await this.sessionCollection.insertOne(session, { ignoreUndefined: true });
+        const insertSession = await this.sessionCollection.insertOne(session, {
+            ignoreUndefined: true,
+        });
         session._id = insertSession.insertedId;
         await this.bookingService.updateOne({
             findFields: ['_id'],
             findValue: [new ObjectId(bookingId)],
             updateFields: ['progress'],
             updateValues: [BookingProgress.Ongoing],
-            method: '$set'
+            method: '$set',
         });
         return session;
     }

@@ -8,4 +8,5 @@ export interface Service {
     description: string;
     doctorId?: ObjectId[]
     isShown?: false;
+    showServices?: ObjectId[]
 }
