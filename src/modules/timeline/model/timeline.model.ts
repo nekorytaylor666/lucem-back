@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, GraphQLISODateTime, ObjectType } from "@nestjs/graphql";
 import { BookingGraph } from "src/modules/booking/model/booking.model";
 import { DoctorGraph } from "src/modules/doctor/model/doctor.model";
 import { Modify } from "src/utils/modifyType";
@@ -13,10 +13,10 @@ export class TimelineGraph implements Modify<Omit<Timeline, "doctorId">, {
     @Field()
     _id: string;
 
-    @Field()
+    @Field(() => GraphQLISODateTime)
     startDate: Date;
 
-    @Field()
+    @Field(() => GraphQLISODateTime)
     endDate: Date;
 
     @Field(() => [BookingGraph],{ nullable: true })

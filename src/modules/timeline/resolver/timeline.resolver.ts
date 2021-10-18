@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, GraphQLISODateTime, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import * as moment from 'moment';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -36,17 +36,18 @@ export class TimelineResolver {
                 for (let ind = 0; ind < 14; ind++) {
                     let startDate = moment(
                         new Date('2021-09-27T09:00:00.000Z'),
-                    ).toISOString();
+                    ).toDate();
                     let endDate = moment(
                         new Date('2021-09-27T18:00:00.000Z'),
-                    ).toISOString();
+                    ).toDate();
                     if (ind) {
                         startDate = moment(new Date('2021-09-27T09:00:00.000Z'))
                             .add(ind, 'day')
-                            .toISOString();
+                            .toDate();
                         endDate = moment(new Date('2021-09-27T18:00:00.000Z'))
                             .add(ind, 'day')
-                            .toISOString();
+                            .toDate()
+                            
                     }
                     await this.timelineService.create({ doctorId: val._id.toHexString(), startDate, endDate });;
                 }
@@ -68,6 +69,22 @@ export class TimelineResolver {
             (val) => new TimelineGraph({ ...val }),
         );
         return timelineResponce;
+    }
+
+    @Mutation(() => TimelineGraph)
+    async setVacation(
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args('endDate', { type: () => GraphQLISODateTime }) endDate: Date,
+        @Args('startDate', { type: () => GraphQLISODateTime }) startDate: Date
+        ) {
+        const vacation = await this.timelineService.create({
+            endDate,
+            startDate,
+            doctorId,
+            isVacation: true
+        });
+        const vacationResponce = new TimelineGraph({...vacation});
+        return vacationResponce;
     }
 
     @Query(() => [TimelineGraph])
