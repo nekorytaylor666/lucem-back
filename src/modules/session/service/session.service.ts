@@ -52,7 +52,7 @@ export class SessionService {
         const { fields, values } = args;
         const findQuery: any = {};
         fields.map((val, ind) => (findQuery[val] = values[ind]));
-        const session = this.sessionCollection.aggregate<SessionAddictive>([
+        const session = this.sessionCollection.aggregate([
             {
                 $match: findQuery,
             },
@@ -107,6 +107,7 @@ export class SessionService {
                                 doctor: {
                                     $arrayElemAt: ['$doctor', 0],
                                 },
+                                userId: 1
                             },
                         },
                     ],
