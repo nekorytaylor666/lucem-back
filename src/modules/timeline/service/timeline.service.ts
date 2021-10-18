@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ApolloError } from 'apollo-server-express';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
 import { TimelineAddictive } from '../model/timeline.addictive';
 import { CreateTimeline } from '../model/timeline.args';
@@ -9,7 +10,7 @@ export class TimelineService {
     constructor(@Inject('DATABASE_CONNECTION') private database: Db) {}
 
     private get timelineCollection() {
-        return this.database.collection('timeline');
+        return this.database.collection<Timeline>('timeline');
     }
 
     async findCursorWithAddictives(
@@ -27,43 +28,42 @@ export class TimelineService {
             },
             {
                 $lookup: {
-                    from: "booking",
+                    from: 'booking',
                     let: {
-                        id: "$_id"
+                        id: '$_id',
                     },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$timelineId", "$$id"]
-                                }
-                            }
+                                    $eq: ['$timelineId', '$$id'],
+                                },
+                            },
                         },
                         {
                             $lookup: {
-                                from: "service",
-                                localField: "serviceId",
-                                foreignField: "_id",
-                                as: "service"
-                            }
+                                from: 'service',
+                                localField: 'serviceId',
+                                foreignField: '_id',
+                                as: 'service',
+                            },
                         },
                         {
                             $project: {
                                 service: {
-                                    $arrayElemAt: ['$service', 0]
+                                    $arrayElemAt: ['$service', 0],
                                 },
-                                
+
                                 _id: 1,
                                 userId: 1,
                                 startDate: 1,
                                 endDate: 1,
-                                timelineId: 1
-                            }
-                        }
-                        
+                                timelineId: 1,
+                            },
+                        },
                     ],
-                    as: "booking"
-                }
+                    as: 'booking',
+                },
             },
         ]);
         return timeline;
@@ -77,6 +77,15 @@ export class TimelineService {
         } = args;
         const [startDate, endDate] = [new Date(_startDate), new Date(_endDate)];
         const doctorId = new ObjectId(_doctorId);
+        const timeLineCheck = await this.timelineCollection.findOne({
+            doctorId: doctorId,
+            startDate: { $lte: startDate },
+            endDate: { $gte: endDate },
+        });
+        if (timeLineCheck)
+            throw new ApolloError(
+                'oops! there is already a time line during this date',
+            );
         const timeline: Timeline = {
             startDate,
             endDate,
@@ -84,6 +93,7 @@ export class TimelineService {
         };
         const insertTimeline = await this.timelineCollection.insertOne(
             timeline,
+            { ignoreUndefined: true },
         );
         timeline._id = insertTimeline.insertedId;
         return timeline;

@@ -63,7 +63,7 @@ export class BookingService {
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
         });
-        if (timeline.startDate > startDate || timeline.endDate < endDate)
+        if (timeline.startDate > startDate || timeline.endDate < endDate || timeline.isVacation)
             throw new ApolloError("doctor doesn't work during this time");
         const booking: Booking = {
             serviceId,

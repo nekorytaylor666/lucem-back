@@ -6,4 +6,5 @@ export interface Timeline {
     doctorId: ObjectId;
     startDate: Date;
     endDate: Date;
+    isVacation?: true;
 }
