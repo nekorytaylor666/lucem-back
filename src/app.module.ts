@@ -21,6 +21,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload/imageUpload.controller';
 import { AdminModule } from './modules/admin/admin.module';
 import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBlank.module';
+import { ForwardsModule } from './modules/forwards/forwards.module';
 
 @Module({
     imports: [
@@ -53,7 +54,8 @@ import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBl
         RatingModule,
         SessionModule,
         AdminModule,
-        AppointmentBlankModule
+        AppointmentBlankModule,
+        ForwardsModule
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
