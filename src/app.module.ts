@@ -22,6 +22,7 @@ import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload
 import { AdminModule } from './modules/admin/admin.module';
 import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBlank.module';
 import { ForwardsModule } from './modules/forwards/forwards.module';
+import { WorkTimeModule } from './modules/workTime/workTime.module';
 
 @Module({
     imports: [
@@ -55,7 +56,8 @@ import { ForwardsModule } from './modules/forwards/forwards.module';
         SessionModule,
         AdminModule,
         AppointmentBlankModule,
-        ForwardsModule
+        ForwardsModule,
+        WorkTimeModule
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
