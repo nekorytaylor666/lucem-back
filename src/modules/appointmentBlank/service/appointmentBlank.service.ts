@@ -37,7 +37,10 @@ export class AppointmentBlankService {
                 values: [sessionId],
             })
             .toArray();
-        if (session[0].booking.doctorId !== doctorId)
+        if (
+            session[0].booking.doctor._id.toHexString() !=
+            doctorId.toHexString()
+        )
             throw new ApolloError('this is not your session');
         const appointmentResultsPhotoURL = await this.imageService.storeImages(
             (await appointmentResults.file).createReadStream(),
@@ -52,15 +55,65 @@ export class AppointmentBlankService {
             complaints,
             sessionId: new ObjectId(sessionId),
             appointmentResults: {
-                ...appointmentResults,
+                description: appointmentResults.description,
                 photoURL: appointmentResultsPhotoURL,
             },
             diagnose,
+            userId: session[0].booking.userId,
+            doctorId: session[0].booking.doctor._id,
         };
         const insertBlank = await this.appointmentBlankCollection.insertOne(
             appointmentBlank,
         );
         appointmentBlank._id = insertBlank.insertedId;
         return appointmentBlank;
+    }
+
+    findWithAddictivesCursor(args: Partial<AppointmentBlank>) {
+        const blankCursor = this.appointmentBlankCollection.aggregate([
+            { $match: args },
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'doctorId',
+                    foreignField: '_id',
+                    as: 'doctor',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'session',
+                    localField: 'sessionId',
+                    foreignField: '_id',
+                    as: 'session',
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    complaints: 1,
+                    diagnose: 1,
+                    appointmentResults: 1,
+                    session: {
+                        $arrayElemAt: ['$session', 0],
+                    },
+                    user: {
+                        $arrayElemAt: ['$user', 0],
+                    },
+                    doctor: {
+                        $arrayElemAt: ['$doctor', 0],
+                    },
+                },
+            },
+        ]);
+        return blankCursor;
     }
 }

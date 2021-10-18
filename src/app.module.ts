@@ -20,6 +20,7 @@ import { SessionModule } from './modules/session/session.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload/imageUpload.controller';
 import { AdminModule } from './modules/admin/admin.module';
+import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBlank.module';
 
 @Module({
     imports: [
@@ -51,7 +52,8 @@ import { AdminModule } from './modules/admin/admin.module';
         SearchModule,
         RatingModule,
         SessionModule,
-        AdminModule
+        AdminModule,
+        AppointmentBlankModule
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],

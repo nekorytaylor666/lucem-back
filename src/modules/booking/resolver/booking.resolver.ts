@@ -49,7 +49,7 @@ export class BookingResolver {
         const bookingsCursor = await this.bookingService.findWithOptionsCursor({
             fields: ['startDate'],
             values: [{ $gt: currentDate }],
-        });
+        });0
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,

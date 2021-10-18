@@ -9,4 +9,6 @@ export interface AppointmentBlank {
     diagnose: Diagnose;
     appointmentResults: AppointmentResults;
     sessionId: ObjectId;
+    doctorId: ObjectId;
+    userId: ObjectId;
 };
