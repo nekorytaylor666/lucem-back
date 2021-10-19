@@ -18,20 +18,34 @@ export class WorkTimeService {
     }) {
         const { fields, values } = args;
         const query: { [index: string]: any } = {};
-        fields.map((val, ind) => query[val] = values[ind]);
-        const workTime = await this.workTimeCollection.findOne(query)
+        fields.map((val, ind) => (query[val] = values[ind]));
+        const workTime = await this.workTimeCollection.findOne(query);
         return workTime;
     }
 
-    async findWithOptions(args: {
-        fields: (keyof WorkTime)[];
-        values: any[];
-    }) {
+    async findWithOptions(args: { fields: (keyof WorkTime)[]; values: any[] }) {
         const { fields, values } = args;
         const query: { [index: string]: any } = {};
-        fields.map((val, ind) => query[val] = values[ind]);
+        fields.map((val, ind) => (query[val] = values[ind]));
         const workTimes = await this.workTimeCollection.find(query).toArray();
         return workTimes;
+    }
+
+    async updateOne(args: {
+        find: Partial<WorkTime>;
+        update: Partial<WorkTime>;
+        method: '$inc' | '$push' | '$addToSet' | '$set';
+    }) {
+        const { find, update, method } = args;
+        const updateQuery = {
+            [method]: update,
+        };
+        const workTime = await this.workTimeCollection.findOneAndUpdate(
+            find,
+            updateQuery,
+            { returnDocument: 'after' },
+        );
+        return workTime.value;
     }
 
     async create(args: { dates: WorkTimeDateInput[]; doctorId: string }) {
