@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: 'mongodb-timeapp'
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: 'timeapp'
+      MONGO_INITDB_ROOT_USERNAME: 'admin'
+      MONGO_INITDB_ROOT_PASSWORD: '4c1ba9a0-1add-4837-bfae-7fe489f8f37c'
+      REPLICA_SET_NAME: 'typesense-rep'
+    ports:
+      - 27017:27017
+    volumes:
+      - /root/mongo-database:/data/db
+
+  typesense:
+    image: 'typesense/typesense:0.21.0'
+    container_name: 'typesense-timeapp'
+    volumes:
+      - /root/typesense-data:/data
+    ports:
+      - 8108:8108
+    command: ['\\\r\n', '--data-dir', '/data', '--api-key=xyz']
