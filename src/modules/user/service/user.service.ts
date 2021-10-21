@@ -23,6 +23,10 @@ export class UserService {
         return collection;
     }
 
+    async list() {
+        return await this.userCollection.find().toArray();
+    }
+
     async findOne(user: Partial<User>): Promise<User> {
         const userResponce = this.userCollection.findOne(user);
         return userResponce;

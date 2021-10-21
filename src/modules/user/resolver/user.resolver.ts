@@ -75,4 +75,11 @@ export class UserResolver {
         const userResponce = new UserGraph({...user});
         return userResponce
     }
+
+    @Query(() => [UserGraph])
+    async listUsers() {
+        const users = await this.userService.list()
+        const usersResponce = users.map((val) => new UserGraph({...val}));
+        return usersResponce;
+    }
 }
