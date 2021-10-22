@@ -46,10 +46,10 @@ export class BookingResolver {
     @UseGuards(PreAuthGuard)
     async getUpcomingBookings(@Args('page', { type: () => Int }) page: number) {
         const currentDate = new Date();
-        const bookingsCursor = await this.bookingService.findWithOptionsCursor({
+        const bookingsCursor = await this.bookingService.findWithAddictivesCursor({
             fields: ['startDate'],
             values: [{ $gt: currentDate }],
-        });0
+        });
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
