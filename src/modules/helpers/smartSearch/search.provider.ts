@@ -11,8 +11,8 @@ export const smartSearchFactory = {
             const client = new Typesense.Client({
                 nodes: [
                     {
-                        host: 'localhost',
-                        port: '8108',
+                        host: configService.get('SMARTSEARCH_HOST'),
+                        port: configService.get('SMARTSEARCH_PORT'),
                         protocol: 'http',
                     },
                 ],
