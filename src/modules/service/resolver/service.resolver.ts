@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { CreateService } from '../model/createService.args';
 import { ServiceGraph } from '../model/service.model';
@@ -11,6 +11,7 @@ import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
+import { paginate } from 'src/utils/paginate';
 @Resolver()
 export class ServiceResolver {
     constructor(private serviceService: ServiceService) {}
@@ -33,6 +34,21 @@ export class ServiceResolver {
         const serviceResponce = service.map(
             (val) => new ServiceGraph({ ...val }),
         );
+        return serviceResponce;
+    }
+
+    @Query(() => [ServiceGraph])
+    async getServicesByDoctorIds(
+        @Args('doctorId', { type: () => [String] }) _doctorIds: string[],
+        @Args('page', { type: () => Int }) page: number
+    ) {
+        const doctorIds = _doctorIds.map((val) => new ObjectId(val))
+        const serviceCursor = await this.serviceService.findWithAddictivesCursor({
+            fields: ['doctorId'],
+            values: [{ $in: doctorIds }]
+        });
+        const service = await paginate({ cursor: serviceCursor, page, elementsPerPage: 10 });
+        const serviceResponce = service.map((val) => new ServiceGraph({...val}));
         return serviceResponce;
     }
 

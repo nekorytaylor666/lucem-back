@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { SearchGraph } from '../model/search.model';
 import { SearchService } from '../service/search.service';

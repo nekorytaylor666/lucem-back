@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
 import { CreateService } from '../model/createService.args';
+import { ServiceAddictive } from '../model/service.addictive';
 import { Service } from '../model/service.interface';
 import { ServiceSearch } from '../model/service.schema';
 
@@ -66,6 +67,39 @@ export class ServiceService {
             findQuery,
         );
         return service;
+    }
+
+    async findWithAddictivesCursor(args: {
+        fields: (keyof Service)[];
+        values: any[];
+    }) {
+        const { fields, values } = args;
+        const findQuery: any = {};
+        fields.map((val, ind) => (findQuery[val] = values[ind]));
+        const cursor = this.serviceCollection.aggregate<ServiceAddictive>([
+            {
+                $match: findQuery,
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    let: {
+                        doctorId: '$doctorId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $in: ['$_id', '$$doctorId']
+                                },
+                            },
+                        },
+                    ],
+                    as: 'doctors'
+                },
+            },
+        ]);
+        return cursor;
     }
 
     async findUnshownServices(userId: ObjectId) {
