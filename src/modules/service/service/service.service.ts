@@ -26,6 +26,10 @@ export class ServiceService {
         return serviceResponce;
     }
 
+    async list() {
+        return this.serviceCollection.find().toArray();
+    }
+
     async updateOne(args: {
         findField: (keyof Service)[];
         findValue: any[];

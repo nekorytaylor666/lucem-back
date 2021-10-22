@@ -2,13 +2,21 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { Desease } from 'src/modules/deseases/model/desease.interface';
 import { DeseaseSearch } from 'src/modules/deseases/model/desease.shema';
+import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { DoctorSearch } from 'src/modules/doctor/model/doctor.schema';
-import { ServiceSearch } from 'src/modules/service/model/service.schema';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { serviceSchema, ServiceSearch } from 'src/modules/service/model/service.schema';
+import { ServiceService } from 'src/modules/service/service/service.service';
 import { Search } from '../model/search.interface';
 
 @Injectable()
 export class SearchService {
-    constructor(@Inject('SMARTSEARCH_CONNECTION') private searchClient) {}
+    constructor(
+        @Inject('SMARTSEARCH_CONNECTION') private searchClient,
+        private doctorService: DoctorService,
+        private serviceService: ServiceService,
+        private deseaseService: DeseaseService
+        ) {}
 
     private get searchDoctorCollection() {
         return this.searchClient.collections('doctor').documents();
@@ -74,5 +82,23 @@ export class SearchService {
             }),
         };
         return searchResponce;
+    }
+
+    async addAll() {
+        const services = await this.serviceService.list();
+        const doctors = await this.doctorService.list();
+        const deseases = await this.deseaseService.list();
+        services.map((val) => this.searchServiceCollection.create({
+            ...val,
+            _id: val._id.toHexString()
+        } as ServiceSearch))
+        doctors.map((val) => this.searchDoctorCollection.create({
+            ...val,
+            _id: val._id.toHexString()
+        } as DoctorSearch));
+        deseases.map((val) => this.searchDeseaseCollection.create({
+            ...val,
+            _id: val._id.toHexString()
+        } as DeseaseSearch))
     }
 }
