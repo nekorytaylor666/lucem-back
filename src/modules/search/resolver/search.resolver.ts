@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { SearchGraph } from '../model/search.model';
 import { SearchService } from '../service/search.service';
 
@@ -14,5 +14,11 @@ export class SearchResolver {
         const searchResult = await this.searchService.search(searchQuery);
         const searchResponce = new SearchGraph({...searchResult})
         return searchResponce;
+    }
+
+    @Mutation(() => String)
+    async addAllToSearch() {
+        await this.searchService.addAll();
+        return 'success';
     }
 }
