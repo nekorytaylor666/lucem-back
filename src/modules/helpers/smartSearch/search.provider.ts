@@ -19,6 +19,15 @@ export const smartSearchFactory = {
                 apiKey: configService.get('SMARTSEARCH_API_KEY'),
                 connectionTimeoutSeconds: 2,
             });
+            try {
+                await client.collections(doctorSchema.name).retrieve();
+                await client.collections(deaseaseShema.name).retrieve();
+                await client.collections(serviceSchema.name).retrieve();
+            } catch (e) {
+                await client.collections().create(doctorSchema);
+                await client.collections().create(deaseaseShema);
+                await client.collections().create(serviceSchema);
+            }
             return client;
         } catch (e) {
             throw `${e}`;
