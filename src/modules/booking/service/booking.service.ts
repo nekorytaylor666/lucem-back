@@ -22,17 +22,76 @@ export class BookingService {
         return booking;
     }
 
-    async findWithOptionsCursor(args: {
+    findWithOptionsCursor(args: {
         fields: (keyof Booking)[];
         values: any[];
     }) {
         const { fields, values } = args;
         const findQuery: any = {};
         fields.map((val, ind) => (findQuery[val] = values[ind]));
-        const bookings = await this.bookingCollection
+        const bookings = this.bookingCollection
             .find(findQuery)
             .sort({ startDate: 1 });
         return bookings;
+    }
+
+    async findWithAddictivesCursor(args: {
+        fields: (keyof Booking)[];
+        values: any[];
+    }) {
+        const { fields, values } = args;
+        const findQuery: any = {};
+        fields.map((val, ind) => (findQuery[val] = values[ind]));
+        const bookingCursor = this.bookingCollection.aggregate([
+            {$match: findQuery,},
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'service',
+                    localField: 'serviceId',
+                    foreignField: '_id',
+                    as: 'service'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'doctorId',
+                    foreignField: '_id',
+                    as: 'doctor'
+                }
+            },
+            { $sort: { startDate: 1 } },
+            {
+                $project: {
+                    service: {
+                        $arrayElemAt: ['$service', 0]
+                    },
+                    doctor: {
+                        $arrayElemAt: ['$doctor', 0]
+                    },
+                    user: {
+                        $arrayElemAt: ['$user', 0]
+                    },
+                    _id: 1,
+                    serviceId: 1,
+                    userId: 1,
+                    timelineId: 1,
+                    startDate: 1,
+                    endDate: 1,
+                    doctorId: 1,
+                    progress: 1,
+                }
+            }
+        ]);
+        return bookingCursor
     }
 
     async create(args: CreateBooking & { userId: string }) {
