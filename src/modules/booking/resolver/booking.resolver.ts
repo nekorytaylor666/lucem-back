@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, GraphQLISODateTime, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentRequestURLGraph,
@@ -88,6 +88,25 @@ export class BookingResolver {
             page,
             elementsPerPage: 10,
         });
+        const bookingsResponce = bookings.map((val) => new BookingGraph({...val}));
+        return bookingsResponce;
+    }
+
+    @Query(() => [BookingGraph])
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async getBookingsByDoctorIdAndDates(
+        @Args('doctorId', { type: () => String, nullable: true }) _doctorId: string,
+        @Args('firstDate', { type: () => GraphQLISODateTime }) firstDate: Date,
+        @Args('secondDate', { type: () => GraphQLISODateTime }) secondDate: Date,
+        @CurrentUserGraph() user: { _id: ObjectId },
+    ) {
+        const doctorId = _doctorId ? new ObjectId(_doctorId) : user._id
+        const bookings = await this.bookingService.findWithAddictivesCursor({
+            fields: ['doctorId', 'startDate'],
+            values: [doctorId, { $gte: firstDate, $lte: secondDate }]
+        }).toArray();
+        console.log(bookings);
         const bookingsResponce = bookings.map((val) => new BookingGraph({...val}));
         return bookingsResponce;
     }
