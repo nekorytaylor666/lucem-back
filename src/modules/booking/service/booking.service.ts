@@ -22,10 +22,7 @@ export class BookingService {
         return booking;
     }
 
-    findWithOptionsCursor(args: {
-        fields: (keyof Booking)[];
-        values: any[];
-    }) {
+    findWithOptionsCursor(args: { fields: (keyof Booking)[]; values: any[] }) {
         const { fields, values } = args;
         const findQuery: any = {};
         fields.map((val, ind) => (findQuery[val] = values[ind]));
@@ -35,7 +32,18 @@ export class BookingService {
         return bookings;
     }
 
-    async findWithAddictivesCursor(args: {
+    async findWithOptions(args: {
+        fields: (keyof Booking)[];
+        values: any[];
+    }) {
+        const { fields, values } = args;
+        const query: { [index: string]: any } = {};
+        fields.map((val, ind) => query[val] = values[ind]);
+        const bookings = await this.bookingCollection.find(query).toArray();
+        return bookings;
+    }
+
+    findWithAddictivesCursor(args: {
         fields: (keyof Booking)[];
         values: any[];
     }) {
@@ -43,42 +51,42 @@ export class BookingService {
         const findQuery: any = {};
         fields.map((val, ind) => (findQuery[val] = values[ind]));
         const bookingCursor = this.bookingCollection.aggregate([
-            {$match: findQuery,},
+            { $match: findQuery },
             {
                 $lookup: {
                     from: 'user',
                     localField: 'userId',
                     foreignField: '_id',
-                    as: 'user'
-                }
+                    as: 'user',
+                },
             },
             {
                 $lookup: {
                     from: 'service',
                     localField: 'serviceId',
                     foreignField: '_id',
-                    as: 'service'
-                }
+                    as: 'service',
+                },
             },
             {
                 $lookup: {
                     from: 'doctor',
                     localField: 'doctorId',
                     foreignField: '_id',
-                    as: 'doctor'
-                }
+                    as: 'doctor',
+                },
             },
             { $sort: { startDate: 1 } },
             {
                 $project: {
                     service: {
-                        $arrayElemAt: ['$service', 0]
+                        $arrayElemAt: ['$service', 0],
                     },
                     doctor: {
-                        $arrayElemAt: ['$doctor', 0]
+                        $arrayElemAt: ['$doctor', 0],
                     },
                     user: {
-                        $arrayElemAt: ['$user', 0]
+                        $arrayElemAt: ['$user', 0],
                     },
                     _id: 1,
                     serviceId: 1,
@@ -88,10 +96,10 @@ export class BookingService {
                     endDate: 1,
                     doctorId: 1,
                     progress: 1,
-                }
-            }
+                },
+            },
         ]);
-        return bookingCursor
+        return bookingCursor;
     }
 
     async create(args: CreateBooking & { userId: string }) {
@@ -122,7 +130,11 @@ export class BookingService {
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
         });
-        if (timeline.startDate > startDate || timeline.endDate < endDate || timeline.isVacation)
+        if (
+            timeline.startDate > startDate ||
+            timeline.endDate < endDate ||
+            timeline.isVacation
+        )
             throw new ApolloError("doctor doesn't work during this time");
         const booking: Booking = {
             serviceId,
@@ -152,15 +164,22 @@ export class BookingService {
         updateValues: any[];
         method: '$set' | '$inc' | '$addToSet';
     }) {
-        const { findFields, findValue, updateFields, updateValues, method } = args;
+        const { findFields, findValue, updateFields, updateValues, method } =
+            args;
         const findQuery: { [index: string]: any } = {};
-        findFields.map((val, ind) => findQuery[val] = findValue[ind]);
+        findFields.map((val, ind) => (findQuery[val] = findValue[ind]));
         const updateFieldsValues: { [index: string]: any } = {};
-        updateFields.map((val, ind) => updateFieldsValues[val] = updateValues[ind]);
+        updateFields.map(
+            (val, ind) => (updateFieldsValues[val] = updateValues[ind]),
+        );
         const updateQuery = {
-            [method]: updateFieldsValues
+            [method]: updateFieldsValues,
         };
-        const booking = await this.bookingCollection.findOneAndUpdate(findQuery, updateQuery, { returnDocument: 'after' });
-        return booking.value;  
+        const booking = await this.bookingCollection.findOneAndUpdate(
+            findQuery,
+            updateQuery,
+            { returnDocument: 'after' },
+        );
+        return booking.value;
     }
 }
