@@ -1,5 +1,4 @@
-import { ObjectId } from "mongodb";
-
+import { ObjectId } from 'mongodb';
 
 export interface Timeline {
     _id?: ObjectId;

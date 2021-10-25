@@ -107,7 +107,7 @@ export class SessionService {
                                 doctor: {
                                     $arrayElemAt: ['$doctor', 0],
                                 },
-                                userId: 1
+                                userId: 1,
                             },
                         },
                     ],

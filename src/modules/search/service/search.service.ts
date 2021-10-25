@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
-import { Desease } from 'src/modules/deseases/model/desease.interface';
 import { DeseaseSearch } from 'src/modules/deseases/model/desease.shema';
 import { DeseaseService } from 'src/modules/deseases/service/desease.service';
-import { DoctorSearch } from 'src/modules/doctor/model/doctor.schema';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
-import { serviceSchema, ServiceSearch } from 'src/modules/service/model/service.schema';
+import { ServiceSearch } from 'src/modules/service/model/service.schema';
 import { ServiceService } from 'src/modules/service/service/service.service';
+import { Modify } from 'src/utils/modifyType';
 import { Search } from '../model/search.interface';
 
 @Injectable()
@@ -15,8 +15,8 @@ export class SearchService {
         @Inject('SMARTSEARCH_CONNECTION') private searchClient,
         private doctorService: DoctorService,
         private serviceService: ServiceService,
-        private deseaseService: DeseaseService
-        ) {}
+        private deseaseService: DeseaseService,
+    ) {}
 
     private get searchDoctorCollection() {
         return this.searchClient.collections('doctor').documents();
@@ -38,9 +38,8 @@ export class SearchService {
         const doctorsResponce = await this.searchDoctorCollection.search(
             doctorSearchParameters,
         );
-        const doctors: DoctorSearch[] = doctorsResponce.hits.map(
-            (val) => val.document,
-        );
+        const doctors: Modify<Doctor, { _id: string }>[] =
+            doctorsResponce.hits.map((val) => val.document);
         const serviceSearchParameters = {
             q: searchQuery,
             query_by: 'name, description',
@@ -88,17 +87,23 @@ export class SearchService {
         const services = await this.serviceService.list();
         const doctors = await this.doctorService.list();
         const deseases = await this.deseaseService.list();
-        services.map((val) => this.searchServiceCollection.create({
-            ...val,
-            _id: val._id.toHexString()
-        } as ServiceSearch))
-        doctors.map((val) => this.searchDoctorCollection.create({
-            ...val,
-            _id: val._id.toHexString()
-        } as DoctorSearch));
-        deseases.map((val) => this.searchDeseaseCollection.create({
-            ...val,
-            _id: val._id.toHexString()
-        } as DeseaseSearch))
+        services.map((val) =>
+            this.searchServiceCollection.create({
+                ...val,
+                _id: val._id.toHexString(),
+            } as ServiceSearch),
+        );
+        doctors.map((val) =>
+            this.searchDoctorCollection.create({
+                ...val,
+                _id: val._id.toHexString(),
+            } as Modify<Doctor, { _id: string }>),
+        );
+        deseases.map((val) =>
+            this.searchDeseaseCollection.create({
+                ...val,
+                _id: val._id.toHexString(),
+            } as DeseaseSearch),
+        );
     }
 }

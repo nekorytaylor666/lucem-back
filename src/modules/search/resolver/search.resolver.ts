@@ -8,10 +8,10 @@ export class SearchResolver {
 
     @Query(() => SearchGraph)
     async search(
-        @Args('searchQuery', { type: () => String}) searchQuery: string
+        @Args('searchQuery', { type: () => String }) searchQuery: string,
     ) {
         const searchResult = await this.searchService.search(searchQuery);
-        const searchResponce = new SearchGraph({...searchResult})
+        const searchResponce = new SearchGraph({ ...searchResult });
         return searchResponce;
     }
 

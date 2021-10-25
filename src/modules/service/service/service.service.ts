@@ -90,12 +90,12 @@ export class ServiceService {
                         {
                             $match: {
                                 $expr: {
-                                    $in: ['$_id', '$$doctorId']
+                                    $in: ['$_id', '$$doctorId'],
                                 },
                             },
                         },
                     ],
-                    as: 'doctors'
+                    as: 'doctors',
                 },
             },
         ]);

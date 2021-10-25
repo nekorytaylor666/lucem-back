@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConnectionClosedEvent, Db, ObjectId } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { CreateDoctor } from '../model/createDoctor.args';
 import * as bcrypt from 'bcryptjs';
 import { Doctor } from '../model/doctor.interface';
@@ -9,8 +9,8 @@ import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { DoctorAddictives } from '../model/doctor.addictives';
 import { DoctorDeseaseService } from 'src/modules/doctorDesease/service/doctorDesease.service';
 import { ApolloError } from 'apollo-server-express';
-import { DoctorSearch } from '../model/doctor.schema';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
+import { Modify } from 'src/utils/modifyType';
 
 @Injectable()
 export class DoctorService {
@@ -36,7 +36,10 @@ export class DoctorService {
         return doctors;
     }
 
-    async createDoctor(args: CreateDoctor, req: string): Promise<Doctor & DoctorAddictives> {
+    async createDoctor(
+        args: CreateDoctor,
+        req: string,
+    ): Promise<Doctor & DoctorAddictives> {
         const {
             fullName,
             email,
@@ -51,7 +54,7 @@ export class DoctorService {
         } = args;
         const avatarURL = await this.fileUploadService.storeImages(
             (await avatar).createReadStream(),
-            req
+            req,
         );
         const passwordHASH = await bcrypt.hash(password, 12);
         const dateOfBirth = new Date(_dateOfBirth);
@@ -75,13 +78,13 @@ export class DoctorService {
             yearsOfExperience,
             description,
             acceptableAgeGroup,
-            avatar: avatarURL
+            avatar: avatarURL,
         };
-        
+
         const insertDoctor = await this.doctorCollection.insertOne(doctor, {
             ignoreUndefined: true,
         });
-        const searchDoctor: DoctorSearch = {
+        const searchDoctor: Modify<Doctor, { _id: string }> = {
             ...doctor,
             _id: doctor._id.toHexString(),
         };

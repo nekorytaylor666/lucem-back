@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { ServiceGraph } from 'src/modules/service/model/service.model';
-import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
 import { BookingAddictive } from './booking.addictive';
@@ -45,7 +44,8 @@ export class BookingGraph
         if (booking.user) this.user = new UserGraph({ ...booking.user });
         if (booking.startDate) this.startDate = booking.startDate;
         if (booking.endDate) this.endDate = booking.endDate;
-        if (booking.doctor) this.doctor = new DoctorGraph({...booking.doctor})
+        if (booking.doctor)
+            this.doctor = new DoctorGraph({ ...booking.doctor });
         if (booking.progress != null) this.progress = booking.progress;
     }
 }
