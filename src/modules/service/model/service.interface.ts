@@ -1,12 +1,11 @@
-import { ObjectId } from "mongodb";
-
+import { ObjectId } from 'mongodb';
 
 export interface Service {
     _id?: ObjectId;
     name: string;
     price: number;
     description: string;
-    doctorId?: ObjectId[]
+    doctorId?: ObjectId[];
     isShown?: false;
-    showServices?: ObjectId[]
+    showServices?: ObjectId[];
 }

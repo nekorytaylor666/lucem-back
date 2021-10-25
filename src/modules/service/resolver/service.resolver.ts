@@ -3,13 +3,12 @@ import { ObjectId } from 'mongodb';
 import { CreateService } from '../model/createService.args';
 import { ServiceGraph } from '../model/service.model';
 import { ServiceService } from '../service/service.service';
-import * as jwt from "jsonwebtoken";
-import { Token } from 'src/modules/helpers/token/token.interface';
-import { PrivateKey } from 'src/modules/helpers/token/token.keys';
-import { signOption } from 'src/modules/helpers/token/token.signOptions';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { UseGuards } from '@nestjs/common';
-import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import {
+    CurrentUserGraph,
+    PreAuthGuard,
+} from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
 @Resolver()
@@ -40,15 +39,22 @@ export class ServiceResolver {
     @Query(() => [ServiceGraph])
     async getServicesByDoctorIds(
         @Args('doctorId', { type: () => [String] }) _doctorIds: string[],
-        @Args('page', { type: () => Int }) page: number
+        @Args('page', { type: () => Int }) page: number,
     ) {
-        const doctorIds = _doctorIds.map((val) => new ObjectId(val))
-        const serviceCursor = await this.serviceService.findWithAddictivesCursor({
-            fields: ['doctorId'],
-            values: [{ $in: doctorIds }]
+        const doctorIds = _doctorIds.map((val) => new ObjectId(val));
+        const serviceCursor =
+            await this.serviceService.findWithAddictivesCursor({
+                fields: ['doctorId'],
+                values: [{ $in: doctorIds }],
+            });
+        const service = await paginate({
+            cursor: serviceCursor,
+            page,
+            elementsPerPage: 10,
         });
-        const service = await paginate({ cursor: serviceCursor, page, elementsPerPage: 10 });
-        const serviceResponce = service.map((val) => new ServiceGraph({...val}));
+        const serviceResponce = service.map(
+            (val) => new ServiceGraph({ ...val }),
+        );
         return serviceResponce;
     }
 
@@ -88,17 +94,20 @@ export class ServiceResolver {
     @Query(() => [ServiceGraph])
     @Roles('user')
     @UseGuards(PreAuthGuard)
-    async getUnshownServicesForPatient(
-        @CurrentUserGraph() user: User
-    ) {
-        const services = await this.serviceService.findUnshownServices(user._id);
-        const servicesResponce = services.map((val) => new ServiceGraph({...val}));
+    async getUnshownServicesForPatient(@CurrentUserGraph() user: User) {
+        const services = await this.serviceService.findUnshownServices(
+            user._id,
+        );
+        const servicesResponce = services.map(
+            (val) => new ServiceGraph({ ...val }),
+        );
         return servicesResponce;
     }
 
     @Mutation(() => ServiceGraph)
     async attachUnshownServiceToShownService(
-        @Args('unShownServiceId', { type: () => String }) unShownServiceId: string,
+        @Args('unShownServiceId', { type: () => String })
+        unShownServiceId: string,
         @Args('shownServiceId', { type: () => String }) shownServiceId: string,
     ) {
         const service = await this.serviceService.updateOne({
@@ -106,10 +115,9 @@ export class ServiceResolver {
             findValue: [new ObjectId(shownServiceId)],
             updateField: ['showServices'],
             updateValue: [new ObjectId(unShownServiceId)],
-            method: '$addToSet'
+            method: '$addToSet',
         });
-        const serviceResponce = new ServiceGraph({...service});
+        const serviceResponce = new ServiceGraph({ ...service });
         return serviceResponce;
     }
-
 }

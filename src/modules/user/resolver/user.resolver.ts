@@ -24,7 +24,7 @@ export class UserResolver {
     @Mutation(() => String)
     async sendVerSMS(
         @Args('phoneNumber', { type: () => String }) phoneNumber: string,
-    ) { 
+    ) {
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         const filteredPhoneNumber = phoneNumber.replace(/\D/g, '');
         this.smsService.sendVerificationSMS({
@@ -68,18 +68,18 @@ export class UserResolver {
     }
 
     @Query(() => UserGraph)
-    async getUserByID(
-        @Args('userId', { type: () => String }) userId: string
-    ) {
-        const user = await this.userService.findOne({_id: new ObjectId(userId)});
-        const userResponce = new UserGraph({...user});
-        return userResponce
+    async getUserByID(@Args('userId', { type: () => String }) userId: string) {
+        const user = await this.userService.findOne({
+            _id: new ObjectId(userId),
+        });
+        const userResponce = new UserGraph({ ...user });
+        return userResponce;
     }
 
     @Query(() => [UserGraph])
     async listUsers() {
-        const users = await this.userService.list()
-        const usersResponce = users.map((val) => new UserGraph({...val}));
+        const users = await this.userService.list();
+        const usersResponce = users.map((val) => new UserGraph({ ...val }));
         return usersResponce;
     }
 }

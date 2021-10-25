@@ -3,7 +3,6 @@ import { Db, ObjectId } from 'mongodb';
 import { TokenService } from 'src/modules/helpers/token/token.service';
 import { CreateUser } from '../model/createUser.args';
 import { User } from '../model/user.interface';
-import * as bcrypt from 'bcryptjs';
 import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { Cache } from 'cache-manager';
 import { ApolloError } from 'apollo-server-express';
@@ -94,12 +93,12 @@ export class UserService {
                     email,
                     fullName,
                     dateOfBirth,
-                    phoneNumber
+                    phoneNumber,
                 },
             },
             {
-                returnDocument: "after"
-            }
+                returnDocument: 'after',
+            },
         );
         const token = this.tokenService.create({
             user: { ...insertUser, _id: insertUser.value._id.toHexString() },

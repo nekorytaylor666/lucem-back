@@ -1,8 +1,14 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, GraphQLISODateTime, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+    Args,
+    GraphQLISODateTime,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from '@nestjs/graphql';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
-    CurrentRequestURLGraph,
     CurrentTokenPayload,
     CurrentUserGraph,
     PreAuthGuard,
@@ -46,10 +52,11 @@ export class BookingResolver {
     @UseGuards(PreAuthGuard)
     async getUpcomingBookings(@Args('page', { type: () => Int }) page: number) {
         const currentDate = new Date();
-        const bookingsCursor = await this.bookingService.findWithAddictivesCursor({
-            fields: ['startDate'],
-            values: [{ $gt: currentDate }],
-        });
+        const bookingsCursor =
+            await this.bookingService.findWithAddictivesCursor({
+                fields: ['startDate'],
+                values: [{ $gt: currentDate }],
+            });
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
@@ -88,7 +95,9 @@ export class BookingResolver {
             page,
             elementsPerPage: 10,
         });
-        const bookingsResponce = bookings.map((val) => new BookingGraph({...val}));
+        const bookingsResponce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
         return bookingsResponce;
     }
 
@@ -96,18 +105,24 @@ export class BookingResolver {
     @Roles('doctor', 'admin')
     @UseGuards(PreAuthGuard)
     async getBookingsByDoctorIdAndDates(
-        @Args('doctorId', { type: () => String, nullable: true }) _doctorId: string,
+        @Args('doctorId', { type: () => String, nullable: true })
+        _doctorId: string,
         @Args('firstDate', { type: () => GraphQLISODateTime }) firstDate: Date,
-        @Args('secondDate', { type: () => GraphQLISODateTime }) secondDate: Date,
+        @Args('secondDate', { type: () => GraphQLISODateTime })
+        secondDate: Date,
         @CurrentUserGraph() user: { _id: ObjectId },
     ) {
-        const doctorId = _doctorId ? new ObjectId(_doctorId) : user._id
-        const bookings = await this.bookingService.findWithAddictivesCursor({
-            fields: ['doctorId', 'startDate'],
-            values: [doctorId, { $gte: firstDate, $lte: secondDate }]
-        }).toArray();
+        const doctorId = _doctorId ? new ObjectId(_doctorId) : user._id;
+        const bookings = await this.bookingService
+            .findWithAddictivesCursor({
+                fields: ['doctorId', 'startDate'],
+                values: [doctorId, { $gte: firstDate, $lte: secondDate }],
+            })
+            .toArray();
         console.log(bookings);
-        const bookingsResponce = bookings.map((val) => new BookingGraph({...val}));
+        const bookingsResponce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
         return bookingsResponce;
     }
 }

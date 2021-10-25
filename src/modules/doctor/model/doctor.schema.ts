@@ -1,7 +1,3 @@
-import { Injectable } from '@nestjs/common';
-import { Modify } from 'src/utils/modifyType';
-import { Doctor } from './doctor.interface';
-
 export const doctorSchema = {
     name: 'doctor',
     fields: [
@@ -15,15 +11,7 @@ export const doctorSchema = {
         { name: 'sumOfRatings', type: 'int32', optional: true },
         { name: 'dateOfBirth', type: 'string' },
         { name: 'email', type: 'string' },
-        { name: 'acceptableAgeGroup', type: 'string'}
+        { name: 'acceptableAgeGroup', type: 'string' },
     ],
     default_sorting_field: 'yearsOfExperience',
 };
-
-export interface DoctorSearch
-    extends Modify<
-        Doctor,
-        {
-            _id: string;
-        }
-    > {}

@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, GraphQLISODateTime, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+    Args,
+    GraphQLISODateTime,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from '@nestjs/graphql';
 import * as moment from 'moment';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -46,14 +53,17 @@ export class TimelineResolver {
                             .toDate();
                         endDate = moment(new Date('2021-09-27T18:00:00.000Z'))
                             .add(ind, 'day')
-                            .toDate()
-                            
+                            .toDate();
                     }
-                    await this.timelineService.create({ doctorId: val._id.toHexString(), startDate, endDate });;
+                    await this.timelineService.create({
+                        doctorId: val._id.toHexString(),
+                        startDate,
+                        endDate,
+                    });
                 }
             }),
         );
-        return "bitch"
+        return 'bitch';
     }
 
     @Query(() => [TimelineGraph])
@@ -76,15 +86,15 @@ export class TimelineResolver {
     async setVacation(
         @Args('doctorId', { type: () => String }) doctorId: string,
         @Args('endDate', { type: () => GraphQLISODateTime }) endDate: Date,
-        @Args('startDate', { type: () => GraphQLISODateTime }) startDate: Date
-        ) {
+        @Args('startDate', { type: () => GraphQLISODateTime }) startDate: Date,
+    ) {
         const vacation = await this.timelineService.create({
             endDate,
             startDate,
             doctorId,
-            isVacation: true
+            isVacation: true,
         });
-        const vacationResponce = new TimelineGraph({...vacation});
+        const vacationResponce = new TimelineGraph({ ...vacation });
         return vacationResponce;
     }
 

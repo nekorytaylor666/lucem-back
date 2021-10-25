@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
 import { Db, ObjectId } from 'mongodb';
-import { Timeline } from 'src/modules/timeline/model/timeline.interface';
 import { TimelineService } from 'src/modules/timeline/service/timeline.service';
 import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
@@ -32,13 +31,10 @@ export class BookingService {
         return bookings;
     }
 
-    async findWithOptions(args: {
-        fields: (keyof Booking)[];
-        values: any[];
-    }) {
+    async findWithOptions(args: { fields: (keyof Booking)[]; values: any[] }) {
         const { fields, values } = args;
         const query: { [index: string]: any } = {};
-        fields.map((val, ind) => query[val] = values[ind]);
+        fields.map((val, ind) => (query[val] = values[ind]));
         const bookings = await this.bookingCollection.find(query).toArray();
         return bookings;
     }
