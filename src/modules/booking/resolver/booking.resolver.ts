@@ -52,16 +52,45 @@ export class BookingResolver {
     @UseGuards(PreAuthGuard)
     async getUpcomingBookings(@Args('page', { type: () => Int }) page: number) {
         const currentDate = new Date();
-        const bookingsCursor =
-            await this.bookingService.findWithAddictivesCursor({
-                fields: ['startDate'],
-                values: [{ $gt: currentDate }],
-            });
+        const bookingsCursor = this.bookingService.findWithAddictivesCursor({
+            fields: ['startDate'],
+            values: [{ $gt: currentDate }],
+        });
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
             elementsPerPage: 10,
         });
+        const bookingsResponce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
+        return bookingsResponce;
+    }
+
+    @Query(() => [BookingGraph])
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async getUpcomingBookingsOfDoctor(
+        @Args('doctorId', { type: () => String, nullable: true })
+        doctorId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const currentDate = new Date();
+        const bookings =
+            payload.role === TokenRoles.Doctor
+                ? await this.bookingService
+                      .findWithAddictivesCursor({
+                          fields: ['startDate', 'doctorId'],
+                          values: [{ $gt: currentDate }, user._id],
+                      })
+                      .toArray()
+                : await this.bookingService
+                      .findWithAddictivesCursor({
+                          fields: ['startDate', 'doctorId'],
+                          values: [{ $gt: currentDate }, user._id],
+                      })
+                      .toArray();
         const bookingsResponce = bookings.map(
             (val) => new BookingGraph({ ...val }),
         );
