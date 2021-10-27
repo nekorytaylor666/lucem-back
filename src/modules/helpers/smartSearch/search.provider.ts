@@ -2,7 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { deaseaseShema } from 'src/modules/deseases/model/desease.shema';
 import { doctorSchema } from 'src/modules/doctor/model/doctor.schema';
 import { serviceSchema } from 'src/modules/service/model/service.schema';
-import Typesense from 'typesense';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const Typesense = require('typesense');
 
 export const smartSearchFactory = {
     provide: 'SMARTSEARCH_CONNECTION',

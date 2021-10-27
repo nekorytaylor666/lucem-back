@@ -72,11 +72,12 @@ export class BookingResolver {
     @UseGuards(PreAuthGuard)
     async getUpcomingBookingsOfDoctor(
         @Args('doctorId', { type: () => String, nullable: true })
-        doctorId: string,
+        _doctorId: string,
         @CurrentUserGraph() user: { _id: ObjectId },
         @CurrentTokenPayload() payload: Token,
     ) {
         const currentDate = new Date();
+        const doctorId = new ObjectId(_doctorId);
         const bookings =
             payload.role === TokenRoles.Doctor
                 ? await this.bookingService
@@ -88,7 +89,7 @@ export class BookingResolver {
                 : await this.bookingService
                       .findWithAddictivesCursor({
                           fields: ['startDate', 'doctorId'],
-                          values: [{ $gt: currentDate }, user._id],
+                          values: [{ $gt: currentDate }, doctorId],
                       })
                       .toArray();
         const bookingsResponce = bookings.map(
