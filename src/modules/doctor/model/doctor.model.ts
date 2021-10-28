@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.graph';
 import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
+import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
 import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
 import { DoctorAddictives } from './doctor.addictives';
@@ -12,7 +13,7 @@ export class DoctorGraph
     implements
         Modify<
             Omit<Doctor, 'passwordHASH' | 'numberOfRatings' | 'sumOfRatings'>,
-            { _id: string, rating: number }
+            { _id: string; rating: number }
         >
 {
     @Field()
@@ -57,6 +58,9 @@ export class DoctorGraph
     @Field(() => PhotoURLGraph, { nullable: true })
     avatar: PhotoURLGraph;
 
+    @Field(() => [SpecializationGraph], { nullable: true })
+    specializations: SpecializationGraph[];
+
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
         if (doctor.fullName) this.fullName = doctor.fullName;
@@ -72,11 +76,20 @@ export class DoctorGraph
         if (doctor.numberOfRatings) this.numOfRatings = doctor.numberOfRatings;
         if (doctor.sumOfRatings) {
             const { numberOfRatings, sumOfRatings } = doctor;
-            const rating = sumOfRatings/numberOfRatings;
+            const rating = sumOfRatings / numberOfRatings;
             this.rating = rating;
         }
-        if (doctor.timeline) this.timelines = doctor.timeline.map((val) => new TimelineGraph({...val}));
-        if (doctor.acceptableAgeGroup) this.acceptableAgeGroup = doctor.acceptableAgeGroup;
-        if (doctor.avatar) this.avatar = new PhotoURLGraph({...doctor.avatar});
+        if (doctor.timeline)
+            this.timelines = doctor.timeline.map(
+                (val) => new TimelineGraph({ ...val }),
+            );
+        if (doctor.acceptableAgeGroup)
+            this.acceptableAgeGroup = doctor.acceptableAgeGroup;
+        if (doctor.avatar)
+            this.avatar = new PhotoURLGraph({ ...doctor.avatar });
+        if (doctor.specializations)
+            this.specializations = doctor.specializations.map(
+                (val) => new SpecializationGraph({ ...val }),
+            );
     }
 }
