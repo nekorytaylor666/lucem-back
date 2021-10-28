@@ -160,4 +160,53 @@ export class DoctorService {
         };
         await this.doctorCollection.updateOne(findQuery, updateQuery);
     }
+
+    async listWithAddictives() {
+        const doctors = await this.doctorCollection
+            .aggregate([
+                {
+                    $lookup: {
+                        from: 'specializationDoctor',
+                        let: {
+                            id: '$_id',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: ['$doctorId', '$$id'],
+                                    },
+                                },
+                            },
+                            {
+                                $lookup: {
+                                    from: 'specialization',
+                                    localField: 'specializationId',
+                                    foreignField: '_id',
+                                    as: 'specialization',
+                                },
+                            },
+                            {
+                                $project: {
+                                    specialization: {
+                                        $arrayElemAt: ['$specialization', 0],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'specializationDoctor',
+                    },
+                },
+            ])
+            .toArray();
+        const doctorsResponce = doctors.map((val) => {
+            return {
+                ...val,
+                specializations: val.specializationDoctor.map(
+                    (val) => val.specialization,
+                ),
+            } as DoctorAddictives;
+        });
+        return doctorsResponce;
+    }
 }
