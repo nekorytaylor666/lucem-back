@@ -11,4 +11,5 @@ export interface AppointmentBlank {
     sessionId: ObjectId;
     doctorId: ObjectId;
     userId: ObjectId;
-};
+    inspections: string[];
+}

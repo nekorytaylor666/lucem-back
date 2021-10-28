@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
+import { FileUpload } from 'graphql-upload';
 import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { SessionService } from 'src/modules/session/service/session.service';
@@ -19,16 +20,14 @@ export class AppointmentBlankService {
         return this.database.collection('appointmentBlank');
     }
 
-    async create(
-        args: CreateAppointmentBlank & { doctorId: ObjectId; reqURL: string },
-    ) {
+    async create(args: CreateAppointmentBlank & { doctorId: ObjectId }) {
         const {
             sessionId: _sessionId,
             complaints,
             appointmentResults,
             diagnose,
             doctorId,
-            reqURL,
+            inspections,
         } = args;
         const sessionId = new ObjectId(_sessionId);
         const session = await this.sessionService
@@ -42,10 +41,6 @@ export class AppointmentBlankService {
             doctorId.toHexString()
         )
             throw new ApolloError('this is not your session');
-        const appointmentResultsPhotoURL = await this.imageService.storeImages(
-            (await appointmentResults.file).createReadStream(),
-            reqURL,
-        );
         const appointmentBlank: Modify<
             AppointmentBlank,
             {
@@ -56,17 +51,39 @@ export class AppointmentBlankService {
             sessionId: new ObjectId(sessionId),
             appointmentResults: {
                 description: appointmentResults.description,
-                photoURL: appointmentResultsPhotoURL,
             },
             diagnose,
             userId: session[0].booking.userId,
             doctorId: session[0].booking.doctor._id,
+            inspections,
         };
         const insertBlank = await this.appointmentBlankCollection.insertOne(
             appointmentBlank,
         );
         appointmentBlank._id = insertBlank.insertedId;
         return appointmentBlank;
+    }
+
+    async addFileToAppointmentResult(args: {
+        file: FileUpload;
+        req: string;
+        appointmentBlankId: ObjectId;
+        doctorId: ObjectId;
+    }) {
+        const { file, req, appointmentBlankId, doctorId } = args;
+        const photoURL = await this.imageService.storeImages(
+            file.createReadStream(),
+            req,
+        );
+        const updateAppointmentBlank =
+            await this.appointmentBlankCollection.findOneAndUpdate(
+                <AppointmentBlank>{ _id: appointmentBlankId, doctorId },
+                { $set: { 'appointmentResults.photoURL': photoURL } },
+                { returnDocument: 'after' },
+            );
+        if (!updateAppointmentBlank.value)
+            throw new ApolloError('this is not your appointment blank');
+        return updateAppointmentBlank.value;
     }
 
     findWithAddictivesCursor(args: Partial<AppointmentBlank>) {

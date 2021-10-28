@@ -1,8 +1,7 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { CreateAppointmentResults } from "./addictives/AppointmenResults.model";
-import { CreateComplaint } from "./addictives/complaint.model";
-import { CreateDiagnose } from "./addictives/diagnose.model";
-
+import { ArgsType, Field } from '@nestjs/graphql';
+import { CreateAppointmentResults } from './addictives/AppointmenResults.model';
+import { CreateComplaint } from './addictives/complaint.model';
+import { CreateDiagnose } from './addictives/diagnose.model';
 
 @ArgsType()
 export class CreateAppointmentBlank {
@@ -14,6 +13,9 @@ export class CreateAppointmentBlank {
 
     @Field(() => CreateAppointmentResults)
     appointmentResults: CreateAppointmentResults;
+
+    @Field(() => [String])
+    inspections: string[];
 
     @Field()
     sessionId: string;

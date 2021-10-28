@@ -40,6 +40,9 @@ export class AppointmentBlankGraph
     @Field(() => UserGraph, { nullable: true })
     user: UserGraph;
 
+    @Field(() => [String])
+    inspections: string[];
+
     constructor(
         appointmentBlank: Partial<AppointmentBlank> & {
             user?: User;
@@ -61,5 +64,7 @@ export class AppointmentBlankGraph
             this.doctor = new DoctorGraph({ ...appointmentBlank.doctor });
         if (appointmentBlank.user)
             this.user = new UserGraph({ ...appointmentBlank.user });
+        if (appointmentBlank.inspections)
+            this.inspections = appointmentBlank.inspections;
     }
 }
