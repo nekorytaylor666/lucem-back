@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db, FindCursor, ObjectId } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { SpecializationAddictive } from '../model/specialization.addictive';

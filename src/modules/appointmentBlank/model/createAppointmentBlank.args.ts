@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import { CreateAppointmentResults } from './addictives/AppointmenResults.model';
-import { CreateComplaint } from './addictives/complaint.model';
-import { CreateDiagnose } from './addictives/diagnose.model';
+import { CreateAppointmentResults } from './parts/AppointmenResults.model';
+import { CreateComplaint } from './parts/complaint.model';
+import { CreateDiagnose } from './parts/diagnose.model';
 
 @ArgsType()
 export class CreateAppointmentBlank {

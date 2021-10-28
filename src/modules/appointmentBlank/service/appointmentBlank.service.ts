@@ -4,9 +4,11 @@ import { FileUpload } from 'graphql-upload';
 import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { SessionService } from 'src/modules/session/service/session.service';
-import { Modify } from 'src/utils/modifyType';
-import { AppointmentBlank } from '../model/appointmentBlank.interface';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
+import { AppointmentResults } from '../model/parts/AppointmenResults.model';
+import { Complaint } from '../model/parts/complaint.model';
+import { Diagnose } from '../model/parts/diagnose.model';
+import { Inspections } from '../model/parts/inspections.model';
 
 @Injectable()
 export class AppointmentBlankService {
@@ -16,16 +18,28 @@ export class AppointmentBlankService {
         private sessionService: SessionService,
     ) {}
 
-    private get appointmentBlankCollection() {
-        return this.database.collection('appointmentBlank');
+    private get complaintCollection() {
+        return this.database.collection('complaint');
+    }
+
+    private get diagnodeCollection() {
+        return this.database.collection('diagnose');
+    }
+
+    private get appointmentResultsCollection() {
+        return this.database.collection('appointmentResults');
+    }
+
+    private get inspectionsCollection() {
+        return this.database.collection('inspections');
     }
 
     async create(args: CreateAppointmentBlank & { doctorId: ObjectId }) {
         const {
             sessionId: _sessionId,
             complaints,
-            appointmentResults,
-            diagnose,
+            appointmentResults: _appointmentResults,
+            diagnose: _diagnose,
             doctorId,
             inspections,
         } = args;
@@ -41,26 +55,36 @@ export class AppointmentBlankService {
             doctorId.toHexString()
         )
             throw new ApolloError('this is not your session');
-        const appointmentBlank: Modify<
-            AppointmentBlank,
-            {
-                _id?: ObjectId;
-            }
-        > = {
-            complaints,
-            sessionId: new ObjectId(sessionId),
-            appointmentResults: {
-                description: appointmentResults.description,
-            },
-            diagnose,
-            userId: session[0].booking.userId,
-            doctorId: session[0].booking.doctor._id,
+        const appointmentResults: AppointmentResults = {
+            _id: new ObjectId(),
+            description: _appointmentResults.description,
+            doctorId,
+        };
+        await this.appointmentResultsCollection.insertOne(appointmentResults);
+        const complaint: Complaint = {
+            ...complaints,
+            _id: new ObjectId(),
+            doctorId,
+        };
+        await this.complaintCollection.insertOne(complaint);
+        const diagnose: Diagnose = {
+            ..._diagnose,
+            _id: new ObjectId(),
+            doctorId,
+        };
+        await this.diagnodeCollection.insertOne(diagnose);
+        const inpections: Inspections = {
+            _id: new ObjectId(),
+            doctorId,
             inspections,
         };
-        const insertBlank = await this.appointmentBlankCollection.insertOne(
-            appointmentBlank,
-        );
-        appointmentBlank._id = insertBlank.insertedId;
+        await this.inspectionsCollection.insertOne(inspections);
+        const appointmentBlank = {
+            appointmentResults,
+            complaint,
+            diagnose,
+            inpections,
+        };
         return appointmentBlank;
     }
 
@@ -76,61 +100,16 @@ export class AppointmentBlankService {
             req,
         );
         const updateAppointmentBlank =
-            await this.appointmentBlankCollection.findOneAndUpdate(
-                <AppointmentBlank>{ _id: appointmentBlankId, doctorId },
-                { $set: { 'appointmentResults.photoURL': photoURL } },
+            await this.appointmentResultsCollection.findOneAndUpdate(
+                <Partial<AppointmentResults>>{
+                    _id: appointmentBlankId,
+                    doctorId,
+                },
+                { $set: { photoURL } },
                 { returnDocument: 'after' },
             );
         if (!updateAppointmentBlank.value)
             throw new ApolloError('this is not your appointment blank');
         return updateAppointmentBlank.value;
-    }
-
-    findWithAddictivesCursor(args: Partial<AppointmentBlank>) {
-        const blankCursor = this.appointmentBlankCollection.aggregate([
-            { $match: args },
-            {
-                $lookup: {
-                    from: 'user',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'user',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'doctor',
-                    localField: 'doctorId',
-                    foreignField: '_id',
-                    as: 'doctor',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'session',
-                    localField: 'sessionId',
-                    foreignField: '_id',
-                    as: 'session',
-                },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    complaints: 1,
-                    diagnose: 1,
-                    appointmentResults: 1,
-                    session: {
-                        $arrayElemAt: ['$session', 0],
-                    },
-                    user: {
-                        $arrayElemAt: ['$user', 0],
-                    },
-                    doctor: {
-                        $arrayElemAt: ['$doctor', 0],
-                    },
-                },
-            },
-        ]);
-        return blankCursor;
     }
 }
