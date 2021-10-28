@@ -149,7 +149,6 @@ export class BookingResolver {
                 values: [doctorId, { $gte: firstDate, $lte: secondDate }],
             })
             .toArray();
-        console.log(bookings);
         const bookingsResponce = bookings.map(
             (val) => new BookingGraph({ ...val }),
         );

@@ -75,7 +75,6 @@ export class TimelineResolver {
                 doctorId: new ObjectId(doctorId),
             });
         const timelines = await timelineCursor.toArray();
-        console.log(timelines);
         const timelineResponce = timelines.map(
             (val) => new TimelineGraph({ ...val }),
         );

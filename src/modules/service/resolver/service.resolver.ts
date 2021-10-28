@@ -26,10 +26,12 @@ export class ServiceResolver {
     async getServicesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
-        const service = await this.serviceService.findWithOptions({
-            fields: ['doctorId'],
-            values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }],
-        });
+        const service = await this.serviceService
+            .findWithAddictivesCursor({
+                fields: ['doctorId'],
+                values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }],
+            })
+            .then((val) => val.toArray());
         const serviceResponce = service.map(
             (val) => new ServiceGraph({ ...val }),
         );

@@ -12,10 +12,4 @@ export const serviceSchema = {
     default_sorting_field: 'price',
 };
 
-export interface ServiceSearch
-    extends Modify<
-        Service,
-        {
-            _id: string;
-        }
-    > {}
+export type ServiceSearch = Modify<Service, { _id: string }>;
