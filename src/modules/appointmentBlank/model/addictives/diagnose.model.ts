@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 export interface Diagnose {
     preliminary: boolean;
@@ -37,9 +37,11 @@ export class DiagnoseGraph implements Diagnose {
     natureOfTheDesease: string;
 
     constructor(diagnose: Partial<Diagnose>) {
-        if (diagnose.preliminary != undefined) this.preliminary = diagnose.preliminary;
+        if (diagnose.preliminary != undefined)
+            this.preliminary = diagnose.preliminary;
         if (diagnose.diagnose) this.diagnose = diagnose.diagnose;
-        if (diagnose.natureOfTheDesease) this.natureOfTheDesease = diagnose.natureOfTheDesease;
+        if (diagnose.natureOfTheDesease)
+            this.natureOfTheDesease = diagnose.natureOfTheDesease;
         if (diagnose.deseaseDBCode) this.deseaseDBCode = diagnose.deseaseDBCode;
     }
 }

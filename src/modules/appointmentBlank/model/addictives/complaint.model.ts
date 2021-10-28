@@ -1,5 +1,4 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 export interface Complaint {
     complaint: string;
@@ -17,10 +16,10 @@ export class CreateComplaint {
 
     @Field({ nullable: true })
     reason: string;
-};
+}
 
 @ObjectType('Complain')
-export class ComplaintGraph implements Complaint{
+export class ComplaintGraph implements Complaint {
     @Field()
     complaint: string;
 
@@ -33,6 +32,7 @@ export class ComplaintGraph implements Complaint{
     constructor(complaint: Partial<Complaint>) {
         if (complaint.complaint != null) this.complaint = complaint.complaint;
         if (complaint.reason != null) this.reason = complaint.reason;
-        if (complaint.sicknessTimeDuration != null) this.sicknessTimeDuration = complaint.sicknessTimeDuration; 
+        if (complaint.sicknessTimeDuration != null)
+            this.sicknessTimeDuration = complaint.sicknessTimeDuration;
     }
 }
