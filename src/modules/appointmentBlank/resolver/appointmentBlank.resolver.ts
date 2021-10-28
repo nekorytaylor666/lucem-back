@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -9,16 +9,18 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { paginate } from 'src/utils/paginate';
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
+import { AppointmentResultsGraph } from '../model/parts/AppointmenResults.model';
+import { ComplaintGraph } from '../model/parts/complaint.model';
+import { DiagnoseGraph } from '../model/parts/diagnose.model';
 import { AppointmentBlankService } from '../service/appointmentBlank.service';
 
 @Resolver()
 export class AppointmentBlankResolver {
     constructor(private appointmentBlankService: AppointmentBlankService) {}
 
-    @Mutation(() => AppointmentBlankGraph)
+    @Mutation(() => [AppointmentBlankGraph])
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async createSessionBlank(
@@ -29,35 +31,26 @@ export class AppointmentBlankResolver {
             ...args,
             doctorId: user._id,
         });
-        const appointmentBlankResponce = new AppointmentBlankGraph({
-            ...appointmentBlank,
+        const appointmentResultsResponce = new AppointmentResultsGraph({
+            ...appointmentBlank.appointmentResults,
+            doctor: user,
         });
-        return appointmentBlankResponce;
+        const complaintResponce = new ComplaintGraph({
+            ...appointmentBlank.complaint,
+            doctor: user,
+        });
+        const diagnoseResponce = new DiagnoseGraph({
+            ...appointmentBlank.diagnose,
+            doctor: user,
+        });
+        return [
+            appointmentResultsResponce,
+            complaintResponce,
+            diagnoseResponce,
+        ];
     }
 
-    @Query(() => [AppointmentBlankGraph])
-    @Roles('doctor', 'admin')
-    @UseGuards(PreAuthGuard)
-    async getAppointmentBlankByUserId(
-        @Args('userId', { type: () => String }) userId: string,
-        @Args('page', { type: () => Int }) page: number,
-    ) {
-        const blankCursor =
-            this.appointmentBlankService.findWithAddictivesCursor({
-                userId: new ObjectId(userId),
-            });
-        const blank = await paginate({
-            cursor: blankCursor,
-            page,
-            elementsPerPage: 10,
-        });
-        const blankResponce = blank.map(
-            (val) => new AppointmentBlankGraph({ ...val }),
-        );
-        return blankResponce;
-    }
-
-    @Mutation(() => AppointmentBlankGraph)
+    @Mutation(() => AppointmentResultsGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async addFileAppointmentResult(
@@ -71,16 +64,16 @@ export class AppointmentBlankResolver {
             await _image,
             new ObjectId(_appointmentBlankId),
         ];
-        const appointmentBlank =
+        const appointmentResults =
             await this.appointmentBlankService.addFileToAppointmentResult({
                 file: image,
                 req,
                 appointmentBlankId,
                 doctorId: doctor._id,
             });
-        const appointmentBlankResponce = new AppointmentBlankGraph({
-            ...appointmentBlank,
+        const appointmentResultsResponce = new AppointmentResultsGraph({
+            ...appointmentResults,
         });
-        return appointmentBlankResponce;
+        return appointmentResultsResponce;
     }
 }

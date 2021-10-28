@@ -1,7 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
-import { Specialization } from 'src/modules/specialization/model/specialization.interface';
-import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
 import { Modify } from 'src/utils/modifyType';
 import { ServiceAddictive } from './service.addictive';
 import { Service } from './service.interface';

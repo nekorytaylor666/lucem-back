@@ -1,6 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentRequestURLGraph,
@@ -41,7 +40,7 @@ export class SpecializationResolver {
         @Args('specializationId', { type: () => String })
         specializationId: string,
     ) {
-        const createAttachment = await this.specializationDoctorService.create({
+        await this.specializationDoctorService.create({
             doctorId,
             specializationId,
         });
