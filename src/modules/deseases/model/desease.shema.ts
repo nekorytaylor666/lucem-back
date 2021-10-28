@@ -10,13 +10,4 @@ export const deaseaseShema = {
     ],
     default_sorting_field: 'num',
 };
-
-export interface DeseaseSearch
-    extends Modify<
-        Desease,
-        {
-            _id: string;
-        }
-    > {
-    num: number;
-}
+export type DeseaseSearch = Modify<Desease, { _id: string }> & { num: number };

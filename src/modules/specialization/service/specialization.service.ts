@@ -74,6 +74,14 @@ export class SpecializationService {
                         as: 'specializationDoctor',
                     },
                 },
+                {
+                    $lookup: {
+                        from: 'service',
+                        localField: '_id',
+                        foreignField: 'specializationId',
+                        as: 'services',
+                    },
+                },
             ])
             .toArray();
         const specializationAddictive = specialization.map((val) => {
@@ -83,7 +91,8 @@ export class SpecializationService {
                 photoURL: val.photoURL,
                 doctors: val.specializationDoctor.map((val) => val.doctor),
                 description: val.description,
-            };
+                services: val.services,
+            } as SpecializationAddictive;
         });
         return specializationAddictive;
     }
@@ -94,7 +103,7 @@ export class SpecializationService {
             image &&
             (await this.photoUploadService.storeImages(
                 (await image).createReadStream(),
-                req
+                req,
             ));
         const specialization: Specialization = {
             photoURL,
@@ -167,6 +176,14 @@ export class SpecializationService {
                         as: 'specializationDoctor',
                     },
                 },
+                {
+                    $lookup: {
+                        from: 'service',
+                        localField: '_id',
+                        foreignField: 'specializationId',
+                        as: 'services',
+                    },
+                },
             ])
             .toArray();
         const specializationAddictive: SpecializationAddictive = {
@@ -176,6 +193,7 @@ export class SpecializationService {
             doctors: specialization[0].specializationDoctor.map(
                 (val) => val.doctor,
             ),
+            services: specialization[0].services,
             description: specialization[0].description,
         };
         return specializationAddictive;

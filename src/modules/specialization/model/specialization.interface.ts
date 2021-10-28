@@ -1,7 +1,7 @@
-import { ObjectId } from "mongodb";
-import { PhotoURL } from "src/modules/helpers/uploadFiles/imageUpload/photoURL.interface";
+import { ObjectId } from 'mongodb';
+import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
 
-    export interface Specialization {
+export interface Specialization {
     _id?: ObjectId;
     name: string;
     description: string;

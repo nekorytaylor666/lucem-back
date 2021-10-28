@@ -1,10 +1,17 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { Service } from "./service.interface";
-
-
+import { ArgsType, Field } from '@nestjs/graphql';
+import { Modify } from 'src/utils/modifyType';
+import { Service } from './service.interface';
 
 @ArgsType()
-export class CreateService implements Omit<Service, "_id"> {
+export class CreateService
+    implements
+        Modify<
+            Omit<Service, '_id'>,
+            {
+                specializationId: string;
+            }
+        >
+{
     @Field()
     name: string;
 
@@ -16,4 +23,7 @@ export class CreateService implements Omit<Service, "_id"> {
 
     @Field(() => Boolean, { nullable: true })
     isShown: false;
+
+    @Field({ nullable: true })
+    specializationId: string;
 }

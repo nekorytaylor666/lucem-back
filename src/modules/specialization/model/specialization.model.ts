@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
+import { ServiceGraph } from 'src/modules/service/model/service.model';
 import { Modify } from 'src/utils/modifyType';
 import { SpecializationAddictive } from './specialization.addictive';
 import { Specialization } from './specialization.interface';
@@ -31,6 +32,9 @@ export class SpecializationGraph
     @Field(() => [DoctorGraph])
     doctors: DoctorGraph[];
 
+    @Field(() => [ServiceGraph])
+    services: ServiceGraph[];
+
     constructor(specialization: Partial<SpecializationAddictive>) {
         if (specialization._id) this._id = specialization._id.toHexString();
         if (specialization.name) this.name = specialization.name;
@@ -41,6 +45,10 @@ export class SpecializationGraph
         if (specialization.doctors)
             this.doctors = specialization.doctors.map(
                 (val) => new DoctorGraph({ ...val }),
+            );
+        if (specialization.services)
+            this.services = specialization.services.map(
+                (val) => new ServiceGraph({ ...val }),
             );
     }
 }

@@ -98,6 +98,26 @@ export class ServiceService {
                     as: 'doctors',
                 },
             },
+            {
+                $lookup: {
+                    from: 'specialization',
+                    localField: 'specializationId',
+                    foreignField: '_id',
+                    as: 'specialization',
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    description: 1,
+                    price: 1,
+                    doctorId: 1,
+                    showServices: 1,
+                    specializationId: 1,
+                    doctors: 1,
+                },
+            },
         ]);
         return cursor;
     }
@@ -155,12 +175,20 @@ export class ServiceService {
     }
 
     async create(args: CreateService) {
-        const { description, name, price, isShown } = args;
+        const {
+            description,
+            name,
+            price,
+            isShown,
+            specializationId: _specializationId,
+        } = args;
+        const specializationId = new ObjectId(_specializationId);
         const service: Service = {
             name,
             description,
             price,
             isShown,
+            specializationId,
         };
         const insertService = await this.serviceCollection.insertOne(service);
         const searchService: ServiceSearch = {
