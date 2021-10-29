@@ -14,6 +14,7 @@ import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { AppointmentResultsGraph } from '../model/parts/AppointmenResults.model';
 import { ComplaintGraph } from '../model/parts/complaint.model';
 import { DiagnoseGraph } from '../model/parts/diagnose.model';
+import { InspectionsGraph } from '../model/parts/inspections.model';
 import { AppointmentBlankService } from '../service/appointmentBlank.service';
 
 @Resolver()
@@ -43,10 +44,15 @@ export class AppointmentBlankResolver {
             ...appointmentBlank.diagnose,
             doctor: user,
         });
+        const inspecionsResponce = new InspectionsGraph({
+            ...appointmentBlank.inspections,
+            doctor: user,
+        });
         return [
             appointmentResultsResponce,
             complaintResponce,
             diagnoseResponce,
+            inspecionsResponce,
         ];
     }
 

@@ -2,15 +2,19 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
+import { Session } from 'src/modules/session/model/session.interface';
+import { SessionGraph } from 'src/modules/session/model/session.model';
+import { User } from 'src/modules/user/model/user.interface';
+import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
+import { AppointmentBlank } from '../appointmentBlank.model';
 
-export interface Diagnose {
+export interface Diagnose extends AppointmentBlank {
     _id: ObjectId;
     preliminary: boolean;
     deseaseDBCode?: string;
     diagnose: string;
     natureOfTheDesease: string;
-    doctorId: ObjectId;
 }
 
 @InputType()
@@ -32,7 +36,7 @@ export class CreateDiagnose {
 export class DiagnoseGraph
     implements
         Modify<
-            Omit<Diagnose, 'doctorId'>,
+            Omit<Diagnose, 'doctorId' | 'userId' | 'sessionId'>,
             {
                 _id: string;
             }
@@ -56,7 +60,19 @@ export class DiagnoseGraph
     @Field(() => DoctorGraph, { nullable: true })
     doctor: DoctorGraph;
 
-    constructor(diagnose: Partial<Diagnose> & { doctor?: Doctor }) {
+    @Field(() => UserGraph, { nullable: true })
+    user: UserGraph;
+
+    @Field(() => SessionGraph, { nullable: true })
+    session: SessionGraph;
+
+    constructor(
+        diagnose: Partial<Diagnose> & {
+            doctor?: Doctor;
+            user?: User;
+            session?: Session;
+        },
+    ) {
         if (diagnose._id) this._id = diagnose._id.toHexString();
         if (diagnose.preliminary != undefined)
             this.preliminary = diagnose.preliminary;
@@ -66,5 +82,8 @@ export class DiagnoseGraph
         if (diagnose.deseaseDBCode) this.deseaseDBCode = diagnose.deseaseDBCode;
         if (diagnose.doctor)
             this.doctor = new DoctorGraph({ ...diagnose.doctor });
+        if (diagnose.user) this.user = new UserGraph({ ...diagnose.user });
+        if (diagnose.session)
+            this.session = new SessionGraph({ ...diagnose.session });
     }
 }
