@@ -41,7 +41,7 @@ export class AppointmentBlankService {
             appointmentResults: _appointmentResults,
             diagnose: _diagnose,
             doctorId,
-            inspections,
+            inspections: _inspections,
         } = args;
         const sessionId = new ObjectId(_sessionId);
         const session = await this.sessionService
@@ -59,31 +59,39 @@ export class AppointmentBlankService {
             _id: new ObjectId(),
             description: _appointmentResults.description,
             doctorId,
+            userId: session[0].booking.user._id,
+            sessionId: session[0]._id,
         };
         await this.appointmentResultsCollection.insertOne(appointmentResults);
         const complaint: Complaint = {
             ...complaints,
             _id: new ObjectId(),
             doctorId,
+            userId: session[0].booking.user._id,
+            sessionId: session[0]._id,
         };
         await this.complaintCollection.insertOne(complaint);
         const diagnose: Diagnose = {
             ..._diagnose,
             _id: new ObjectId(),
             doctorId,
+            userId: session[0].booking.user._id,
+            sessionId: session[0]._id,
         };
         await this.diagnodeCollection.insertOne(diagnose);
-        const inpections: Inspections = {
+        const inspections: Inspections = {
             _id: new ObjectId(),
             doctorId,
-            inspections,
+            inspections: _inspections,
+            userId: session[0].booking.user._id,
+            sessionId: session[0]._id,
         };
         await this.inspectionsCollection.insertOne(inspections);
         const appointmentBlank = {
             appointmentResults,
             complaint,
             diagnose,
-            inpections,
+            inspections,
         };
         return appointmentBlank;
     }

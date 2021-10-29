@@ -24,7 +24,7 @@ export class DoctorService {
     ) {}
 
     private get doctorCollection() {
-        return this.database.collection<Doctor>('doctor');
+        return this.database.collection('doctor');
     }
 
     private get searchCollection() {
