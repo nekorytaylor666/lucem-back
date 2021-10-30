@@ -42,7 +42,7 @@ export class AppointmenResultsResolver {
     @Roles('doctor', 'admin', 'user')
     @UseGuards(PreAuthGuard)
     async getAppointmentResultsByUser(
-        @Args('userId', { type: () => String }) userId: string,
+        @Args('userId', { type: () => String, nullable: true }) userId: string,
         @CurrentUserGraph() user: { _id: ObjectId },
         @CurrentTokenPayload() payload: Token,
     ) {

@@ -5,8 +5,14 @@ import { UploadFileModule } from '../helpers/uploadFiles/uploadFiles.module';
 import { SessionModule } from '../session/session.module';
 import { AppointmentBlankResolver } from './resolver/appointmentBlank.resolver';
 import { AppointmenResultsResolver } from './resolver/parts/appointmentResults.resolver';
+import { ComplaintResolver } from './resolver/parts/complaint.resolver';
+import { DiagnoseResolver } from './resolver/parts/diagnose.resolver';
+import { InspectionsResolver } from './resolver/parts/inspections.resolver';
 import { AppointmentBlankService } from './service/appointmentBlank.service';
 import { AppointmenResultsService } from './service/parts/appointmentResult.service';
+import { ComplaintService } from './service/parts/complaint.service';
+import { DiagnoseService } from './service/parts/diagnose.service';
+import { InspectionsService } from './service/parts/inspections.service';
 
 @Module({
     imports: [MongoModule, UploadFileModule, SessionModule, PreAuthModule],
@@ -15,6 +21,12 @@ import { AppointmenResultsService } from './service/parts/appointmentResult.serv
         AppointmentBlankResolver,
         AppointmenResultsResolver,
         AppointmenResultsService,
+        InspectionsService,
+        InspectionsResolver,
+        DiagnoseService,
+        DiagnoseResolver,
+        ComplaintService,
+        ComplaintResolver,
     ],
     exports: [AppointmentBlankService],
 })

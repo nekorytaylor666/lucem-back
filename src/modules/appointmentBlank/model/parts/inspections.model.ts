@@ -33,7 +33,7 @@ export class InspectionsGraph {
 
     constructor(
         inspections: Partial<Inspections> & {
-            doctor: Doctor;
+            doctor?: Doctor;
             user?: User;
             session?: Session;
         },
