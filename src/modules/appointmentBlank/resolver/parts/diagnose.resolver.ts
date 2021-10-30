@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -58,5 +59,25 @@ export class DiagnoseResolver {
             (val) => new DiagnoseGraph({ ...val }),
         );
         return diagnosesResponce;
+    }
+
+    @Query(() => DiagnoseGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async getDiagnoseById(
+        @Args('diagnoseId', { type: () => String }) diagnoseId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const diagnose = await this.diagnoseService.findOne({
+            _id: new ObjectId(diagnoseId),
+        });
+        if (
+            payload.role === TokenRoles.User &&
+            user._id.toHexString() !== diagnose.userId.toHexString()
+        )
+            throw new ApolloError('this is not your diagnose');
+        const diagnoseResponce = new DiagnoseGraph({ ...diagnose });
+        return diagnoseResponce;
     }
 }

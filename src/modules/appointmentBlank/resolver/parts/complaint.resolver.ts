@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -58,5 +59,25 @@ export class ComplaintResolver {
             (val) => new ComplaintGraph({ ...val }),
         );
         return complaintsResponce;
+    }
+
+    @Query(() => ComplaintGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async getComplaintById(
+        @Args('comlaintId', { type: () => String }) complaintId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const complaint = await this.complaintService.findOne({
+            _id: new ObjectId(complaintId),
+        });
+        if (
+            payload.role === TokenRoles.User &&
+            complaint.userId.toHexString() !== user._id.toHexString()
+        )
+            throw new ApolloError('this is not your complaint');
+        const complaintResponce = new ComplaintGraph({ ...complaint });
+        return complaintResponce;
     }
 }

@@ -10,6 +10,11 @@ export class DiagnoseService {
         return this.database.collection('diagnose');
     }
 
+    async findOne(args: Partial<Diagnose>) {
+        const diagnose = await this.diagnoseCollection.findOne<Diagnose>(args);
+        return diagnose;
+    }
+
     async findOneWithAddictives(args: Partial<Diagnose>) {
         const diagnoses = await this.diagnoseCollection
             .aggregate([

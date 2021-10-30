@@ -17,6 +17,12 @@ export class AppointmenResultsService {
         return appointmentResults;
     }
 
+    async findOne(args: Partial<AppointmentResults>) {
+        const appointmentResults =
+            await this.appointmentResultsCollection.findOne<AppointmentResults>(args);
+        return appointmentResults;
+    }
+
     async findWithAddictives(args: Partial<AppointmentResults>) {
         const appointmentResults = await this.appointmentResultsCollection
             .aggregate([

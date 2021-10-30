@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -39,7 +40,7 @@ export class InspectionsResolver {
     }
 
     @Query(() => [InspectionsGraph])
-    @Roles('doctor', 'user', 'admin')
+    @Roles('none')
     @UseGuards(PreAuthGuard)
     async getInspectionsOfUser(
         @Args('userId', { type: () => String, nullable: true }) userId: string,
@@ -58,5 +59,25 @@ export class InspectionsResolver {
             (val) => new InspectionsGraph({ ...val }),
         );
         return inspectionsResponce;
+    }
+
+    @Query(() => InspectionsGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async getInspectionById(
+        @Args('inspectionId', { type: () => String }) inspectionId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const inspection = await this.inspectionsService.findOne({
+            _id: new ObjectId(inspectionId),
+        });
+        if (
+            payload.role === TokenRoles.User &&
+            inspection.userId.toHexString() !== user._id.toHexString()
+        )
+            throw new ApolloError('this is not your inspection');
+        const inspectionResponce = new InspectionsGraph({ ...inspection });
+        return inspectionResponce;
     }
 }

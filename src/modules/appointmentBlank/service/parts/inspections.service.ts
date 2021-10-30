@@ -10,6 +10,12 @@ export class InspectionsService {
         return this.database.collection('inspection');
     }
 
+    async findOne(args: Partial<Inspections>) {
+        const inspection =
+            await this.inspectionsCollection.findOne<Inspections>(args);
+        return inspection;
+    }
+
     async findOneWithAddictions(args: Partial<Inspections>) {
         const inspections = await this.inspectionsCollection
             .aggregate([

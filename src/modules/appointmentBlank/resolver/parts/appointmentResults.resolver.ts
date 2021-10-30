@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -58,6 +59,29 @@ export class AppointmenResultsResolver {
         const appointmentResultsResponce = appointmentResults.map(
             (val) => new AppointmentResultsGraph({ ...val }),
         );
+        return appointmentResultsResponce;
+    }
+
+    @Query(() => AppointmentResultsGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async getAppointmentResultById(
+        @Args('appointmentResultId', { type: () => String })
+        appointmentResultId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const appointmentResult = await this.appointmentResultsService.findOne({
+            _id: new ObjectId(appointmentResultId),
+        });
+        if (
+            payload.role === TokenRoles.User &&
+            appointmentResult.userId.toHexString() !== user._id.toHexString()
+        )
+            throw new ApolloError('this is not your appointment results');
+        const appointmentResultsResponce = new AppointmentResultsGraph({
+            ...appointmentResult,
+        });
         return appointmentResultsResponce;
     }
 }
