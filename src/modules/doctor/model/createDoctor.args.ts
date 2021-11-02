@@ -8,7 +8,11 @@ export class CreateDoctor
     implements
         Modify<
             Omit<Doctor, '_id' | 'token' | 'passwordHASH'>,
-            { dateOfBirth: string; deseasesIDs?: string[], avatar: Promise<FileUpload>}
+            {
+                dateOfBirth: string;
+                deseasesIDs?: string[];
+                avatar: Promise<FileUpload>;
+            }
         >
 {
     @Field()

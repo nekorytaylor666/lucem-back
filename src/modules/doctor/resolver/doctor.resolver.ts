@@ -6,13 +6,17 @@ import {
     CurrentRequestURLGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { TokenService } from 'src/modules/helpers/token/token.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorService } from '../service/doctor.service';
 
 @Resolver()
 export class DoctorResolver {
-    constructor(private doctorService: DoctorService) {}
+    constructor(
+        private doctorService: DoctorService,
+        private tokenService: TokenService,
+    ) {}
 
     @Mutation(() => DoctorGraph)
     @UseGuards(PreAuthGuard)

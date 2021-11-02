@@ -28,6 +28,7 @@ export class AppointmentBlankResolver {
         @CurrentUserGraph() user: Doctor,
         @Args() args: CreateAppointmentBlank,
     ) {
+        console.log(user);
         const appointmentBlank = await this.appointmentBlankService.create({
             ...args,
             doctorId: user._id,
