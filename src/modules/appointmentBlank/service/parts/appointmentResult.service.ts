@@ -19,7 +19,9 @@ export class AppointmenResultsService {
 
     async findOne(args: Partial<AppointmentResults>) {
         const appointmentResults =
-            await this.appointmentResultsCollection.findOne<AppointmentResults>(args);
+            await this.appointmentResultsCollection.findOne<AppointmentResults>(
+                args,
+            );
         return appointmentResults;
     }
 

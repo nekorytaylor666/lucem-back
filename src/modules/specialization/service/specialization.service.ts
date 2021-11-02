@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
+import { Modify } from 'src/utils/modifyType';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { SpecializationAddictive } from '../model/specialization.addictive';
 import { Specialization } from '../model/specialization.interface';
@@ -20,58 +21,54 @@ export class SpecializationService {
         return await this.specializationCollection.find().toArray();
     }
 
+    async updateOne(args: {
+        find: Partial<Specialization>;
+        update: Partial<Modify<Specialization, { doctorIds: ObjectId }>>;
+        method: '$addToSet' | '$push' | '$set' | '$inc' | '$pull';
+        ignoreUndefined?: true;
+    }) {
+        const { find, update, method, ignoreUndefined } = args;
+        const updateQuery = {
+            [method]: update,
+        };
+        const specialization =
+            await this.specializationCollection.findOneAndUpdate(
+                find,
+                updateQuery,
+                {
+                    returnDocument: 'after',
+                    ignoreUndefined: ignoreUndefined ? ignoreUndefined : false,
+                },
+            );
+        return specialization.value;
+    }
+
     async listWithAddictives() {
-        const specialization = await this.specializationCollection
-            .aggregate([
+        const specializations = await this.specializationCollection
+            .aggregate<SpecializationAddictive>([
+                {
+                    $addFields: {
+                        doctorIds: {
+                            $ifNull: ['$doctorIds', ['null']],
+                        },
+                    },
+                },
                 {
                     $lookup: {
-                        from: 'specializationDoctor',
+                        from: 'doctor',
                         let: {
-                            id: '$_id',
+                            doctorIds: '$doctorIds',
                         },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ['$specializationId', '$$id'],
-                                    },
-                                },
-                            },
-                            {
-                                $lookup: {
-                                    from: 'doctor',
-                                    let: {
-                                        doctorId: '$doctorId',
-                                    },
-                                    pipeline: [
-                                        {
-                                            $match: {
-                                                $expr: {
-                                                    $eq: ['$_id', '$$doctorId'],
-                                                },
-                                            },
-                                        },
-                                        {
-                                            $lookup: {
-                                                from: 'timeline',
-                                                localField: '_id',
-                                                foreignField: 'doctorId',
-                                                as: 'timeline',
-                                            },
-                                        },
-                                    ],
-                                    as: 'doctor',
-                                },
-                            },
-                            {
-                                $project: {
-                                    doctor: {
-                                        $arrayElemAt: ['$doctor', 0],
+                                        $in: ['$_id', '$$doctorIds'],
                                     },
                                 },
                             },
                         ],
-                        as: 'specializationDoctor',
+                        as: 'doctors',
                     },
                 },
                 {
@@ -84,17 +81,7 @@ export class SpecializationService {
                 },
             ])
             .toArray();
-        const specializationAddictive = specialization.map((val) => {
-            return {
-                _id: val._id,
-                name: val.name,
-                photoURL: val.photoURL,
-                doctors: val.specializationDoctor.map((val) => val.doctor),
-                description: val.description,
-                services: val.services,
-            } as SpecializationAddictive;
-        });
-        return specializationAddictive;
+        return specializations;
     }
 
     async create(args: CreateSpecialization, req: string) {
@@ -119,7 +106,7 @@ export class SpecializationService {
     async findOneWithAddictives(_id: string) {
         const id = new ObjectId(_id);
         const specialization = await this.specializationCollection
-            .aggregate([
+            .aggregate<SpecializationAddictive>([
                 {
                     $match: {
                         _id: id,
@@ -127,53 +114,20 @@ export class SpecializationService {
                 },
                 {
                     $lookup: {
-                        from: 'specializationDoctor',
+                        from: 'doctor',
                         let: {
-                            id: '$_id',
+                            doctorIds: '$doctorIds',
                         },
                         pipeline: [
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: ['$specializationId', '$$id'],
-                                    },
-                                },
-                            },
-                            {
-                                $lookup: {
-                                    from: 'doctor',
-                                    let: {
-                                        doctorId: '$doctorId',
-                                    },
-                                    pipeline: [
-                                        {
-                                            $match: {
-                                                $expr: {
-                                                    $eq: ['$_id', '$$doctorId'],
-                                                },
-                                            },
-                                        },
-                                        {
-                                            $lookup: {
-                                                from: 'timeline',
-                                                localField: '_id',
-                                                foreignField: 'doctorId',
-                                                as: 'timeline',
-                                            },
-                                        },
-                                    ],
-                                    as: 'doctor',
-                                },
-                            },
-                            {
-                                $project: {
-                                    doctor: {
-                                        $arrayElemAt: ['$doctor', 0],
+                                        $in: ['$_id', '$$doctorIds'],
                                     },
                                 },
                             },
                         ],
-                        as: 'specializationDoctor',
+                        as: 'doctors',
                     },
                 },
                 {
@@ -186,16 +140,6 @@ export class SpecializationService {
                 },
             ])
             .toArray();
-        const specializationAddictive: SpecializationAddictive = {
-            _id: specialization[0]._id,
-            name: specialization[0].name,
-            photoURL: specialization[0].photoURL,
-            doctors: specialization[0].specializationDoctor.map(
-                (val) => val.doctor,
-            ),
-            services: specialization[0].services,
-            description: specialization[0].description,
-        };
-        return specializationAddictive;
+        return specialization[0];
     }
 }

@@ -163,50 +163,34 @@ export class DoctorService {
 
     async listWithAddictives() {
         const doctors = await this.doctorCollection
-            .aggregate([
+            .aggregate<DoctorAddictives>([
                 {
                     $lookup: {
-                        from: 'specializationDoctor',
+                        from: 'specialization',
                         let: {
                             id: '$_id',
                         },
                         pipeline: [
                             {
-                                $match: {
-                                    $expr: {
-                                        $eq: ['$doctorId', '$$id'],
+                                $addFields: {
+                                    doctorIds: {
+                                        $ifNull: ['$doctorIds', ['null']],
                                     },
                                 },
                             },
                             {
-                                $lookup: {
-                                    from: 'specialization',
-                                    localField: 'specializationId',
-                                    foreignField: '_id',
-                                    as: 'specialization',
-                                },
-                            },
-                            {
-                                $project: {
-                                    specialization: {
-                                        $arrayElemAt: ['$specialization', 0],
+                                $match: {
+                                    $expr: {
+                                        $in: ['$$id', '$doctorIds'],
                                     },
                                 },
                             },
                         ],
-                        as: 'specializationDoctor',
+                        as: 'specializations',
                     },
                 },
             ])
             .toArray();
-        const doctorsResponce = doctors.map((val) => {
-            return {
-                ...val,
-                specializations: val.specializationDoctor.map(
-                    (val) => val.specialization,
-                ),
-            } as DoctorAddictives;
-        });
-        return doctorsResponce;
+        return doctors;
     }
 }

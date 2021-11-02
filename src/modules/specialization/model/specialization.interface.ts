@@ -6,4 +6,5 @@ export interface Specialization {
     name: string;
     description: string;
     photoURL: PhotoURL;
+    doctorIds?: ObjectId[];
 }

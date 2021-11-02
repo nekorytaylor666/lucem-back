@@ -1,21 +1,18 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentRequestURLGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { SpecializationDoctorService } from 'src/modules/specializationDoctor/service/specializationDoctor.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { SpecializationGraph } from '../model/specialization.model';
 import { SpecializationService } from '../service/specialization.service';
 
 @Resolver()
 export class SpecializationResolver {
-    constructor(
-        private specializationService: SpecializationService,
-        private specializationDoctorService: SpecializationDoctorService,
-    ) {}
+    constructor(private specializationService: SpecializationService) {}
 
     @Mutation(() => SpecializationGraph)
     @Roles('none')
@@ -34,17 +31,22 @@ export class SpecializationResolver {
         return specializationResponce;
     }
 
-    @Mutation(() => String)
+    @Mutation(() => SpecializationGraph)
     async attachDoctorToSpecialization(
         @Args('doctorId', { type: () => String }) doctorId: string,
         @Args('specializationId', { type: () => String })
         specializationId: string,
     ) {
-        await this.specializationDoctorService.create({
-            doctorId,
-            specializationId,
+        const specialization = await this.specializationService.updateOne({
+            find: { _id: new ObjectId(specializationId) },
+            update: { doctorIds: new ObjectId(doctorId) },
+            method: '$addToSet',
+            ignoreUndefined: true,
         });
-        return 'success';
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
+        return specializationResponce;
     }
 
     @Query(() => SpecializationGraph)

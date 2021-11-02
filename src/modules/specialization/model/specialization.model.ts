@@ -10,7 +10,7 @@ import { Specialization } from './specialization.interface';
 export class SpecializationGraph
     implements
         Modify<
-            Specialization,
+            Omit<Specialization, 'doctorIds'>,
             {
                 _id: string;
                 photoURL: PhotoURLGraph;
