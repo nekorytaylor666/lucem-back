@@ -81,7 +81,7 @@ export class RatingService {
         };
         const insertRating = await this.ratingCollection.insertOne(rating);
         rating._id = insertRating.insertedId;
-        await this.doctorService.update({
+        await this.doctorService.updateOneWithOptions({
             updateField: ['numberOfRatings', 'sumOfRatings'],
             updateValue: [1, numRating],
             findField: ['_id'],
