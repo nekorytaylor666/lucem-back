@@ -1,7 +1,8 @@
-import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { ArgsType, Field, GraphQLISODateTime, Int } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Modify } from 'src/utils/modifyType';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
+import { ExperienceInput } from './parts/experience.input';
 
 @ArgsType()
 export class CreateDoctor
@@ -9,7 +10,6 @@ export class CreateDoctor
         Modify<
             Omit<Doctor, '_id' | 'token' | 'passwordHASH'>,
             {
-                dateOfBirth: string;
                 deseasesIDs?: string[];
                 avatar: Promise<FileUpload>;
             }
@@ -27,8 +27,8 @@ export class CreateDoctor
     @Field()
     password: string;
 
-    @Field()
-    dateOfBirth: string;
+    @Field(() => GraphQLISODateTime)
+    dateOfBirth: Date;
 
     @Field(() => [String], { nullable: true })
     deseasesIDs?: string[];
@@ -44,4 +44,7 @@ export class CreateDoctor
 
     @Field(() => GraphQLUpload)
     avatar: Promise<FileUpload>;
+
+    @Field(() => ExperienceInput, { nullable: true })
+    experience: ExperienceInput[];
 }

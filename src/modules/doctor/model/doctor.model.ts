@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
@@ -6,6 +6,7 @@ import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
 import { DoctorAddictives } from './doctor.addictives';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
+import { ExperienceAndEducationGraph } from './parts/experience.model';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -30,7 +31,7 @@ export class DoctorGraph
     @Field({ nullable: true })
     token?: string;
 
-    @Field(() => Date)
+    @Field(() => GraphQLISODateTime)
     dateOfBirth: Date;
 
     @Field(() => [DeseaseGraph], { nullable: true })
@@ -59,6 +60,9 @@ export class DoctorGraph
 
     @Field(() => [SpecializationGraph], { nullable: true })
     specializations: SpecializationGraph[];
+
+    @Field(() => ExperienceAndEducationGraph)
+    experiences: ExperienceAndEducationGraph[];
 
     constructor(doctor: Partial<DoctorAddictives>) {
         if (doctor._id) this._id = doctor._id.toHexString();
@@ -89,6 +93,10 @@ export class DoctorGraph
         if (doctor.specializations)
             this.specializations = doctor.specializations.map(
                 (val) => new SpecializationGraph({ ...val }),
+            );
+        if (doctor.experiences)
+            this.experiences = doctor.experiences.map(
+                (val) => new ExperienceAndEducationGraph({ ...val }),
             );
     }
 }

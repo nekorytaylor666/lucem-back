@@ -10,6 +10,7 @@ import { DoctorAddictives } from '../model/doctor.addictives';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Modify } from 'src/utils/modifyType';
+import { ExperienceAndEducation } from '../model/parts/experience.model';
 
 @Injectable()
 export class DoctorService {
@@ -22,7 +23,11 @@ export class DoctorService {
     ) {}
 
     private get doctorCollection() {
-        return this.database.collection('doctor');
+        return this.database.collection<Doctor>('doctor');
+    }
+
+    private get experienceCollection() {
+        return this.database.collection('experience');
     }
 
     private get searchCollection() {
@@ -49,6 +54,7 @@ export class DoctorService {
             description,
             acceptableAgeGroup,
             avatar,
+            experience,
         } = args;
         const avatarURL = await this.fileUploadService.storeImages(
             (await avatar).createReadStream(),
@@ -102,6 +108,36 @@ export class DoctorService {
             token,
             deseases,
         ];
+        const experiences: ExperienceAndEducation[] = experience.map((val) => {
+            return {
+                _id: new ObjectId(),
+                doctorId: doctor._id,
+                data: val.data,
+                name: val.name,
+            };
+        });
+        await this.experienceCollection.insertMany(experiences);
+        return doctor;
+    }
+
+    async updateOne(args: {
+        find: Partial<Doctor>;
+        update: Partial<Doctor>;
+        method: '$inc' | '$set' | '$addToSet' | '$push' | '$pull';
+        ignoreundefined?: true;
+    }) {
+        const { find, update, method, ignoreundefined } = args;
+        const updateQuery = {
+            [method]: update,
+        };
+        const doctor = await this.doctorCollection.findOneAndUpdate(
+            find,
+            updateQuery,
+            {
+                returnDocument: 'after',
+                ignoreUndefined: ignoreundefined ? ignoreundefined : false,
+            },
+        );
         return doctor;
     }
 
@@ -129,31 +165,12 @@ export class DoctorService {
         return doctor;
     }
 
-    async update(args: {
-        findField: (keyof Doctor)[];
-        findValue: any[];
-        updateField: (keyof Doctor)[];
-        updateValue: any[];
-        method: '$inc' | '$set' | '$addToSet';
-    }) {
-        const { findField, findValue, updateField, updateValue, method } = args;
-        const findQuery: any = {};
-        findField.map((val, ind) => {
-            findQuery[val] = findValue[ind];
-        });
-        const preUpdateQuery: any = {};
-        updateField.map((val, ind) => {
-            preUpdateQuery[val] = updateValue[ind];
-        });
-        const updateQuery = {
-            [method]: preUpdateQuery,
-        };
-        await this.doctorCollection.updateOne(findQuery, updateQuery);
-    }
-
-    async listWithAddictives() {
+    async findOneWithAddictives(args: Partial<Doctor>) {
         const doctors = await this.doctorCollection
             .aggregate<DoctorAddictives>([
+                {
+                    $match: args,
+                },
                 {
                     $lookup: {
                         from: 'specialization',
@@ -177,6 +194,101 @@ export class DoctorService {
                             },
                         ],
                         as: 'specializations',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'experience',
+                        localField: '_id',
+                        foreignField: 'doctorId',
+                        as: 'experiences',
+                    },
+                },
+            ])
+            .toArray();
+        return doctors[0];
+    }
+
+    async updateOneWithOptions(args: {
+        findField: (keyof Doctor)[];
+        findValue: any[];
+        updateField: (keyof Doctor)[];
+        updateValue: any[];
+        method: '$inc' | '$set' | '$addToSet';
+        ignoreundefined?: true;
+    }) {
+        const {
+            findField,
+            findValue,
+            updateField,
+            updateValue,
+            method,
+            ignoreundefined,
+        } = args;
+        const findQuery: any = {};
+        findField.map((val, ind) => {
+            findQuery[val] = findValue[ind];
+        });
+        const preUpdateQuery: any = {};
+        updateField.map((val, ind) => {
+            preUpdateQuery[val] = updateValue[ind];
+        });
+        const updateQuery = {
+            [method]: preUpdateQuery,
+        };
+        const doctor = await this.doctorCollection.findOneAndUpdate(
+            findQuery,
+            updateQuery,
+            {
+                returnDocument: 'after',
+                ignoreUndefined: ignoreundefined ? ignoreundefined : false,
+            },
+        );
+        return doctor;
+    }
+
+    async listWithAddictives() {
+        const doctors = await this.doctorCollection
+            .aggregate<DoctorAddictives>([
+                {
+                    $lookup: {
+                        from: 'experience',
+                        localField: '_id',
+                        foreignField: 'doctorId',
+                        as: 'experience',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'specialization',
+                        let: {
+                            id: '$_id',
+                        },
+                        pipeline: [
+                            {
+                                $addFields: {
+                                    doctorIds: {
+                                        $ifNull: ['$doctorIds', ['null']],
+                                    },
+                                },
+                            },
+                            {
+                                $match: {
+                                    $expr: {
+                                        $in: ['$$id', '$doctorIds'],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'specializations',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'experience',
+                        localField: '_id',
+                        foreignField: 'doctorId',
+                        as: 'experiences',
                     },
                 },
             ])
