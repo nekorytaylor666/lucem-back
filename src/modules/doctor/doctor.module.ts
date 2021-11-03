@@ -1,7 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { AdminModule } from '../admin/admin.module';
 import { DeseasesModule } from '../deseases/deseases.module';
-import { DoctorDeseaseModule } from '../doctorDesease/doctorDesease.module';
 import { MongoModule } from '../helpers/database/mongo.module';
 import { SmartSearchModule } from '../helpers/smartSearch/search.module';
 import { TokenModule } from '../helpers/token/token.module';
@@ -15,7 +14,6 @@ import { DoctorService } from './service/doctor.service';
         TokenModule,
         forwardRef(() => UserModule),
         MongoModule,
-        DoctorDeseaseModule,
         DeseasesModule,
         SmartSearchModule,
         UploadFileModule,

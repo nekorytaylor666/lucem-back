@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { CreateDeseaseInput } from '../model/desease.inputs';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
+import { Modify } from 'src/utils/modifyType';
 import { Desease } from '../model/desease.interface';
 import { DeseaseSearch } from '../model/desease.shema';
 
@@ -20,8 +20,12 @@ export class DeseaseService {
         return this.searchClient.collections('desease').documents();
     }
 
-    async create(desease: CreateDeseaseInput) {
+    async create(name: string) {
         try {
+            const desease: Desease = {
+                _id: new ObjectId(),
+                name,
+            };
             const insertDesease = await this.deseaseCollection.insertOne(
                 desease,
             );
@@ -32,24 +36,43 @@ export class DeseaseService {
             };
 
             await this.searchCollection.create(deseaseSearch);
-
-            const deseaseResponce: Desease = {
-                ...desease,
-                _id: insertDesease.insertedId,
-            };
-            return deseaseResponce;
+            return desease;
         } catch (error) {
             throw new BadRequestException(error);
         }
     }
 
-    async list() {
-        //!TODO Add pagination for cursor
-        return await this.deseaseCollection.find().toArray();
+    listCursor() {
+        return this.deseaseCollection.find();
     }
 
     async findOne(args: Partial<Desease>) {
         const desease = await this.deseaseCollection.findOne(args);
         return desease;
+    }
+
+    async updateOne(args: {
+        find: Partial<Desease>;
+        update: Partial<Modify<Desease, { doctorIds: ObjectId }>>;
+        method: '$set' | '$inc' | '$addToSet' | '$push';
+        ignoreUndefined?: true;
+    }) {
+        const { find, update, method, ignoreUndefined } = args;
+        const updateQuery = {
+            [method]: update,
+        };
+        const desease = await this.deseaseCollection.findOneAndUpdate(
+            find,
+            updateQuery,
+            {
+                returnDocument: 'after',
+                ignoreUndefined: ignoreUndefined ? ignoreUndefined : false,
+            },
+        );
+        return desease.value;
+    }
+
+    async list() {
+        return await this.deseaseCollection.find().toArray();
     }
 }
