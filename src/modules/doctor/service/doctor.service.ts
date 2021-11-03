@@ -7,7 +7,6 @@ import { TokenService } from 'src/modules/helpers/token/token.service';
 import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { DoctorAddictives } from '../model/doctor.addictives';
-import { DoctorDeseaseService } from 'src/modules/doctorDesease/service/doctorDesease.service';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Modify } from 'src/utils/modifyType';
@@ -18,7 +17,6 @@ export class DoctorService {
         @Inject('DATABASE_CONNECTION') private database: Db,
         private tokenService: TokenService,
         private deseaseService: DeseaseService,
-        private doctorDeseaseService: DoctorDeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
         private fileUploadService: ImageUploadService,
     ) {}
@@ -89,14 +87,6 @@ export class DoctorService {
             _id: doctor._id.toHexString(),
         };
         await this.searchCollection.create(searchDoctor);
-        if (deseases) {
-            deseasesIDs.map(async (val) => {
-                this.doctorDeseaseService.create({
-                    doctorId: insertDoctor.insertedId.toHexString(),
-                    deseaseId: val,
-                });
-            });
-        }
         const token = this.tokenService.create({
             user: {
                 _id: insertDoctor.insertedId.toHexString(),

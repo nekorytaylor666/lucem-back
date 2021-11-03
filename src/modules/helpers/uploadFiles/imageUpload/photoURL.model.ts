@@ -3,13 +3,13 @@ import { PhotoURL } from './photoURL.interface';
 
 @ObjectType('PhotoURL')
 export class PhotoURLGraph implements PhotoURL {
-    @Field()
+    @Field({ nullable: true })
     xl: string;
 
-    @Field()
+    @Field({ nullable: true })
     m: string;
 
-    @Field()
+    @Field({ nullable: true })
     thumbnail: string;
 
     constructor(photo: Partial<PhotoURL>) {
