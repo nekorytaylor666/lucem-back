@@ -61,7 +61,7 @@ export class DoctorGraph
     @Field(() => [SpecializationGraph], { nullable: true })
     specializations: SpecializationGraph[];
 
-    @Field(() => ExperienceAndEducationGraph)
+    @Field(() => ExperienceAndEducationGraph, { nullable: true })
     experiences: ExperienceAndEducationGraph[];
 
     constructor(doctor: Partial<DoctorAddictives>) {
