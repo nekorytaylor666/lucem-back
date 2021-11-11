@@ -8,5 +8,5 @@ export interface Service {
     doctorId?: ObjectId[];
     isShown?: false;
     showServices?: ObjectId[];
-    specializationId: ObjectId;
+    specializationIds: ObjectId[];
 }

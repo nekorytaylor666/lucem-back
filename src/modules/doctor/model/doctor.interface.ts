@@ -15,14 +15,13 @@ export interface Doctor {
     phoneNumber: string;
     token?: string;
     passwordHASH: string;
-    dateOfBirth: Date;
     serviceIds?: string[];
     yearsOfExperience: number;
     numberOfRatings?: number;
     sumOfRatings?: number;
     description: string;
     acceptableAgeGroup: AcceptableAgeGroup;
-    avatar: PhotoURL;
+    avatar?: PhotoURL;
 }
 
 registerEnumType(AcceptableAgeGroup, {

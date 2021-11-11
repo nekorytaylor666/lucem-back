@@ -38,6 +38,7 @@
         "aws-sdk": "^2.974.0",
         "bcryptjs": "^2.4.3",
         "cache-manager": "^3.4.4",
+        "exceljs": "^4.3.0",
         "graphql": "^15.5.1",
         "graphql-upload": "^12.0.0",
         "jsonwebtoken": "^8.5.1",
@@ -47,7 +48,8 @@
         "rimraf": "^3.0.2",
         "rxjs": "^7.2.0",
         "sharp": "^0.29.0",
-        "typesense": "^0.14.0"
+        "typesense": "^0.14.0",
+        "xlsx": "^0.17.3"
     },
     "devDependencies": {
         "@nestjs/cli": "^8.0.0",

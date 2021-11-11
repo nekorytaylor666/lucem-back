@@ -48,7 +48,6 @@ export class DoctorService {
             email,
             phoneNumber: _phoneNumber,
             password,
-            dateOfBirth: _dateOfBirth,
             deseasesIDs,
             yearsOfExperience,
             description,
@@ -61,7 +60,6 @@ export class DoctorService {
             req,
         );
         const passwordHASH = await bcrypt.hash(password, 12);
-        const dateOfBirth = new Date(_dateOfBirth);
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
         const deseases =
             deseasesIDs &&
@@ -77,7 +75,6 @@ export class DoctorService {
             fullName,
             email,
             passwordHASH,
-            dateOfBirth,
             phoneNumber,
             yearsOfExperience,
             description,
@@ -98,7 +95,6 @@ export class DoctorService {
                 _id: insertDoctor.insertedId.toHexString(),
                 email,
                 phoneNumber,
-                dateOfBirth,
                 fullName,
             },
             role: TokenRoles.Doctor,

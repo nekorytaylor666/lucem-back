@@ -17,7 +17,7 @@ export class SessionResolver {
         @Args('bookingId', { type: () => String }) bookingId: string,
     ) {
         const session = await this.sessionService.create(bookingId);
-        const sessionResponce = new SessionGraph({...session});
+        const sessionResponce = new SessionGraph({ ...session });
         return sessionResponce;
     }
 
@@ -25,32 +25,38 @@ export class SessionResolver {
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async endSession(
-        @Args('sessionId', { type: () => String}) sessionId: string
+        @Args('sessionId', { type: () => String }) sessionId: string,
     ) {
         const session = await this.sessionService.endSession(sessionId);
-        const sessionResponce = new SessionGraph({...session});
+        const sessionResponce = new SessionGraph({ ...session });
         return sessionResponce;
     }
 
     @Query(() => SessionGraph)
     async getActiveSessionByUserId(
-        @Args('userId', { type: () => String}) userId: string
+        @Args('userId', { type: () => String }) userId: string,
     ) {
         const session = await this.sessionService.findActiveSession(userId);
-        const sessionResponce = new SessionGraph({...session});
+        const sessionResponce = new SessionGraph({ ...session });
         return sessionResponce;
-    };
+    }
 
     @Query(() => [SessionGraph])
     async getHistoryOfSessions(
-        @Args('page', { type: () => Int}) page: number
+        @Args('page', { type: () => Int }) page: number,
     ) {
         const sessionCursor = this.sessionService.findWithAddictives({
             fields: ['endDate'],
-            values: [{$exists: true}]
+            values: [{ $exists: true }],
         });
-        const sessions = await paginate({ cursor: sessionCursor, page, elementsPerPage: 10});
-        const sessionsResponce = sessions.map((val) => new SessionGraph({...val}));
+        const sessions = await paginate({
+            cursor: sessionCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const sessionsResponce = sessions.map(
+            (val) => new SessionGraph({ ...val }),
+        );
         return sessionsResponce;
     }
 }

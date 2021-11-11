@@ -101,21 +101,19 @@ export class ServiceService {
             {
                 $lookup: {
                     from: 'specialization',
-                    localField: 'specializationId',
-                    foreignField: '_id',
-                    as: 'specialization',
-                },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    description: 1,
-                    price: 1,
-                    doctorId: 1,
-                    showServices: 1,
-                    specializationId: 1,
-                    doctors: 1,
+                    let: {
+                        specializationId: '$specializationId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $in: ['$_id', '$$specializationId'],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'specializations',
                 },
             },
         ]);
@@ -180,15 +178,17 @@ export class ServiceService {
             name,
             price,
             isShown,
-            specializationId: _specializationId,
+            specializationIds: _specializationIds,
         } = args;
-        const specializationId = new ObjectId(_specializationId);
+        const specializationIds = _specializationIds.map(
+            (val) => new ObjectId(val),
+        );
         const service: Service = {
             name,
             description,
             price,
             isShown,
-            specializationId,
+            specializationIds,
         };
         const insertService = await this.serviceCollection.insertOne(service);
         const searchService: ServiceSearch = {
