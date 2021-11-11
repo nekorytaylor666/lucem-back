@@ -34,13 +34,13 @@ export class DoctorGraph
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
-    @Field(() => Int)
+    @Field(() => Int, { nullable: true })
     yearsOfExperience: number;
 
     @Field({ nullable: true, defaultValue: 10 })
     rating: number;
 
-    @Field()
+    @Field({ nullable: true })
     description: string;
 
     @Field(() => Int, { defaultValue: 0 })
@@ -49,7 +49,7 @@ export class DoctorGraph
     @Field(() => [TimelineGraph], { nullable: true })
     timelines: TimelineGraph[];
 
-    @Field()
+    @Field({ nullable: true })
     acceptableAgeGroup: AcceptableAgeGroup;
 
     @Field(() => PhotoURLGraph, { nullable: true })
