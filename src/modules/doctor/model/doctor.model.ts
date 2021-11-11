@@ -31,9 +31,6 @@ export class DoctorGraph
     @Field({ nullable: true })
     token?: string;
 
-    @Field(() => GraphQLISODateTime)
-    dateOfBirth: Date;
-
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
@@ -70,7 +67,6 @@ export class DoctorGraph
         if (doctor.email) this.email = doctor.email;
         if (doctor.phoneNumber) this.phoneNumber = doctor.phoneNumber;
         if (doctor.token) this.token = doctor.token;
-        if (doctor.dateOfBirth) this.dateOfBirth = doctor.dateOfBirth;
         if (doctor.deseases)
             this.deseases = doctor.deseases.map(
                 (val) => new DeseaseGraph({ ...val }),

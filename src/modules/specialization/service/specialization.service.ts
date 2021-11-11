@@ -74,8 +74,18 @@ export class SpecializationService {
                 {
                     $lookup: {
                         from: 'service',
-                        localField: '_id',
-                        foreignField: 'specializationId',
+                        let: {
+                            id: '_id',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $in: ['$$id', 'specializationIds'],
+                                    },
+                                },
+                            },
+                        ],
                         as: 'services',
                     },
                 },

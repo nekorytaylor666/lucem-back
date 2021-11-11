@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongoModule } from './modules/helpers/database/mongo.module';
-import { TokenModule } from './modules/helpers/token/token.module';
 import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
 import { DoctorModule } from './modules/doctor/doctor.module';
@@ -15,7 +14,6 @@ import { SpecializationModule } from './modules/specialization/specialization.mo
 import { SmartSearchModule } from './modules/helpers/smartSearch/search.module';
 import { SearchModule } from './modules/search/search.module';
 import { RatingModule } from './modules/rating/rating.module';
-import { PreAuthModule } from './modules/helpers/auth/auth.module';
 import { SessionModule } from './modules/session/session.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload/imageUpload.controller';
@@ -23,11 +21,12 @@ import { AdminModule } from './modules/admin/admin.module';
 import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBlank.module';
 import { ForwardsModule } from './modules/forwards/forwards.module';
 import { WorkTimeModule } from './modules/workTime/workTime.module';
+import { ScriptModule } from './modules/script/script.module';
 
 @Module({
     imports: [
         MulterModule.register({
-            dest: './uploads'
+            dest: './uploads',
         }),
         ConfigModule.forRoot({
             isGlobal: true,
@@ -57,7 +56,8 @@ import { WorkTimeModule } from './modules/workTime/workTime.module';
         AdminModule,
         AppointmentBlankModule,
         ForwardsModule,
-        WorkTimeModule
+        WorkTimeModule,
+        ScriptModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],

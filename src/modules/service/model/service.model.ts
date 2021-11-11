@@ -6,7 +6,7 @@ import { Service } from './service.interface';
 
 @ObjectType('Service')
 export class ServiceGraph
-    implements Omit<Modify<Service, { _id: string }>, 'specializationId'>
+    implements Omit<Modify<Service, { _id: string }>, 'specializationIds'>
 {
     @Field()
     _id: string;

@@ -5,6 +5,6 @@ export interface Specialization {
     _id?: ObjectId;
     name: string;
     description: string;
-    photoURL: PhotoURL;
+    photoURL?: PhotoURL;
     doctorIds?: ObjectId[];
 }
