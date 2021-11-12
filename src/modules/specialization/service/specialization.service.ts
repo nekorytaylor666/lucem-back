@@ -81,7 +81,7 @@ export class SpecializationService {
                             {
                                 $match: {
                                     $expr: {
-                                        $in: ['$$id', 'specializationIds'],
+                                        $in: ['$$id', '$specializationIds'],
                                     },
                                 },
                             },
