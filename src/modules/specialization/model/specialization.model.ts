@@ -29,6 +29,9 @@ export class SpecializationGraph
     @Field(() => PhotoURLGraph, { nullable: true })
     photoURL: PhotoURLGraph;
 
+    @Field({ nullable: true })
+    colorCode: string;
+
     @Field(() => [DoctorGraph])
     doctors: DoctorGraph[];
 
