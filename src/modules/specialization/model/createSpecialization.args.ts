@@ -1,6 +1,5 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { Modify } from 'src/utils/modifyType';
 import { Specialization } from './specialization.interface';
 
 @ArgsType()
@@ -12,6 +11,9 @@ export class CreateSpecialization
 
     @Field()
     description: string;
+
+    @Field({ nullable: true })
+    colorCode: string;
 
     @Field(() => GraphQLUpload, {
         name: 'image',
