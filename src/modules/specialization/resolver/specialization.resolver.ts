@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -7,6 +8,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
+import { EditSpecialization } from '../model/editSpecialization.args';
 import { SpecializationGraph } from '../model/specialization.model';
 import { SpecializationService } from '../service/specialization.service';
 
@@ -71,6 +73,41 @@ export class SpecializationResolver {
         const specializationResponce = specialization.map(
             (val) => new SpecializationGraph({ ...val }),
         );
+        return specializationResponce;
+    }
+
+    @Mutation(() => SpecializationGraph)
+    async editSpecializationWithoutFile(
+        @Args() args: EditSpecialization,
+    ): Promise<SpecializationGraph> {
+        const specialization =
+            await this.specializationService.editSpecializationWithoutFiles(
+                args,
+            );
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
+        return specializationResponce;
+    }
+
+    @Mutation(() => SpecializationGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async editSpecializationWithFile(
+        @Args('image', { type: () => GraphQLUpload, name: 'image' })
+        image: Promise<FileUpload>,
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+        @CurrentRequestURLGraph() req: string,
+    ): Promise<SpecializationGraph> {
+        const specialization = await this.specializationService.editWithFile({
+            image: await image,
+            specializationId,
+            req,
+        });
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
         return specializationResponce;
     }
 }

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Collection, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { AdminService } from 'src/modules/admin/service/admin.service';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { UserService } from 'src/modules/user/service/user.service';
