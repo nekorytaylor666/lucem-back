@@ -127,7 +127,6 @@ export class ScriptService {
             if (_specializations) {
                 const specializations =
                     _specializations && _specializations.toString().split(', ');
-                console.log(specializations);
                 specializations &&
                     Promise.all(
                         specializations.map(async (val) => {
@@ -191,7 +190,6 @@ export class ScriptService {
                 isShown: isViewed === 'Да' ? undefined : false,
                 specializationIds,
             };
-            console.log(service);
             await this.serviceCollection.insertOne(service, {
                 ignoreUndefined: true,
             });

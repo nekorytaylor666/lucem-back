@@ -11,6 +11,7 @@ import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Modify } from 'src/utils/modifyType';
 import { ExperienceAndEducation } from '../model/parts/experience.model';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class DoctorService {
@@ -134,7 +135,7 @@ export class DoctorService {
                 ignoreUndefined: ignoreundefined ? ignoreundefined : false,
             },
         );
-        return doctor;
+        return doctor.value;
     }
 
     async login(args: { email: string; password: string }) {
@@ -153,6 +154,25 @@ export class DoctorService {
             role: TokenRoles.Doctor,
         });
         doctor.token = token;
+        return doctor;
+    }
+
+    async editWithFile(args: {
+        image: FileUpload;
+        doctorId: string;
+        req: string;
+    }) {
+        const { image, doctorId: _doctorId, req } = args;
+        const doctorId = new ObjectId(_doctorId);
+        const photoURL = await this.fileUploadService.storeImages(
+            image.createReadStream(),
+            req,
+        );
+        const doctor = await this.updateOne({
+            find: { _id: doctorId },
+            update: { avatar: photoURL },
+            method: '$set',
+        });
         return doctor;
     }
 

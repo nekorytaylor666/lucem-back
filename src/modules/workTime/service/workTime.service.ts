@@ -12,6 +12,11 @@ export class WorkTimeService {
         return this.database.collection<WorkTime>('workTime');
     }
 
+    async find(args: Partial<WorkTime>) {
+        const workTimes = await this.workTimeCollection.find(args).toArray();
+        return workTimes;
+    }
+
     async findOneWithOptions(args: {
         fields: (keyof WorkTime)[];
         values: any[];

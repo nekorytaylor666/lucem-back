@@ -55,7 +55,6 @@ export class AppointmenResultsResolver {
                 : await this.appointmentResultsService.findWithAddictives({
                       userId: user._id,
                   });
-        console.log(appointmentResults);
         const appointmentResultsResponce = appointmentResults.map(
             (val) => new AppointmentResultsGraph({ ...val }),
         );

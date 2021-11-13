@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -57,6 +58,24 @@ export class DoctorResolver {
         const doctorResponce = doctors.map(
             (val) => new DoctorGraph({ ...val }),
         );
+        return doctorResponce;
+    }
+
+    @Mutation(() => DoctorGraph)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async editDoctorWithFile(
+        @Args('image', { type: () => GraphQLUpload })
+        image: Promise<FileUpload>,
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @CurrentRequestURLGraph() req: string,
+    ) {
+        const doctor = await this.doctorService.editWithFile({
+            image: await image,
+            doctorId,
+            req,
+        });
+        const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
 }

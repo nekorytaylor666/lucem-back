@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { ApolloError } from 'apollo-server-express';
+import moment from 'moment';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { WorkTimeService } from 'src/modules/workTime/service/workTime.service';
 import { parseTime } from 'src/utils/parseTime';
 import { TimelineAddictive } from '../model/timeline.addictive';
@@ -12,10 +15,23 @@ export class TimelineService {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         private workTimeService: WorkTimeService,
+        private doctorService: DoctorService,
     ) {}
 
     private get timelineCollection() {
         return this.database.collection<Timeline>('timeline');
+    }
+
+    @Cron('* * 1 * *')
+    async setTimeLines() {
+        const doctors = await this.doctorService.list();
+        Promise.all(
+            doctors.map(async (val) => {
+                const workTimes = await this.workTimeService.find({
+                    doctorId: val._id,
+                });
+            }),
+        );
     }
 
     async findCursorWithAddictives(
