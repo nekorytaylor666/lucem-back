@@ -11,6 +11,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
+import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 @Resolver()
 export class ServiceResolver {
     constructor(private serviceService: ServiceService) {}
@@ -22,16 +23,30 @@ export class ServiceResolver {
         return serviceResponce;
     }
 
+    @Query(() => ServiceGraph)
+    async getServiceById(
+        @Args('serviceId', { type: () => String }) serviceId: string,
+    ) {
+        const service = await this.serviceService.findById(
+            new ObjectId(serviceId),
+        );
+        const serviceResponce = new ServiceGraph({ ...service });
+        return serviceResponce;
+    }
+
     @Query(() => [ServiceGraph])
     async getServicesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
-        const service = await this.serviceService
-            .findWithAddictivesCursor({
-                fields: ['doctorId'],
-                values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }],
-            })
-            .then((val) => val.toArray());
+        // const service = await this.serviceService
+        //     .findWithAddictivesCursor({
+        //         fields: ['doctorId'],
+        //         values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }],
+        //     })
+        //     .then((val) => val.toArray());
+        const service = await this.serviceService.findByDoctorId(
+            new ObjectId(doctorId),
+        );
         const serviceResponce = service.map(
             (val) => new ServiceGraph({ ...val }),
         );
@@ -44,11 +59,9 @@ export class ServiceResolver {
         @Args('page', { type: () => Int }) page: number,
     ) {
         const doctorIds = _doctorIds.map((val) => new ObjectId(val));
-        const serviceCursor =
-            await this.serviceService.findWithAddictivesCursor({
-                fields: ['doctorId'],
-                values: [{ $in: doctorIds }],
-            });
+        const serviceCursor = await this.serviceService.findByDoctorIdsCursor(
+            doctorIds,
+        );
         const service = await paginate({
             cursor: serviceCursor,
             page,
@@ -65,7 +78,7 @@ export class ServiceResolver {
         @Args('doctorId', { type: () => String }) doctorId: string,
         @Args('serviceId', { type: () => String }) serviceId: string,
     ) {
-        const attachService = await this.serviceService.updateOne({
+        const attachService = await this.serviceService.updateOneWithOptions({
             findField: ['_id'],
             findValue: [new ObjectId(serviceId)],
             updateField: ['doctorId'],
@@ -112,7 +125,7 @@ export class ServiceResolver {
         unShownServiceId: string,
         @Args('shownServiceId', { type: () => String }) shownServiceId: string,
     ) {
-        const service = await this.serviceService.updateOne({
+        const service = await this.serviceService.updateOneWithOptions({
             findField: ['_id'],
             findValue: [new ObjectId(shownServiceId)],
             updateField: ['showServices'],
