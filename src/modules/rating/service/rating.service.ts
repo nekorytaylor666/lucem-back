@@ -2,64 +2,43 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { BasicService } from 'src/modules/helpers/basic.service';
 import { CreateRating } from '../model/createRating.args';
+import { RatingAddictive } from '../model/rating.addictive';
 import { Rating } from '../model/rating.interface';
 
 @Injectable()
-export class RatingService {
+export class RatingService extends BasicService<Rating> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         private doctorService: DoctorService,
-    ) {}
-
-    private get ratingCollection() {
-        return this.database.collection('rating');
+    ) {
+        super();
+        this.dbService = this.database.collection('rating');
+        this.basicLookups = [
+            {
+                from: 'doctor',
+                localField: 'doctorId',
+                foreignField: '_id',
+                as: 'doctor',
+                isArray: false,
+            },
+            {
+                from: 'user',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user',
+                isArray: false,
+            },
+        ];
     }
 
-    findCursorWithAddictive(args: {
-        findFields: (keyof Rating)[];
-        findValues: any[];
-    }): AggregationCursor<Rating> {
-        const { findFields, findValues } = args;
-        const findQuery: any = {};
-        findFields.map((val, ind) => {
-            findQuery[val] = findValues[ind];
+    findRatingsByDoctorId(doctorId: ObjectId) {
+        const ratings = this.findWithAddictivesCursor<RatingAddictive>({
+            find: { doctorId },
+            lookups: this.basicLookups,
         });
-        const ratingCursor = this.ratingCollection.aggregate<Rating>([
-            {
-                $match: findQuery,
-            },
-            {
-                $lookup: {
-                    from: 'doctor',
-                    localField: 'doctorId',
-                    foreignField: '_id',
-                    as: 'doctor',
-                },
-            },
-            {
-                $lookup: {
-                    from: 'user',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'user',
-                },
-            },
-            {
-                $project: {
-                    doctor: {
-                        $arrayElemAt: ['$doctor', 0],
-                    },
-                    user: {
-                        $arrayElemAt: ['$user', 0],
-                    },
-                    rating: 1,
-                    comment: 1,
-                    _id: 1,
-                },
-            },
-        ]);
-        return ratingCursor;
+        return ratings;
     }
 
     async create(
@@ -79,8 +58,8 @@ export class RatingService {
             comment,
             rating: numRating,
         };
-        const insertRating = await this.ratingCollection.insertOne(rating);
-        rating._id = insertRating.insertedId;
+        const insertRating = await this.insertOne(rating);
+        rating._id = insertRating;
         await this.doctorService.updateOneWithOptions({
             updateField: ['numberOfRatings', 'sumOfRatings'],
             updateValue: [1, numRating],

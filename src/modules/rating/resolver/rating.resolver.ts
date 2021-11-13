@@ -3,8 +3,8 @@ import { Args, Mutation, Resolver, Query, Int } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
-    CurrentUserGraph, PreAuthGuard,
-
+    CurrentUserGraph,
+    PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
@@ -36,16 +36,17 @@ export class RatingResolver {
         @Args('doctorId', { type: () => String }) doctorId: string,
         @Args('page', { type: () => Int }) page: number,
     ) {
-        const ratingCursor = this.ratingService.findCursorWithAddictive({
-            findFields: ['doctorId'],
-            findValues: [new ObjectId(doctorId)]
-        });
+        const ratingCursor = this.ratingService.findRatingsByDoctorId(
+            new ObjectId(doctorId),
+        );
         const ratings = await paginate({
             cursor: ratingCursor,
             page,
             elementsPerPage: 10,
         });
-        const ratingResponce = ratings.map((val) => new RatingGraph({...val}));
+        const ratingResponce = ratings.map(
+            (val) => new RatingGraph({ ...val }),
+        );
         return ratingResponce;
     }
 }
