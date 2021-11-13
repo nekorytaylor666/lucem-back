@@ -1,6 +1,15 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Specialization } from './specialization.interface';
+
+@InputType()
+export class ColorCodeGradientInput {
+    @Field()
+    start: string;
+
+    @Field()
+    finish: string;
+}
 
 @ArgsType()
 export class CreateSpecialization
@@ -13,7 +22,7 @@ export class CreateSpecialization
     description: string;
 
     @Field({ nullable: true })
-    colorCode: string;
+    colorCodeGradient: ColorCodeGradientInput;
 
     @Field(() => GraphQLUpload, {
         name: 'image',

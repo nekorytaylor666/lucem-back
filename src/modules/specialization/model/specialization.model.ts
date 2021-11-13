@@ -5,6 +5,7 @@ import { ServiceGraph } from 'src/modules/service/model/service.model';
 import { Modify } from 'src/utils/modifyType';
 import { SpecializationAddictive } from './specialization.addictive';
 import { Specialization } from './specialization.interface';
+import { ColorCodeGradientGraph } from './utils/colorCode.model';
 
 @ObjectType('Specialization')
 export class SpecializationGraph
@@ -29,8 +30,8 @@ export class SpecializationGraph
     @Field(() => PhotoURLGraph, { nullable: true })
     photoURL: PhotoURLGraph;
 
-    @Field({ nullable: true })
-    colorCode: string;
+    @Field(() => ColorCodeGradientGraph, { nullable: true })
+    colorCodeGradient: ColorCodeGradientGraph;
 
     @Field(() => [DoctorGraph])
     doctors: DoctorGraph[];
@@ -53,5 +54,9 @@ export class SpecializationGraph
             this.services = specialization.services.map(
                 (val) => new ServiceGraph({ ...val }),
             );
+        if (specialization.colorCodeGradient)
+            this.colorCodeGradient = new ColorCodeGradientGraph({
+                ...specialization.colorCodeGradient,
+            });
     }
 }
