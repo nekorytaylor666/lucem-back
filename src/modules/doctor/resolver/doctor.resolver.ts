@@ -8,6 +8,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { TokenService } from 'src/modules/helpers/token/token.service';
+import { ServiceService } from 'src/modules/service/service/service.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorService } from '../service/doctor.service';
@@ -17,6 +18,7 @@ export class DoctorResolver {
     constructor(
         private doctorService: DoctorService,
         private tokenService: TokenService,
+        private serviceService: ServiceService,
     ) {}
 
     @Mutation(() => DoctorGraph)
@@ -78,4 +80,9 @@ export class DoctorResolver {
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
+
+    // @Query(() => [DoctorGraph])
+    // async getDoctorsByService(
+    //     @Args('serviceId', { type: () => String }) serviceId: string,
+    // ) {}
 }

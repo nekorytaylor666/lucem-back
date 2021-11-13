@@ -12,19 +12,19 @@ import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/
 import { Modify } from 'src/utils/modifyType';
 import { ExperienceAndEducation } from '../model/parts/experience.model';
 import { FileUpload } from 'graphql-upload';
+import { BasicService } from 'src/modules/helpers/basic.service';
 
 @Injectable()
-export class DoctorService {
+export class DoctorService extends BasicService<Doctor> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         private tokenService: TokenService,
         private deseaseService: DeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
         private fileUploadService: ImageUploadService,
-    ) {}
-
-    private get doctorCollection() {
-        return this.database.collection<Doctor>('doctor');
+    ) {
+        super();
+        this.dbService = this.database.collection('doctor');
     }
 
     private get experienceCollection() {
@@ -33,11 +33,6 @@ export class DoctorService {
 
     private get searchCollection() {
         return this.client.collections('doctor').documents();
-    }
-
-    async list() {
-        const doctors = await this.doctorCollection.find().toArray();
-        return doctors;
     }
 
     async createDoctor(
@@ -83,9 +78,7 @@ export class DoctorService {
             avatar: avatarURL,
         };
 
-        const insertDoctor = await this.doctorCollection.insertOne(doctor, {
-            ignoreUndefined: true,
-        });
+        const insertDoctor = await this.insertOne(doctor);
         const searchDoctor: Modify<Doctor, { _id: string }> = {
             ...doctor,
             _id: doctor._id.toHexString(),
@@ -93,7 +86,7 @@ export class DoctorService {
         await this.searchCollection.create(searchDoctor);
         const token = this.tokenService.create({
             user: {
-                _id: insertDoctor.insertedId.toHexString(),
+                _id: insertDoctor.toHexString(),
                 email,
                 phoneNumber,
                 fullName,
@@ -101,7 +94,7 @@ export class DoctorService {
             role: TokenRoles.Doctor,
         });
         [doctor._id, doctor.token, doctor.deseases] = [
-            insertDoctor.insertedId,
+            insertDoctor,
             token,
             deseases,
         ];
@@ -117,30 +110,9 @@ export class DoctorService {
         return doctor;
     }
 
-    async updateOne(args: {
-        find: Partial<Doctor>;
-        update: Partial<Doctor>;
-        method: '$inc' | '$set' | '$addToSet' | '$push' | '$pull';
-        ignoreundefined?: true;
-    }) {
-        const { find, update, method, ignoreundefined } = args;
-        const updateQuery = {
-            [method]: update,
-        };
-        const doctor = await this.doctorCollection.findOneAndUpdate(
-            find,
-            updateQuery,
-            {
-                returnDocument: 'after',
-                ignoreUndefined: ignoreundefined ? ignoreundefined : false,
-            },
-        );
-        return doctor.value;
-    }
-
     async login(args: { email: string; password: string }) {
         const { email, password } = args;
-        const doctor = await this.doctorCollection.findOne({ email });
+        const doctor = await this.findOne({ email });
         const checkPassword = await bcrypt.compare(
             password,
             doctor.passwordHASH,
@@ -176,13 +148,8 @@ export class DoctorService {
         return doctor;
     }
 
-    async findOne(args: Partial<Doctor>) {
-        const doctor = await this.doctorCollection.findOne(args);
-        return doctor;
-    }
-
     async findOneWithAddictives(args: Partial<Doctor>) {
-        const doctors = await this.doctorCollection
+        const doctors = await this.dbService
             .aggregate<DoctorAddictives>([
                 {
                     $match: args,
@@ -225,46 +192,8 @@ export class DoctorService {
         return doctors[0];
     }
 
-    async updateOneWithOptions(args: {
-        findField: (keyof Doctor)[];
-        findValue: any[];
-        updateField: (keyof Doctor)[];
-        updateValue: any[];
-        method: '$inc' | '$set' | '$addToSet';
-        ignoreundefined?: true;
-    }) {
-        const {
-            findField,
-            findValue,
-            updateField,
-            updateValue,
-            method,
-            ignoreundefined,
-        } = args;
-        const findQuery: any = {};
-        findField.map((val, ind) => {
-            findQuery[val] = findValue[ind];
-        });
-        const preUpdateQuery: any = {};
-        updateField.map((val, ind) => {
-            preUpdateQuery[val] = updateValue[ind];
-        });
-        const updateQuery = {
-            [method]: preUpdateQuery,
-        };
-        const doctor = await this.doctorCollection.findOneAndUpdate(
-            findQuery,
-            updateQuery,
-            {
-                returnDocument: 'after',
-                ignoreUndefined: ignoreundefined ? ignoreundefined : false,
-            },
-        );
-        return doctor;
-    }
-
     async listWithAddictives() {
-        const doctors = await this.doctorCollection
+        const doctors = await this.dbService
             .aggregate<DoctorAddictives>([
                 {
                     $lookup: {
