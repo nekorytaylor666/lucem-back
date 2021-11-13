@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApolloError } from 'apollo-server-express';
-import moment from 'moment';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { WorkTimeService } from 'src/modules/workTime/service/workTime.service';
@@ -34,9 +33,9 @@ export class TimelineService {
         );
     }
 
-    async findCursorWithAddictives(
+    findCursorWithAddictives(
         args: Partial<Timeline>,
-    ): Promise<AggregationCursor<TimelineAddictive>> {
+    ): AggregationCursor<TimelineAddictive> {
         const currentDate = new Date();
         const timeline = this.timelineCollection.aggregate<TimelineAddictive>([
             {
