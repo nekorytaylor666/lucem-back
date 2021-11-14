@@ -66,6 +66,16 @@ export class TimelineResolver {
         return 'bitch';
     }
 
+    @Query(() => String)
+    async timelineUpdatingSystem() {
+        try {
+            await this.timelineService.setTimeLines();
+        } catch (e) {
+            throw e;
+        }
+        return 'success';
+    }
+
     @Query(() => [TimelineGraph])
     async getTimelinesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,

@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ApolloError } from 'apollo-server-express';
+import * as moment from 'moment';
 import { AggregationCursor, Db, ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { BasicService } from 'src/modules/helpers/basic.service';
 import { WorkTimeService } from 'src/modules/workTime/service/workTime.service';
 import { parseTime } from 'src/utils/parseTime';
 import { TimelineAddictive } from '../model/timeline.addictive';
@@ -10,25 +12,71 @@ import { CreateTimeline } from '../model/timeline.args';
 import { Timeline } from '../model/timeline.interface';
 
 @Injectable()
-export class TimelineService {
+export class TimelineService extends BasicService<Timeline> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         private workTimeService: WorkTimeService,
         private doctorService: DoctorService,
-    ) {}
-
-    private get timelineCollection() {
-        return this.database.collection<Timeline>('timeline');
+    ) {
+        super();
+        this.dbService = this.database.collection<Timeline>('timeline');
     }
 
     @Cron('* * 1 * *')
     async setTimeLines() {
         const doctors = await this.doctorService.list();
-        Promise.all(
+        await Promise.all(
             doctors.map(async (val) => {
                 const workTimes = await this.workTimeService.find({
                     doctorId: val._id,
                 });
+                for (let i = 1; i < 31; i++) {
+                    const currentDate = moment(new Date())
+                        .add(i, 'days')
+                        .toDate();
+                    const parsedDate = parseTime(currentDate);
+                    const currentWorkTime = workTimes.find(
+                        (val) => val.startTime.getDay() === parsedDate.getDay(),
+                    );
+                    if (!currentWorkTime) continue;
+                    const startDate = new Date(
+                        moment(currentDate)
+                            .set({
+                                hours: currentWorkTime.startTime.getUTCHours(),
+                                minutes:
+                                    currentWorkTime.startTime.getUTCMinutes(),
+                                seconds:
+                                    currentWorkTime.startTime.getUTCSeconds(),
+                            })
+                            .format(),
+                    );
+                    const endDate = new Date(
+                        moment(currentDate)
+                            .set({
+                                hours: currentWorkTime.endTime.getUTCHours(),
+                                minutes:
+                                    currentWorkTime.endTime.getUTCMinutes(),
+                                seconds:
+                                    currentWorkTime.endTime.getUTCSeconds(),
+                            })
+                            .format(),
+                    );
+                    const checkTimeLine = await this.findOneWithOptions({
+                        fields: ['startDate', 'endDate', 'doctorId'],
+                        values: [
+                            { $lte: startDate },
+                            { $gte: endDate },
+                            val._id,
+                        ],
+                    });
+                    if (checkTimeLine) continue;
+                    const timeLine: Timeline = {
+                        doctorId: val._id,
+                        startDate,
+                        endDate,
+                    };
+                    await this.insertOne(timeLine);
+                }
             }),
         );
     }
@@ -37,7 +85,7 @@ export class TimelineService {
         args: Partial<Timeline>,
     ): AggregationCursor<TimelineAddictive> {
         const currentDate = new Date();
-        const timeline = this.timelineCollection.aggregate<TimelineAddictive>([
+        const timeline = this.dbService.aggregate<TimelineAddictive>([
             {
                 $match: {
                     ...args,
@@ -97,7 +145,7 @@ export class TimelineService {
         } = args;
         const [startDate, endDate] = [new Date(_startDate), new Date(_endDate)];
         const doctorId = new ObjectId(_doctorId);
-        const timeLineCheck = await this.timelineCollection.findOne({
+        const timeLineCheck = await this.dbService.findOne({
             doctorId: doctorId,
             startDate: { $lte: startDate },
             endDate: { $gte: endDate },
@@ -118,16 +166,15 @@ export class TimelineService {
             endDate,
             doctorId,
         };
-        const insertTimeline = await this.timelineCollection.insertOne(
-            timeline,
-            { ignoreUndefined: true },
-        );
+        const insertTimeline = await this.dbService.insertOne(timeline, {
+            ignoreUndefined: true,
+        });
         timeline._id = insertTimeline.insertedId;
         return timeline;
     }
 
     async findOne(args: Partial<Timeline>): Promise<Timeline> {
-        const timeline = await this.timelineCollection.findOne<Timeline>(args);
+        const timeline = await this.dbService.findOne<Timeline>(args);
         return timeline;
     }
 }

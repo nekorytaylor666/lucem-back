@@ -219,10 +219,8 @@ export class SessionService {
             method: '$set',
         });
         await this.bookingService.updateOne({
-            findFields: ['_id'],
-            findValue: [session.bookingId],
-            updateFields: ['progress'],
-            updateValues: [BookingProgress.Done],
+            find: { _id: session.bookingId },
+            update: { progress: BookingProgress.Done },
             method: '$set',
         });
         return session;
@@ -291,10 +289,8 @@ export class SessionService {
         });
         session._id = insertSession.insertedId;
         await this.bookingService.updateOne({
-            findFields: ['_id'],
-            findValue: [new ObjectId(bookingId)],
-            updateFields: ['progress'],
-            updateValues: [BookingProgress.Ongoing],
+            find: { _id: new ObjectId(bookingId) },
+            update: { progress: BookingProgress.Ongoing },
             method: '$set',
         });
         return session;

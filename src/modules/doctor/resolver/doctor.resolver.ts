@@ -15,11 +15,7 @@ import { DoctorService } from '../service/doctor.service';
 
 @Resolver()
 export class DoctorResolver {
-    constructor(
-        private doctorService: DoctorService,
-        private tokenService: TokenService,
-        private serviceService: ServiceService,
-    ) {}
+    constructor(private doctorService: DoctorService) {}
 
     @Mutation(() => DoctorGraph)
     @UseGuards(PreAuthGuard)
