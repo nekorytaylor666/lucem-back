@@ -9,7 +9,6 @@ export const doctorSchema = {
         { name: 'phoneNumber', type: 'string' },
         { name: 'numberOfRatings', type: 'int32', optional: true },
         { name: 'sumOfRatings', type: 'int32', optional: true },
-        { name: 'dateOfBirth', type: 'string' },
         { name: 'email', type: 'string' },
         { name: 'acceptableAgeGroup', type: 'string' },
     ],

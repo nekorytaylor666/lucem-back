@@ -6,7 +6,7 @@ export const serviceSchema = {
     fields: [
         { name: '_id', type: 'string' },
         { name: 'name', type: 'string' },
-        { name: 'price', type: 'int32' },
+        { name: 'price', type: 'int64' },
         { name: 'description', type: 'string' },
     ],
     default_sorting_field: 'price',

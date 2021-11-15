@@ -87,6 +87,9 @@ export class SearchService {
         const services = await this.serviceService.list();
         const doctors = await this.doctorService.list();
         const deseases = await this.deseaseService.list();
+        console.log(doctors);
+        console.log(services);
+        console.log(deseases);
         services.map((val) =>
             this.searchServiceCollection.create({
                 ...val,
@@ -102,6 +105,7 @@ export class SearchService {
         deseases.map((val) =>
             this.searchDeseaseCollection.create({
                 ...val,
+                num: 1,
                 _id: val._id.toHexString(),
             } as DeseaseSearch),
         );
