@@ -147,16 +147,24 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const lookups = _lookups.map((val) => {
             const lookupQuery = val.let
                 ? {
-                      from: val.from,
-                      let: `$${val.let}`,
-                      pipeline: val.pipeline,
-                      as: val.as,
+                      $lookup: {
+                          from: val.from,
+                          let: {
+                              [Object.keys(val.let)[0]]: `$${
+                                  val.let[Object.keys(val.let)[0]]
+                              }`,
+                          },
+                          pipeline: val.pipeline,
+                          as: val.as,
+                      },
                   }
                 : {
-                      from: val.from,
-                      localField: val.localField,
-                      foreignField: val.foreignField,
-                      as: val.as,
+                      $lookup: {
+                          from: val.from,
+                          localField: val.localField,
+                          foreignField: val.foreignField,
+                          as: val.as,
+                      },
                   };
             return lookupQuery;
         });
@@ -175,6 +183,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const aggregation = aggregationUnfiltered.filter(
             (val) => val !== undefined,
         );
+        console.dir((aggregation[1] as any).$lookup);
         const cursor = this.dbService.aggregate<U>(aggregation);
         return cursor;
     }
