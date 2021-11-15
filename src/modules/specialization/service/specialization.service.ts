@@ -69,6 +69,14 @@ export class SpecializationService {
                                     },
                                 },
                             },
+                            {
+                                $lookup: {
+                                    from: 'timeline',
+                                    localField: '_id',
+                                    foreignField: 'doctorId',
+                                    as: 'timelines',
+                                },
+                            },
                         ],
                         as: 'doctors',
                     },
