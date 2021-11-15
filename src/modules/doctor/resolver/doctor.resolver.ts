@@ -43,9 +43,9 @@ export class DoctorResolver {
     async getDoctorByID(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
-        const doctor = await this.doctorService.findOneWithAddictives({
-            _id: new ObjectId(doctorId),
-        });
+        const doctor = await this.doctorService.findByIdWithAddictives(
+            new ObjectId(doctorId),
+        );
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }

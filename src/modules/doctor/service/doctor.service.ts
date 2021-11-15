@@ -25,6 +25,61 @@ export class DoctorService extends BasicService<Doctor> {
     ) {
         super();
         this.dbService = this.database.collection('doctor');
+        this.basicLookups = [
+            {
+                from: 'specialization',
+                let: {
+                    id: '_id',
+                },
+                pipeline: [
+                    {
+                        $addFields: {
+                            doctorIds: {
+                                $ifNull: ['$doctorIds', ['null']],
+                            },
+                        },
+                    },
+                    {
+                        $match: {
+                            $expr: {
+                                $in: ['$$id', '$doctorIds'],
+                            },
+                        },
+                    },
+                ],
+                as: 'specializations',
+                isArray: true,
+            },
+            {
+                from: 'experience',
+                localField: '_id',
+                foreignField: 'doctorId',
+                as: 'experiences',
+                isArray: true,
+            },
+            {
+                from: 'timeline',
+                let: {
+                    id: '_id',
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ['$doctorId', '$$id'] },
+                                    {
+                                        $gt: [new Date(), '$endTime'],
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                ],
+                as: 'timelines',
+                isArray: true,
+            },
+        ];
     }
 
     private get experienceCollection() {
@@ -148,48 +203,12 @@ export class DoctorService extends BasicService<Doctor> {
         return doctor;
     }
 
-    async findOneWithAddictives(args: Partial<Doctor>) {
-        const doctors = await this.dbService
-            .aggregate<DoctorAddictives>([
-                {
-                    $match: args,
-                },
-                {
-                    $lookup: {
-                        from: 'specialization',
-                        let: {
-                            id: '$_id',
-                        },
-                        pipeline: [
-                            {
-                                $addFields: {
-                                    doctorIds: {
-                                        $ifNull: ['$doctorIds', ['null']],
-                                    },
-                                },
-                            },
-                            {
-                                $match: {
-                                    $expr: {
-                                        $in: ['$$id', '$doctorIds'],
-                                    },
-                                },
-                            },
-                        ],
-                        as: 'specializations',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'experience',
-                        localField: '_id',
-                        foreignField: 'doctorId',
-                        as: 'experiences',
-                    },
-                },
-            ])
-            .toArray();
-        return doctors[0];
+    async findByIdWithAddictives(_id: ObjectId) {
+        const doctor = await this.findWithAddictivesCursor<DoctorAddictives>({
+            find: { _id },
+            lookups: this.basicLookups,
+        }).toArray();
+        return doctor[0];
     }
 
     async listWithAddictives() {
