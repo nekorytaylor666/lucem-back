@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { ServiceGraph } from 'src/modules/service/model/service.model';
 import { UserGraph } from 'src/modules/user/model/user.model';
@@ -25,10 +25,10 @@ export class BookingGraph
     @Field()
     user: UserGraph;
 
-    @Field()
+    @Field(() => GraphQLISODateTime)
     startDate: Date;
 
-    @Field()
+    @Field(() => GraphQLISODateTime)
     endDate: Date;
 
     @Field(() => DoctorGraph)

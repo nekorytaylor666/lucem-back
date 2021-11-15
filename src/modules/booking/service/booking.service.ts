@@ -61,17 +61,15 @@ export class BookingService extends BasicService<Booking> {
             serviceId: _serviceId,
             userId: _userId,
             timelineId: _timelineId,
-            startDate: _startDate,
-            endDate: _endDate,
+            startDate,
+            endDate,
             doctorId: _doctorId,
         } = args;
-        const [serviceId, userId, timelineId, doctorId, startDate, endDate] = [
+        const [serviceId, userId, timelineId, doctorId] = [
             new ObjectId(_serviceId),
             new ObjectId(_userId),
             new ObjectId(_timelineId),
             new ObjectId(_doctorId),
-            new Date(_startDate),
-            new Date(_endDate),
         ];
         const checkIfTimeIsTaken = await this.findOneWithOptions({
             fields: ['timelineId', 'startDate', 'endDate'],
@@ -81,6 +79,7 @@ export class BookingService extends BasicService<Booking> {
             throw new ApolloError('the time is already booked');
         const timeline = await this.timelineService.findOne({
             _id: timelineId,
+            doctorId,
         });
         if (
             timeline.startDate > startDate ||

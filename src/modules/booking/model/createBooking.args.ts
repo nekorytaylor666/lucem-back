@@ -1,4 +1,4 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { Modify } from 'src/utils/modifyType';
 import { Booking } from './booking.interface';
 
@@ -10,8 +10,6 @@ export class CreateBooking
             {
                 serviceId?: string;
                 timelineId: string;
-                startDate: string;
-                endDate: string;
                 doctorId: string;
             }
         >
@@ -22,11 +20,11 @@ export class CreateBooking
     @Field()
     timelineId: string;
 
-    @Field()
-    startDate: string;
+    @Field(() => GraphQLISODateTime)
+    startDate: Date;
 
-    @Field()
-    endDate: string;
+    @Field(() => GraphQLISODateTime)
+    endDate: Date;
 
     @Field()
     doctorId: string;
