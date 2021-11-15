@@ -183,7 +183,6 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const aggregation = aggregationUnfiltered.filter(
             (val) => val !== undefined,
         );
-        console.dir((aggregation[1] as any).$lookup);
         const cursor = this.dbService.aggregate<U>(aggregation);
         return cursor;
     }
