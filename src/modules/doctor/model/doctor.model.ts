@@ -78,8 +78,8 @@ export class DoctorGraph
             const rating = sumOfRatings / numberOfRatings;
             this.rating = rating;
         }
-        if (doctor.timeline)
-            this.timelines = doctor.timeline.map(
+        if (doctor.timelines)
+            this.timelines = doctor.timelines.map(
                 (val) => new TimelineGraph({ ...val }),
             );
         if (doctor.acceptableAgeGroup)

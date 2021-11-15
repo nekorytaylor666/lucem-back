@@ -197,14 +197,6 @@ export class DoctorService extends BasicService<Doctor> {
             .aggregate<DoctorAddictives>([
                 {
                     $lookup: {
-                        from: 'experience',
-                        localField: '_id',
-                        foreignField: 'doctorId',
-                        as: 'experience',
-                    },
-                },
-                {
-                    $lookup: {
                         from: 'specialization',
                         let: {
                             id: '$_id',
@@ -234,6 +226,29 @@ export class DoctorService extends BasicService<Doctor> {
                         localField: '_id',
                         foreignField: 'doctorId',
                         as: 'experiences',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'timeline',
+                        let: {
+                            id: '$_id',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$doctorId', '$$id'] },
+                                            {
+                                                $gt: [new Date(), '$endTime'],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'timelines',
                     },
                 },
             ])

@@ -13,8 +13,8 @@ export class WorkTimeResolver {
     constructor(private workTimeService: WorkTimeService) {}
 
     @Mutation(() => [WorkTimeGraph])
-    @Roles('admin')
-    @UseGuards(PreAuthGuard)
+    // @Roles('admin')
+    // @UseGuards(PreAuthGuard)
     async createWorkTimeForAWeek(
         @Args('dates', { type: () => [WorkTimeDateInput] })
         workTimeDates: WorkTimeDateInput[],

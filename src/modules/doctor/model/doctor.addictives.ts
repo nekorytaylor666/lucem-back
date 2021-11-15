@@ -9,7 +9,7 @@ export interface DoctorAddictives extends Doctor {
     deseases?: Desease[];
     service?: Service[];
     rating?: number;
-    timeline?: Timeline[];
+    timelines?: Timeline[];
     specializations?: Specialization[];
     experiences?: ExperienceAndEducation[];
 }
