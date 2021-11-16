@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';

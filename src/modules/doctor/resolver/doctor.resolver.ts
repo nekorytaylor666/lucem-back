@@ -7,8 +7,6 @@ import {
     CurrentRequestURLGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { TokenService } from 'src/modules/helpers/token/token.service';
-import { ServiceService } from 'src/modules/service/service/service.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorService } from '../service/doctor.service';

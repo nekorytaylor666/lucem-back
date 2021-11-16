@@ -47,7 +47,6 @@ export class UserService {
             `${filteredPhoneNumber}`,
         );
         if (code !== originalCode) throw new ApolloError('The code is wrong');
-
         const insertPhoneNumber = (
             await this.userCollection.findOneAndUpdate(
                 { phoneNumber: filteredPhoneNumber },

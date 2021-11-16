@@ -39,12 +39,14 @@ export class SpecializationResolver {
         @Args('specializationId', { type: () => String })
         specializationId: string,
     ) {
-        const specialization = await this.specializationService.updateOne({
-            find: { _id: new ObjectId(specializationId) },
-            update: { doctorIds: new ObjectId(doctorId) },
-            method: '$addToSet',
-            ignoreUndefined: true,
-        });
+        const specialization =
+            await this.specializationService.updateOneWithOptions({
+                findField: ['_id'],
+                findValue: [new ObjectId(specializationId)],
+                updateField: ['doctorIds'],
+                updateValue: [new ObjectId(doctorId)],
+                method: '$addToSet',
+            });
         const specializationResponce = new SpecializationGraph({
             ...specialization,
         });
@@ -57,8 +59,8 @@ export class SpecializationResolver {
         specializationId: string,
     ) {
         const specialization =
-            await this.specializationService.findOneWithAddictives(
-                specializationId,
+            await this.specializationService.findByIdWithAddictives(
+                new ObjectId(specializationId),
             );
         const specializationResponce = new SpecializationGraph({
             ...specialization,
