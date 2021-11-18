@@ -10,7 +10,7 @@ import { Session } from './session.interface';
 export class SessionGraph
     implements
         Modify<
-            Omit<Session, 'bookingId'>,
+            Omit<Session, 'bookingId' | 'serviceId' | 'userId' | 'doctorId'>,
             {
                 _id: string;
                 startDate: string;
@@ -39,7 +39,6 @@ export class SessionGraph
             this.booking = new BookingGraph({ ...session.booking });
         if (session.startDate) this.startDate = session.startDate.toISOString();
         if (session.endDate) this.endDate = session.endDate.toISOString();
-
         if (session.count) this.count = session.count;
     }
 }

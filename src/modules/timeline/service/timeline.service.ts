@@ -42,7 +42,8 @@ export class TimelineService extends BasicService<Timeline> {
                     const startDate = new Date(
                         moment(currentDate)
                             .set({
-                                hours: currentWorkTime.startTime.getUTCHours(),
+                                hours:
+                                    currentWorkTime.startTime.getUTCHours() + 6,
                                 minutes:
                                     currentWorkTime.startTime.getUTCMinutes(),
                                 seconds:
@@ -53,7 +54,8 @@ export class TimelineService extends BasicService<Timeline> {
                     const endDate = new Date(
                         moment(currentDate)
                             .set({
-                                hours: currentWorkTime.endTime.getUTCHours(),
+                                hours:
+                                    currentWorkTime.endTime.getUTCHours() + 6,
                                 minutes:
                                     currentWorkTime.endTime.getUTCMinutes(),
                                 seconds:
