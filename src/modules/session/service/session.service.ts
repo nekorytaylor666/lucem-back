@@ -276,6 +276,7 @@ export class SessionService {
                 },
             ])
             .toArray();
+        const { doctorId, userId, serviceId } = booking;
         const session: Session = {
             bookingId: new ObjectId(bookingId),
             startDate: currentDate,
@@ -283,6 +284,9 @@ export class SessionService {
                 previousSessions.length !== 0
                     ? previousSessions.length + 1
                     : undefined,
+            doctorId,
+            userId,
+            serviceId,
         };
         const insertSession = await this.sessionCollection.insertOne(session, {
             ignoreUndefined: true,

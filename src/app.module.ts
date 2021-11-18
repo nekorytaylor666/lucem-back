@@ -22,6 +22,7 @@ import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBl
 import { ForwardsModule } from './modules/forwards/forwards.module';
 import { WorkTimeModule } from './modules/workTime/workTime.module';
 import { ScriptModule } from './modules/script/script.module';
+import { StatsModule } from './modules/stats/stats.module';
 
 @Module({
     imports: [
@@ -58,6 +59,7 @@ import { ScriptModule } from './modules/script/script.module';
         ForwardsModule,
         WorkTimeModule,
         ScriptModule,
+        StatsModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],

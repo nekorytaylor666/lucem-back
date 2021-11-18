@@ -6,4 +6,7 @@ export interface Session {
     startDate: Date;
     endDate?: Date;
     count: number;
+    serviceId: ObjectId;
+    doctorId: ObjectId;
+    userId: ObjectId;
 }
