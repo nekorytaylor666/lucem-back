@@ -15,7 +15,7 @@ export interface Doctor {
     phoneNumber: string;
     token?: string;
     passwordHASH: string;
-    serviceIds?: string[];
+    serviceIds?: ObjectId[];
     yearsOfExperience: number;
     numberOfRatings?: number;
     sumOfRatings?: number;

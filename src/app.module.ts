@@ -23,6 +23,7 @@ import { ForwardsModule } from './modules/forwards/forwards.module';
 import { WorkTimeModule } from './modules/workTime/workTime.module';
 import { ScriptModule } from './modules/script/script.module';
 import { StatsModule } from './modules/stats/stats.module';
+import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
 
 @Module({
     imports: [
@@ -60,6 +61,7 @@ import { StatsModule } from './modules/stats/stats.module';
         WorkTimeModule,
         ScriptModule,
         StatsModule,
+        DoctorStatsModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
