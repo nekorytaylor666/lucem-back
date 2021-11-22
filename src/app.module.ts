@@ -24,6 +24,7 @@ import { WorkTimeModule } from './modules/workTime/workTime.module';
 import { ScriptModule } from './modules/script/script.module';
 import { StatsModule } from './modules/stats/stats.module';
 import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
+import { SpecializationStatsModule } from './modules/specializationStats/specializationStats.module';
 
 @Module({
     imports: [
@@ -62,6 +63,7 @@ import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
         ScriptModule,
         StatsModule,
         DoctorStatsModule,
+        SpecializationStatsModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
