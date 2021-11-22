@@ -1,7 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -26,11 +24,13 @@ export class AppointmentBlankResolver {
     @UseGuards(PreAuthGuard)
     async createSessionBlank(
         @CurrentUserGraph() user: Doctor,
+        @CurrentRequestURLGraph() req: string,
         @Args() args: CreateAppointmentBlank,
     ) {
         const appointmentBlank = await this.appointmentBlankService.create({
             ...args,
             doctorId: user._id,
+            req,
         });
         const appointmentResultsResponce = new AppointmentResultsGraph({
             ...appointmentBlank.appointmentResults,
@@ -54,32 +54,5 @@ export class AppointmentBlankResolver {
             diagnoseResponce,
             inspecionsResponce,
         ];
-    }
-
-    @Mutation(() => AppointmentResultsGraph)
-    @Roles('doctor')
-    @UseGuards(PreAuthGuard)
-    async addFileAppointmentResult(
-        @Args('image', { type: () => GraphQLUpload })
-        _image: Promise<FileUpload>,
-        @CurrentRequestURLGraph() req: string,
-        @Args('appointmentBlankId') _appointmentBlankId: string,
-        @CurrentUserGraph() doctor: Doctor,
-    ) {
-        const [image, appointmentBlankId] = [
-            await _image,
-            new ObjectId(_appointmentBlankId),
-        ];
-        const appointmentResults =
-            await this.appointmentBlankService.addFileToAppointmentResult({
-                file: image,
-                req,
-                appointmentBlankId,
-                doctorId: doctor._id,
-            });
-        const appointmentResultsResponce = new AppointmentResultsGraph({
-            ...appointmentResults,
-        });
-        return appointmentResultsResponce;
     }
 }

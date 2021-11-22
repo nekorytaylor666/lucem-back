@@ -34,7 +34,9 @@ export class AppointmentBlankService {
         return this.database.collection('inspections');
     }
 
-    async create(args: CreateAppointmentBlank & { doctorId: ObjectId }) {
+    async create(
+        args: CreateAppointmentBlank & { doctorId: ObjectId; req: string },
+    ) {
         const {
             sessionId: _sessionId,
             complaints,
@@ -42,25 +44,27 @@ export class AppointmentBlankService {
             diagnose: _diagnose,
             doctorId,
             inspections: _inspections,
+            req,
         } = args;
         const sessionId = new ObjectId(_sessionId);
         const session = await this.sessionService
             .findWithAddictives({
-                fields: ['_id'],
-                values: [sessionId],
+                fields: ['_id', 'doctorId'],
+                values: [sessionId, doctorId],
             })
             .toArray();
-        if (
-            session[0].booking.doctor._id.toHexString() !=
-            doctorId.toHexString()
-        )
-            throw new ApolloError('this is not your session');
+        if (!session) throw new ApolloError('not your session');
+        const appointmentResultPhotoURL = await this.imageService.storeImages(
+            (await _appointmentResults.photoURL).createReadStream(),
+            req,
+        );
         const appointmentResults: AppointmentResults = {
             _id: new ObjectId(),
             description: _appointmentResults.description,
             doctorId,
             userId: session[0].booking.user._id,
             sessionId: session[0]._id,
+            photoURL: appointmentResultPhotoURL,
         };
         await this.appointmentResultsCollection.insertOne(appointmentResults);
         const complaint: Complaint = {
