@@ -1,5 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'bson';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
@@ -21,6 +22,8 @@ export interface AppointmentResults extends AppointmentBlank {
 export class CreateAppointmentResults {
     @Field()
     description: string;
+    @Field(() => GraphQLUpload, { nullable: true })
+    photoURL: Promise<FileUpload>;
 }
 
 @ObjectType('AppointmentResults')
