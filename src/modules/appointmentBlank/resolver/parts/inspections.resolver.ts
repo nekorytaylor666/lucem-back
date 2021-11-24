@@ -40,7 +40,7 @@ export class InspectionsResolver {
     }
 
     @Query(() => [InspectionsGraph])
-    @Roles('none')
+    @Roles('admin', 'user')
     @UseGuards(PreAuthGuard)
     async getInspectionsOfUser(
         @Args('userId', { type: () => String, nullable: true }) userId: string,

@@ -7,7 +7,7 @@ export class InspectionsService {
     constructor(@Inject('DATABASE_CONNECTION') private database: Db) {}
 
     private get inspectionsCollection() {
-        return this.database.collection('inspection');
+        return this.database.collection('inspections');
     }
 
     async findOne(args: Partial<Inspections>) {
