@@ -48,7 +48,7 @@ export class DiagnoseGraph
     @Field(() => Boolean)
     preliminary: boolean;
 
-    @Field()
+    @Field({ nullable: true })
     deseaseDBCode: string;
 
     @Field()

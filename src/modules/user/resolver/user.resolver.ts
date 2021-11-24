@@ -12,12 +12,15 @@ import { Cache } from 'cache-manager';
 import { User } from '../model/user.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { ObjectId } from 'mongodb';
+import { TokenService } from 'src/modules/helpers/token/token.service';
+import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 
 @Resolver()
 export class UserResolver {
     constructor(
         private userService: UserService,
         private smsService: SMSService,
+        private tokenService: TokenService,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
     ) {}
 

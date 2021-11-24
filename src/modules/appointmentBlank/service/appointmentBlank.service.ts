@@ -54,10 +54,12 @@ export class AppointmentBlankService {
             })
             .toArray();
         if (!session) throw new ApolloError('not your session');
-        const appointmentResultPhotoURL = await this.imageService.storeImages(
-            (await _appointmentResults.photoURL).createReadStream(),
-            req,
-        );
+        const appointmentResultPhotoURL =
+            _appointmentResults.photoURL &&
+            (await this.imageService.storeImages(
+                (await _appointmentResults.photoURL).createReadStream(),
+                req,
+            ));
         const appointmentResults: AppointmentResults = {
             _id: new ObjectId(),
             description: _appointmentResults.description,
