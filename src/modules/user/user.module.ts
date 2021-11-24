@@ -18,7 +18,7 @@ import { UserService } from './service/user.service';
         UploadFileModule,
         SMSModule,
         CacheModule.register(),
-        forwardRef(() => AdminModule)
+        forwardRef(() => AdminModule),
     ],
     providers: [UserService, UserResolver],
     exports: [UserService],

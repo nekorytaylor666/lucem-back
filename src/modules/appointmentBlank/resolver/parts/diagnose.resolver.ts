@@ -53,7 +53,7 @@ export class DiagnoseResolver {
                       userId: user._id,
                   })
                 : await this.diagnoseService.findOneWithAddictives({
-                      doctorId: new ObjectId(userId),
+                      userId: new ObjectId(userId),
                   });
         const diagnosesResponce = diagnoses.map(
             (val) => new DiagnoseGraph({ ...val }),
