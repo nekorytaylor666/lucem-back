@@ -2,7 +2,7 @@ import { AggregationCursor, Collection, FindCursor, ObjectId } from 'mongodb';
 
 export abstract class BasicService<T extends any = Record<string, unknown>> {
     protected dbService: Collection<T>;
-    protected basicLookups: {
+    basicLookups: {
         from: string;
         localField?: string;
         foreignField?: string;
