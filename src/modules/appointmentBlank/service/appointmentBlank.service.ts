@@ -43,15 +43,12 @@ export class AppointmentBlankService {
             diagnose: _diagnose,
             doctorId,
             inspections: _inspections,
-            req,
         } = args;
         const sessionId = new ObjectId(_sessionId);
-        const session = await this.sessionService
-            .findWithAddictives({
-                fields: ['_id', 'doctorId'],
-                values: [sessionId, doctorId],
-            })
-            .toArray();
+        const session = this.sessionService.findWithAddictivesCursor({
+            find: { _id: new ObjectId(sessionId) },
+            lookups: this.sessionService.basicLookups,
+        });
         if (!session) throw new ApolloError('not your session');
         const complaint: Complaint = {
             ...complaints,

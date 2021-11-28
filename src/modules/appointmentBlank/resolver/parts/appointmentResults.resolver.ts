@@ -11,9 +11,14 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
-import { AppointmentResultsGraph } from '../../model/parts/AppointmenResults.model';
+import {
+    AppointmentResults,
+    AppointmentResultsGraph,
+} from '../../model/parts/AppointmenResults.model';
 import { AppointmenResultsService } from '../../service/parts/appointmentResult.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { Session } from 'src/modules/session/model/session.interface';
+import { User } from 'src/modules/user/model/user.interface';
 
 @Resolver()
 export class AppointmenResultsResolver {
@@ -30,12 +35,30 @@ export class AppointmenResultsResolver {
     ) {
         const appointmentResults =
             payload.role === TokenRoles.Doctor
-                ? await this.appointmentResultsService.findWithAddictives({
-                      doctorId: user._id,
-                  })
-                : await this.appointmentResultsService.findWithAddictives({
-                      doctorId: new ObjectId(doctorId),
-                  });
+                ? await this.appointmentResultsService
+                      .findWithAddictivesCursor<
+                          AppointmentResultsGraph & {
+                              doctor?: Doctor;
+                              user?: User;
+                              session?: Session;
+                          }
+                      >({
+                          find: { doctorId: user._id },
+                          lookups: this.appointmentResultsService.basicLookups,
+                      })
+                      .toArray()
+                : await this.appointmentResultsService
+                      .findWithAddictivesCursor<
+                          AppointmentResults & {
+                              doctor?: Doctor;
+                              user?: User;
+                              session?: Session;
+                          }
+                      >({
+                          find: { doctorId: new ObjectId(doctorId) },
+                          lookups: this.appointmentResultsService.basicLookups,
+                      })
+                      .toArray();
         const appointmentResultsResponce = appointmentResults.map(
             (val) => new AppointmentResultsGraph({ ...val }),
         );
@@ -52,12 +75,30 @@ export class AppointmenResultsResolver {
     ) {
         const appointmentResults =
             payload.role === TokenRoles.User
-                ? await this.appointmentResultsService.findWithAddictives({
-                      userId: new ObjectId(userId),
-                  })
-                : await this.appointmentResultsService.findWithAddictives({
-                      userId: user._id,
-                  });
+                ? await this.appointmentResultsService
+                      .findWithAddictivesCursor<
+                          AppointmentResults & {
+                              doctor?: Doctor;
+                              user?: User;
+                              session?: Session;
+                          }
+                      >({
+                          find: { userId: user._id },
+                          lookups: this.appointmentResultsService.basicLookups,
+                      })
+                      .toArray()
+                : await this.appointmentResultsService
+                      .findWithAddictivesCursor<
+                          AppointmentResults & {
+                              doctor?: Doctor;
+                              user?: User;
+                              session?: Session;
+                          }
+                      >({
+                          find: { userId: new ObjectId(userId) },
+                          lookups: this.appointmentResultsService.basicLookups,
+                      })
+                      .toArray();
         const appointmentResultsResponce = appointmentResults.map(
             (val) => new AppointmentResultsGraph({ ...val }),
         );
