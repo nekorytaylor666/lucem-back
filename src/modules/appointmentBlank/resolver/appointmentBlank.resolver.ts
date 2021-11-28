@@ -32,10 +32,6 @@ export class AppointmentBlankResolver {
             doctorId: user._id,
             req,
         });
-        const appointmentResultsResponce = new AppointmentResultsGraph({
-            ...appointmentBlank.appointmentResults,
-            doctor: user,
-        });
         const complaintResponce = new ComplaintGraph({
             ...appointmentBlank.complaint,
             doctor: user,
@@ -48,11 +44,6 @@ export class AppointmentBlankResolver {
             ...appointmentBlank.inspections,
             doctor: user,
         });
-        return [
-            appointmentResultsResponce,
-            complaintResponce,
-            diagnoseResponce,
-            inspecionsResponce,
-        ];
+        return [complaintResponce, diagnoseResponce, inspecionsResponce];
     }
 }
