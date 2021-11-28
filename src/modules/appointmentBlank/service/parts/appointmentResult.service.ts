@@ -89,10 +89,12 @@ export class AppointmenResultsService {
         doctorId: ObjectId;
     }) {
         const { sessionId, image, description, req, doctorId } = args;
-        const session = await this.sessionService.findWithAddictives({
-            fields: ['_id', 'doctorId'],
-            values: [sessionId, doctorId],
-        });
+        const session = await this.sessionService
+            .findWithAddictives({
+                fields: ['_id', 'doctorId'],
+                values: [sessionId, doctorId],
+            })
+            .toArray();
         if (!session) throw new ApolloError('not your session');
         const appointmentResultPhotoURL =
             image &&
