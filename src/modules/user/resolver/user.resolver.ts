@@ -13,7 +13,6 @@ import { User } from '../model/user.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { ObjectId } from 'mongodb';
 import { TokenService } from 'src/modules/helpers/token/token.service';
-import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 
 @Resolver()
 export class UserResolver {

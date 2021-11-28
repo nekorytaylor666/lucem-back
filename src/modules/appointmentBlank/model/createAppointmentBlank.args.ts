@@ -1,5 +1,4 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import { CreateAppointmentResults } from './parts/AppointmenResults.model';
 import { CreateComplaint } from './parts/complaint.model';
 import { CreateDiagnose } from './parts/diagnose.model';
 
@@ -10,9 +9,6 @@ export class CreateAppointmentBlank {
 
     @Field(() => CreateDiagnose)
     diagnose: CreateDiagnose;
-
-    @Field(() => CreateAppointmentResults)
-    appointmentResults: CreateAppointmentResults;
 
     @Field(() => [String])
     inspections: string[];

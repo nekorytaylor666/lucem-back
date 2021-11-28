@@ -40,7 +40,6 @@ export class AppointmentBlankService {
         const {
             sessionId: _sessionId,
             complaints,
-            appointmentResults: _appointmentResults,
             diagnose: _diagnose,
             doctorId,
             inspections: _inspections,
@@ -54,21 +53,6 @@ export class AppointmentBlankService {
             })
             .toArray();
         if (!session) throw new ApolloError('not your session');
-        const appointmentResultPhotoURL =
-            _appointmentResults.photoURL &&
-            (await this.imageService.storeImages(
-                (await _appointmentResults.photoURL).createReadStream(),
-                req,
-            ));
-        const appointmentResults: AppointmentResults = {
-            _id: new ObjectId(),
-            description: _appointmentResults.description,
-            doctorId,
-            userId: session[0].booking.user._id,
-            sessionId: session[0]._id,
-            photoURL: appointmentResultPhotoURL,
-        };
-        await this.appointmentResultsCollection.insertOne(appointmentResults);
         const complaint: Complaint = {
             ...complaints,
             _id: new ObjectId(),
@@ -94,7 +78,6 @@ export class AppointmentBlankService {
         };
         await this.inspectionsCollection.insertOne(inspections);
         const appointmentBlank = {
-            appointmentResults,
             complaint,
             diagnose,
             inspections,

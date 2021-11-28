@@ -1,10 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db } from 'mongodb';
+import { ApolloError } from 'apollo-server-core';
+import { FileUpload } from 'graphql-upload';
+import { Db, ObjectId } from 'mongodb';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
+import { SessionService } from 'src/modules/session/service/session.service';
 import { AppointmentResults } from '../../model/parts/AppointmenResults.model';
 
 @Injectable()
 export class AppointmenResultsService {
-    constructor(@Inject('DATABASE_CONNECTION') private database: Db) {}
+    constructor(
+        @Inject('DATABASE_CONNECTION') private database: Db,
+        private imageService: ImageUploadService,
+        private sessionService: SessionService,
+    ) {}
 
     private get appointmentResultsCollection() {
         return this.database.collection('appointmentResults');
@@ -70,6 +78,37 @@ export class AppointmenResultsService {
                 },
             ])
             .toArray();
+        return appointmentResults;
+    }
+
+    async create(args: {
+        sessionId: ObjectId;
+        image?: FileUpload;
+        description?: string;
+        req: string;
+        doctorId: ObjectId;
+    }) {
+        const { sessionId, image, description, req, doctorId } = args;
+        const session = await this.sessionService.findWithAddictives({
+            fields: ['_id', 'doctorId'],
+            values: [sessionId, doctorId],
+        });
+        if (!session) throw new ApolloError('not your session');
+        const appointmentResultPhotoURL =
+            image &&
+            (await this.imageService.storeImages(
+                (await image).createReadStream(),
+                req,
+            ));
+        const appointmentResults: AppointmentResults = {
+            _id: new ObjectId(),
+            description,
+            doctorId,
+            userId: session[0].booking.user._id,
+            sessionId: session[0]._id,
+            photoURL: appointmentResultPhotoURL,
+        };
+        await this.appointmentResultsCollection.insertOne(appointmentResults);
         return appointmentResults;
     }
 }
