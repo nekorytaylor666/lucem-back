@@ -2,13 +2,13 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
 import { Modify } from 'src/utils/modifyType';
-import { DoctorStats } from './doctorStats.interface';
+import { DoctorSpecStats } from './doctorStats.interface';
 
 @ObjectType()
-export class DoctorStatsGraph
+export class DoctorSpecStatsGraph
     implements
         Modify<
-            DoctorStats,
+            DoctorSpecStats,
             {
                 specialization: SpecializationGraph;
                 doctor: DoctorGraph;
@@ -18,7 +18,7 @@ export class DoctorStatsGraph
     @Field(() => DoctorGraph)
     doctor: DoctorGraph;
 
-    @Field(() => SpecializationGraph)
+    @Field(() => SpecializationGraph, { nullable: true })
     specialization: SpecializationGraph;
 
     @Field(() => Int, { defaultValue: 0 })
@@ -27,7 +27,7 @@ export class DoctorStatsGraph
     @Field(() => Int, { defaultValue: 0 })
     totalNumOfSessions: number;
 
-    constructor(stats: Partial<DoctorStats>) {
+    constructor(stats: Partial<DoctorSpecStats>) {
         if (stats.specialization)
             this.specialization = new SpecializationGraph({
                 ...stats.specialization,

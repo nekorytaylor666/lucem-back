@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
-import { DoctorStats } from '../model/doctorStats.interface';
+import { DoctorSpecStats } from '../model/doctorStats.interface';
 
 @Injectable()
 export class DoctorStatsService {
@@ -10,14 +10,14 @@ export class DoctorStatsService {
         return this.database.collection('session');
     }
 
-    async getStatsOfDoctorsByPeriodOfTime(args: {
+    async getStatsOfDoctorsByPeriodOfTimeAndSpec(args: {
         firstDate: Date;
         secondDate: Date;
         specializationId: ObjectId;
     }) {
         const { firstDate, secondDate, specializationId } = args;
         const stats = await this.sessionCollection
-            .aggregate<DoctorStats>([
+            .aggregate<DoctorSpecStats>([
                 {
                     $match: {
                         startDate: { $gte: firstDate },
@@ -114,5 +114,67 @@ export class DoctorStatsService {
             ])
             .toArray();
         return stats;
+    }
+
+    async getStatsOfDoctorByPeriodsOfTime(args: {
+        doctorId: ObjectId;
+        firstDate: Date;
+        secondDate: Date;
+    }) {
+        const { doctorId, firstDate, secondDate } = args;
+        const stats = await this.sessionCollection
+            .aggregate<DoctorSpecStats>([
+                {
+                    $match: {
+                        doctorId: doctorId,
+                        startDate: { $gte: firstDate },
+                        endDate: { $lte: secondDate },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'doctor',
+                        localField: 'doctorId',
+                        foreignField: '_id',
+                        as: 'doctors',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'service',
+                        localField: 'serviceId',
+                        foreignField: '_id',
+                        as: 'services',
+                    },
+                },
+                {
+                    $addFields: {
+                        doctor: {
+                            $first: '$doctors',
+                        },
+                        service: {
+                            $first: '$services',
+                        },
+                    },
+                },
+                {
+                    $group: {
+                        _id: '$doctor',
+                        totalMoneyEarnt: {
+                            $sum: '$service.price',
+                        },
+                        totalNumOfSessions: {
+                            $sum: 1,
+                        },
+                    },
+                },
+                {
+                    $addFields: {
+                        doctor: '$_id',
+                    },
+                },
+            ])
+            .toArray();
+        return stats[0];
     }
 }
