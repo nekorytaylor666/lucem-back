@@ -3,6 +3,7 @@ import { ApolloError } from 'apollo-server-express';
 import { FileUpload } from 'graphql-upload';
 import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
+import { SessionAddictive } from 'src/modules/session/model/session.addictive';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { AppointmentResults } from '../model/parts/AppointmenResults.model';
@@ -45,16 +46,18 @@ export class AppointmentBlankService {
             inspections: _inspections,
         } = args;
         const sessionId = new ObjectId(_sessionId);
-        const session = this.sessionService.findWithAddictivesCursor({
-            find: { _id: new ObjectId(sessionId) },
-            lookups: this.sessionService.basicLookups,
-        });
+        const session = await this.sessionService
+            .findWithAddictivesCursor<SessionAddictive>({
+                find: { _id: new ObjectId(sessionId) },
+                lookups: this.sessionService.basicLookups,
+            })
+            .toArray();
         if (!session) throw new ApolloError('not your session');
         const complaint: Complaint = {
             ...complaints,
             _id: new ObjectId(),
             doctorId,
-            userId: session[0].booking.user._id,
+            userId: session[0].user._id,
             sessionId: session[0]._id,
         };
         await this.complaintCollection.insertOne(complaint);
@@ -62,7 +65,7 @@ export class AppointmentBlankService {
             ..._diagnose,
             _id: new ObjectId(),
             doctorId,
-            userId: session[0].booking.user._id,
+            userId: session[0].user._id,
             sessionId: session[0]._id,
         };
         await this.diagnodeCollection.insertOne(diagnose);
@@ -70,7 +73,7 @@ export class AppointmentBlankService {
             _id: new ObjectId(),
             doctorId,
             inspections: _inspections,
-            userId: session[0].booking.user._id,
+            userId: session[0].user._id,
             sessionId: session[0]._id,
         };
         await this.inspectionsCollection.insertOne(inspections);

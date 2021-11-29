@@ -9,7 +9,6 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
-import { AppointmentResultsGraph } from '../model/parts/AppointmenResults.model';
 import { ComplaintGraph } from '../model/parts/complaint.model';
 import { DiagnoseGraph } from '../model/parts/diagnose.model';
 import { InspectionsGraph } from '../model/parts/inspections.model';

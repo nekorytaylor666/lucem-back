@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ApolloError } from 'apollo-server-core';
 import { FileUpload } from 'graphql-upload';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
