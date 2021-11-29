@@ -42,18 +42,13 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
     }
 
     async create(args: {
-        sessionId: ObjectId;
         image?: FileUpload;
         description?: string;
         req: string;
         doctorId: ObjectId;
+        userId: ObjectId;
     }) {
-        const { sessionId, image, description, req, doctorId } = args;
-        const session = await this.sessionService.findWithAddictivesCursor({
-            find: { _id: sessionId, doctorId },
-            lookups: this.sessionService.basicLookups,
-        });
-        if (!session) throw new ApolloError('not your session');
+        const { image, description, req, doctorId, userId } = args;
         const appointmentResultPhotoURL =
             image &&
             (await this.imageService.storeImages(
@@ -64,8 +59,7 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
             _id: new ObjectId(),
             description,
             doctorId,
-            userId: session[0].booking.user._id,
-            sessionId: session[0]._id,
+            userId: userId,
             photoURL: appointmentResultPhotoURL,
         };
         await this.insertOne(appointmentResults);

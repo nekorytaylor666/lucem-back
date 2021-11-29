@@ -132,19 +132,19 @@ export class AppointmenResultsResolver {
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async uploadAppointmentResults(
-        @Args('sessionId', { type: () => String }) sessionId: string,
         @Args('image', { type: () => GraphQLUpload })
         image: Promise<FileUpload>,
+        @Args('userId', { type: () => String }) userId: string,
         @Args('description', { type: () => String }) description: string,
         @CurrentRequestURLGraph() req: string,
         @CurrentUserGraph() doctor: Doctor,
     ) {
         const appointmentResults = await this.appointmentResultsService.create({
-            sessionId: new ObjectId(sessionId),
             image: await image,
             description,
             doctorId: doctor._id,
             req,
+            userId: new ObjectId(userId),
         });
         const appointmentResultsResponce = new AppointmentResultsGraph({
             ...appointmentResults,
