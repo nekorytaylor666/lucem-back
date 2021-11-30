@@ -66,15 +66,15 @@ export class ComplaintGraph
             session?: Session;
         },
     ) {
-        if (complaint._id) this._id = complaint._id.toHexString();
+        if (complaint._id != null) this._id = complaint._id.toHexString();
         if (complaint.complaint != null) this.complaint = complaint.complaint;
         if (complaint.reason != null) this.reason = complaint.reason;
         if (complaint.sicknessTimeDuration != null)
             this.sicknessTimeDuration = complaint.sicknessTimeDuration;
-        if (complaint.doctor)
+        if (complaint.doctor != null)
             this.doctor = new DoctorGraph({ ...complaint.doctor });
-        if (complaint.user) this.user = new UserGraph({ ...complaint.user });
-        if (complaint.session)
+        if (complaint.user != null) this.user = new UserGraph({ ...complaint.user });
+        if (complaint.session != null)
             this.session = new SessionGraph({ ...complaint.session });
     }
 }

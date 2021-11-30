@@ -16,9 +16,9 @@ export class DeseaseGraph implements Modify<Desease, { _id: string }> {
     doctors: DoctorGraph[];
 
     constructor(desease: Partial<Desease> & { doctors?: Doctor[] }) {
-        if (desease.name) this.name = desease.name;
-        if (desease._id) this._id = desease._id.toHexString();
-        if (desease.doctors)
+        if (desease.name != null) this.name = desease.name;
+        if (desease._id != null) this._id = desease._id.toHexString();
+        if (desease.doctors != null)
             this.doctors = desease.doctors.map(
                 (val) => new DoctorGraph({ ...val }),
             );

@@ -28,13 +28,13 @@ export class DoctorSpecStatsGraph
     totalNumOfSessions: number;
 
     constructor(stats: Partial<DoctorSpecStats>) {
-        if (stats.specialization)
+        if (stats.specialization != null)
             this.specialization = new SpecializationGraph({
                 ...stats.specialization,
             });
-        if (stats.doctor) this.doctor = new DoctorGraph({ ...stats.doctor });
-        if (stats.totalMoneyEarnt) this.totalMoneyEarnt = stats.totalMoneyEarnt;
-        if (stats.totalNumOfSessions)
+        if (stats.doctor != null) this.doctor = new DoctorGraph({ ...stats.doctor });
+        if (stats.totalMoneyEarnt != null) this.totalMoneyEarnt = stats.totalMoneyEarnt;
+        if (stats.totalNumOfSessions != null)
             this.totalNumOfSessions = stats.totalNumOfSessions;
     }
 }

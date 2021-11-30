@@ -38,11 +38,11 @@ export class InspectionsGraph {
             session?: Session;
         },
     ) {
-        if (inspections._id) this._id = inspections._id.toHexString();
-        if (inspections.doctor)
+        if (inspections._id != null) this._id = inspections._id.toHexString();
+        if (inspections.doctor != null)
             this.doctor = new DoctorGraph({ ...inspections.doctor });
-        if (inspections.inspections) this.inspections = inspections.inspections;
-        if (inspections.user)
+        if (inspections.inspections != null) this.inspections = inspections.inspections;
+        if (inspections.user != null)
             this.session = new SessionGraph({ ...inspections.session });
     }
 }

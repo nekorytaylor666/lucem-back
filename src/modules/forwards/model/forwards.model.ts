@@ -40,14 +40,14 @@ export class ForwardsGraph
             doctor?: Doctor;
         },
     ) {
-        if (forwards._id) this._id = forwards._id.toHexString();
-        if (forwards.dateAdded) this.dateAdded = forwards.dateAdded;
-        if (forwards.doctor)
+        if (forwards._id != null) this._id = forwards._id.toHexString();
+        if (forwards.dateAdded != null) this.dateAdded = forwards.dateAdded;
+        if (forwards.doctor != null)
             this.doctor = new DoctorGraph({ ...forwards.doctor });
-        if (forwards.services)
+        if (forwards.services != null)
             this.services = forwards.services.map(
                 (val) => new ServiceGraph({ ...val }),
             );
-        if (forwards.user) this.user = new UserGraph({ ...forwards.user });
+        if (forwards.user != null) this.user = new UserGraph({ ...forwards.user });
     }
 }

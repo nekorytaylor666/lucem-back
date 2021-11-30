@@ -13,8 +13,8 @@ export class PhotoURLGraph implements PhotoURL {
     thumbnail: string;
 
     constructor(photo: Partial<PhotoURL>) {
-        if (photo.xl) this.xl = photo.xl;
-        if (photo.m) this.m = photo.m;
-        if (photo.thumbnail) this.thumbnail = photo.thumbnail;
+        if (photo.xl != null) this.xl = photo.xl;
+        if (photo.m != null) this.m = photo.m;
+        if (photo.thumbnail != null) this.thumbnail = photo.thumbnail;
     }
 }

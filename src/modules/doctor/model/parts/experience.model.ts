@@ -38,11 +38,11 @@ export class ExperienceAndEducationGraph {
     data: ExperienceAndEducationDataGraph[];
 
     constructor(args: Partial<ExperienceAndEducation>) {
-        if (args._id) this._id = args._id.toHexString();
-        if (args.data)
+        if (args._id != null) this._id = args._id.toHexString();
+        if (args.data != null)
             this.data = args.data.map(
                 (val) => new ExperienceAndEducationDataGraph({ ...val }),
             );
-        if (args.name) this.name = args.name;
+        if (args.name != null) this.name = args.name;
     }
 }

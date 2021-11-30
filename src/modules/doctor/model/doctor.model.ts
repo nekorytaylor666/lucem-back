@@ -62,35 +62,35 @@ export class DoctorGraph
     experiences: ExperienceAndEducationGraph[];
 
     constructor(doctor: Partial<DoctorAddictives>) {
-        if (doctor._id) this._id = doctor._id.toHexString();
-        if (doctor.fullName) this.fullName = doctor.fullName;
-        if (doctor.email) this.email = doctor.email;
-        if (doctor.phoneNumber) this.phoneNumber = doctor.phoneNumber;
-        if (doctor.token) this.token = doctor.token;
-        if (doctor.deseases)
+        if (doctor._id != null) this._id = doctor._id.toHexString();
+        if (doctor.fullName != null) this.fullName = doctor.fullName;
+        if (doctor.email != null) this.email = doctor.email;
+        if (doctor.phoneNumber != null) this.phoneNumber = doctor.phoneNumber;
+        if (doctor.token != null) this.token = doctor.token;
+        if (doctor.deseases != null)
             this.deseases = doctor.deseases.map(
                 (val) => new DeseaseGraph({ ...val }),
             );
-        if (doctor.description) this.description = doctor.description;
-        if (doctor.numberOfRatings) this.numOfRatings = doctor.numberOfRatings;
-        if (doctor.sumOfRatings) {
+        if (doctor.description != null) this.description = doctor.description;
+        if (doctor.numberOfRatings != null) this.numOfRatings = doctor.numberOfRatings;
+        if (doctor.sumOfRatings != null) {
             const { numberOfRatings, sumOfRatings } = doctor;
             const rating = sumOfRatings / numberOfRatings;
             this.rating = rating;
         }
-        if (doctor.timelines)
+        if (doctor.timelines != null)
             this.timelines = doctor.timelines.map(
                 (val) => new TimelineGraph({ ...val }),
             );
-        if (doctor.acceptableAgeGroup)
+        if (doctor.acceptableAgeGroup != null)
             this.acceptableAgeGroup = doctor.acceptableAgeGroup;
-        if (doctor.avatar)
+        if (doctor.avatar != null)
             this.avatar = new PhotoURLGraph({ ...doctor.avatar });
-        if (doctor.specializations)
+        if (doctor.specializations != null)
             this.specializations = doctor.specializations.map(
                 (val) => new SpecializationGraph({ ...val }),
             );
-        if (doctor.experiences)
+        if (doctor.experiences != null)
             this.experiences = doctor.experiences.map(
                 (val) => new ExperienceAndEducationGraph({ ...val }),
             );

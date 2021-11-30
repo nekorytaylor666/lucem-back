@@ -33,11 +33,11 @@ export class DestinationGraph {
             service?: Service;
         },
     ) {
-        if (destination._id) this._id = destination._id.toHexString();
-        if (destination.endDate) this.endDate = destination.endDate;
-        if (destination.booking)
+        if (destination._id != null) this._id = destination._id.toHexString();
+        if (destination.endDate != null) this.endDate = destination.endDate;
+        if (destination.booking != null)
             this.booking = new BookingGraph({ ...destination.booking });
-        if (destination.service)
+        if (destination.service != null)
             this.service = new ServiceGraph({ ...destination.service });
     }
 }

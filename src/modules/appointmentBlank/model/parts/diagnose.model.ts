@@ -73,17 +73,17 @@ export class DiagnoseGraph
             session?: Session;
         },
     ) {
-        if (diagnose._id) this._id = diagnose._id.toHexString();
+        if (diagnose._id != null) this._id = diagnose._id.toHexString();
         if (diagnose.preliminary != undefined)
             this.preliminary = diagnose.preliminary;
-        if (diagnose.diagnose) this.diagnose = diagnose.diagnose;
-        if (diagnose.natureOfTheDesease)
+        if (diagnose.diagnose != null) this.diagnose = diagnose.diagnose;
+        if (diagnose.natureOfTheDesease != null)
             this.natureOfTheDesease = diagnose.natureOfTheDesease;
-        if (diagnose.deseaseDBCode) this.deseaseDBCode = diagnose.deseaseDBCode;
-        if (diagnose.doctor)
+        if (diagnose.deseaseDBCode != null) this.deseaseDBCode = diagnose.deseaseDBCode;
+        if (diagnose.doctor != null)
             this.doctor = new DoctorGraph({ ...diagnose.doctor });
-        if (diagnose.user) this.user = new UserGraph({ ...diagnose.user });
-        if (diagnose.session)
+        if (diagnose.user != null) this.user = new UserGraph({ ...diagnose.user });
+        if (diagnose.session != null)
             this.session = new SessionGraph({ ...diagnose.session });
     }
 }

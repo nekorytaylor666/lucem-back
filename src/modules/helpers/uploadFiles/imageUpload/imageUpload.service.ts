@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ReadStream, createWriteStream, writeFileSync } from 'fs';
+import { ReadStream, writeFileSync } from 'fs';
 import { join } from 'path';
 import * as sharp from 'sharp';
 import Buffer from 'sharp';
@@ -11,17 +11,20 @@ export class ImageUploadService {
         const thumbnailResizeImage = sharp().resize({
             height: 50,
             width: 50,
-            fit: 'cover',
+            fit: 'contain',
         });
         const mResizeImage = sharp().resize(200, 200, {
-            fit: 'cover',
+            fit: 'contain',
         });
         const xlResizeImage = sharp().resize(1000, 1000, {
-            fit: 'cover',
+            fit: 'contain',
         });
 
         const [thumbnailBuffer, mBuffer, xlBuffer] = await Promise.all([
-            fileReadStream.pipe(thumbnailResizeImage).toFormat('jpg').toBuffer(),
+            fileReadStream
+                .pipe(thumbnailResizeImage)
+                .toFormat('jpg')
+                .toBuffer(),
             fileReadStream.pipe(mResizeImage).toBuffer(),
             fileReadStream.pipe(xlResizeImage).toBuffer(),
         ]);
@@ -33,13 +36,22 @@ export class ImageUploadService {
         const keyStr =
             new Date().getTime().toString() +
             Math.random().toString(36).substr(2, 5);
-        writeFileSync(join(process.cwd(), 'uploads') + `/thumbnail-${keyStr}.jpg`, resizedImages[0]);
-        writeFileSync(join(process.cwd(), 'uploads') + `/m-${keyStr}.jpg`, resizedImages[1]);
-        writeFileSync(join(process.cwd(), 'uploads') + `/xl-${keyStr}.jpg`, resizedImages[2]);
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/thumbnail-${keyStr}.jpg`,
+            resizedImages[0],
+        );
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/m-${keyStr}.jpg`,
+            resizedImages[1],
+        );
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/xl-${keyStr}.jpg`,
+            resizedImages[2],
+        );
         const photoUrl: PhotoURL = {
             thumbnail: `${req}/media/thumbnail-${keyStr}.jpg`,
             m: `${req}/media/m-${keyStr}.jpg`,
-            xl: `${req}/media/xl-${keyStr}.jpg`            
+            xl: `${req}/media/xl-${keyStr}.jpg`,
         };
         return photoUrl;
     }
