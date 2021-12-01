@@ -1,6 +1,13 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ObjectId } from 'bson';
+import {
+    Args,
+    GraphQLISODateTime,
+    Int,
+    Mutation,
+    Query,
+    Resolver,
+} from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentTokenPayload,
@@ -107,6 +114,40 @@ export class SessionResolver {
             page,
             elementsPerPage: 10,
         });
+        const sessionsResponce = sessions.map(
+            (val) => new SessionGraph({ ...val }),
+        );
+        return sessionsResponce;
+    }
+
+    @Query(() => [SessionGraph])
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async getHistoryOfSessionsOfDoctorByPeriodsOfTime(
+        @Args('doctorId', { type: () => String, nullable: true })
+        doctorId: string,
+        @Args('firstDate', { type: () => GraphQLISODateTime }) firstDate: Date,
+        @Args('secondDate', { type: () => GraphQLISODateTime })
+        secondDate: Date,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const sessions =
+            payload.role === TokenRoles.Doctor
+                ? await this.sessionService.getSessionsOfDoctorByPeriodsOfTimeCursor(
+                      {
+                          doctorId: user._id,
+                          firstDate,
+                          secondDate,
+                      },
+                  )
+                : await this.sessionService.getSessionsOfDoctorByPeriodsOfTimeCursor(
+                      {
+                          doctorId: new ObjectId(doctorId),
+                          firstDate,
+                          secondDate,
+                      },
+                  );
         const sessionsResponce = sessions.map(
             (val) => new SessionGraph({ ...val }),
         );

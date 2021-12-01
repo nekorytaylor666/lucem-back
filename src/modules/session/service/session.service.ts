@@ -78,6 +78,30 @@ export class SessionService extends BasicService<Session> {
         return sessionsCursor;
     }
 
+    async getSessionsOfDoctorByPeriodsOfTimeCursor(args: {
+        doctorId: ObjectId;
+        firstDate: Date;
+        secondDate: Date;
+    }) {
+        const { doctorId, firstDate, secondDate } = args;
+        const sessionsCursor = await this.findWithAddictivesCursor<SessionAddictive>({
+            matchQuery: {
+                endDate: {
+                    $lte: secondDate,
+                },
+                startDate: {
+                    $gte: firstDate,
+                },
+                doctorId,
+            },
+            lookups: this.basicLookups,
+            sort: {
+                endDate: -1,
+            },
+        }).toArray();
+        return sessionsCursor;
+    }
+
     historyOfSessionsCursor() {
         const sessions = this.findWithAddictivesCursor<SessionAddictive>({
             matchQuery: {
