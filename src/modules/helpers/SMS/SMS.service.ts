@@ -21,10 +21,9 @@ export class SMSService {
                 {
                     headers: {
                         'Content-type': 'application/x-www-form-urlencoded',
-                        'Cache-control': 'no-cache'
-
-                    }
-                }
+                        'Cache-control': 'no-cache',
+                    },
+                },
             )
             .subscribe();
         return send;

@@ -89,6 +89,33 @@ export class SessionResolver {
     @Query(() => [SessionGraph])
     @Roles('doctor', 'admin')
     @UseGuards(PreAuthGuard)
+    async getHistoryOfSessionsOfDoctor(
+        @Args('doctorId', { nullable: true, type: () => String })
+        doctorId: string,
+        @Args('page', { type: () => Int }) page: number,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const sessionsCursor =
+            payload.role === TokenRoles.Doctor
+                ? this.sessionService.getSessionsOfDoctorCursor(user._id)
+                : this.sessionService.getSessionsOfDoctorCursor(
+                      new ObjectId(doctorId),
+                  );
+        const sessions = await paginate({
+            cursor: sessionsCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const sessionsResponce = sessions.map(
+            (val) => new SessionGraph({ ...val }),
+        );
+        return sessionsResponce;
+    }
+
+    @Query(() => [SessionGraph])
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
     async getDoctorsSessionsOfUser(
         @Args('doctorId', { type: () => String, nullable: true })
         doctorId: string,

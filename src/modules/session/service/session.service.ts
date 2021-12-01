@@ -64,6 +64,20 @@ export class SessionService extends BasicService<Session> {
         return session[0];
     }
 
+    getSessionsOfDoctorCursor(doctorId: ObjectId) {
+        const sessionsCursor = this.findWithAddictivesCursor<SessionAddictive>({
+            matchQuery: {
+                endDate: {
+                    $exists: false,
+                },
+                doctorId: new ObjectId(doctorId),
+            },
+            lookups: this.basicLookups,
+            sort: { endDate: -1 },
+        });
+        return sessionsCursor;
+    }
+
     historyOfSessionsCursor() {
         const sessions = this.findWithAddictivesCursor<SessionAddictive>({
             matchQuery: {
