@@ -84,21 +84,22 @@ export class SessionService extends BasicService<Session> {
         secondDate: Date;
     }) {
         const { doctorId, firstDate, secondDate } = args;
-        const sessionsCursor = await this.findWithAddictivesCursor<SessionAddictive>({
-            matchQuery: {
-                endDate: {
-                    $lte: secondDate,
+        const sessionsCursor =
+            await this.findWithAddictivesCursor<SessionAddictive>({
+                matchQuery: {
+                    endDate: {
+                        $lte: secondDate,
+                    },
+                    startDate: {
+                        $gte: firstDate,
+                    },
+                    doctorId,
                 },
-                startDate: {
-                    $gte: firstDate,
+                lookups: this.basicLookups,
+                sort: {
+                    endDate: -1,
                 },
-                doctorId,
-            },
-            lookups: this.basicLookups,
-            sort: {
-                endDate: -1,
-            },
-        }).toArray();
+            }).toArray();
         return sessionsCursor;
     }
 
