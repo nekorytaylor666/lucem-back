@@ -8,7 +8,7 @@ export async function paginate<T>(args: {
     const { cursor, page, elementsPerPage } = args;
     const paginatedResult = await cursor
         .skip((page - 1) * elementsPerPage)
-        .limit((page + 1) * elementsPerPage)
+        .limit(elementsPerPage)
         .toArray();
     return paginatedResult;
 }
