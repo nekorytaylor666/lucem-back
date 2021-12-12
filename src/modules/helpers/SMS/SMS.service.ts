@@ -24,6 +24,6 @@ export class SMSService {
             },
         );
         const sendResponce = await lastValueFrom(send);
-        return send;
+        return sendResponce.data;
     }
 }

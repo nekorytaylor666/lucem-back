@@ -11,15 +11,14 @@ export class ImageUploadService {
         const thumbnailResizeImage = sharp().resize({
             height: 50,
             width: 50,
-            fit: 'contain',
+            fit: 'inside',
         });
         const mResizeImage = sharp().resize(200, 200, {
-            fit: 'contain',
+            fit: 'inside',
         });
         const xlResizeImage = sharp().resize(1000, 1000, {
-            fit: 'contain',
+            fit: 'inside',
         });
-
         const [thumbnailBuffer, mBuffer, xlBuffer] = await Promise.all([
             fileReadStream
                 .pipe(thumbnailResizeImage)
