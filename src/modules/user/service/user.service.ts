@@ -7,39 +7,23 @@ import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { Cache } from 'cache-manager';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
+import { BasicService } from 'src/modules/helpers/basic.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends BasicService<User> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
         private tokenService: TokenService,
         private photoUploadService: ImageUploadService,
-    ) {}
-
-    get userCollection() {
-        const collection = this.database.collection<User>('user');
-        return collection;
+    ) {
+        super();
+        this.dbService = this.database.collection('user');
     }
 
     async list() {
-        return await this.userCollection.find().toArray();
+        return await this.dbService.find().toArray();
     }
-
-    async findOne(user: Partial<User>): Promise<User> {
-        const userResponce = this.userCollection.findOne(user);
-        return userResponce;
-    }
-
-    async insertOne(user: Omit<User, '_id'>) {
-        const insertUser = await this.userCollection.insertOne(user);
-        const userReponce: User = {
-            ...user,
-            _id: insertUser.insertedId,
-        };
-        return userReponce;
-    }
-
     async checkSMSVerification(args: { phoneNumber: string; code: string }) {
         const { phoneNumber, code } = args;
         const filteredPhoneNumber = phoneNumber.replace(/\D/g, '');
@@ -48,7 +32,7 @@ export class UserService {
         );
         if (code !== originalCode) throw new ApolloError('The code is wrong');
         const insertPhoneNumber = (
-            await this.userCollection.findOneAndUpdate(
+            await this.dbService.findOneAndUpdate(
                 { phoneNumber: filteredPhoneNumber },
                 {
                     $set: {
@@ -85,7 +69,7 @@ export class UserService {
         } = newUser;
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
         const dateOfBirth = new Date(_dateOfBirth);
-        const insertUser = await this.userCollection.findOneAndUpdate(
+        const insertUser = await this.dbService.findOneAndUpdate(
             { _id: new ObjectId(_id), phoneNumber },
             {
                 $set: {

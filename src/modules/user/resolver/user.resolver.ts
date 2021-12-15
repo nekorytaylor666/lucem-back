@@ -81,7 +81,10 @@ export class UserResolver {
 
     @Query(() => [UserGraph])
     async listUsers() {
-        const users = await this.userService.list();
+        const users = await this.userService.findWithOptions({
+            fields: ['fullName'],
+            values: [{ $exists: true }],
+        });
         const usersResponce = users.map((val) => new UserGraph({ ...val }));
         return usersResponce;
     }
