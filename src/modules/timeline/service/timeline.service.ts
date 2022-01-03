@@ -22,67 +22,6 @@ export class TimelineService extends BasicService<Timeline> {
         this.dbService = this.database.collection<Timeline>('timeline');
     }
 
-    @Cron('* * 1 * *')
-    async setTimeLines() {
-        const doctors = await this.doctorService.list();
-        await Promise.all(
-            doctors.map(async (val) => {
-                const workTimes = await this.workTimeService.find({
-                    doctorId: val._id,
-                });
-                for (let i = 1; i < 31; i++) {
-                    const currentDate = moment(new Date())
-                        .add(i, 'days')
-                        .toDate();
-                    const parsedDate = parseTime(currentDate);
-                    const currentWorkTime = workTimes.find(
-                        (val) => val.startTime.getDay() === parsedDate.getDay(),
-                    );
-                    if (!currentWorkTime) continue;
-                    const startDate = new Date(
-                        moment(currentDate)
-                            .set({
-                                hours:
-                                    currentWorkTime.startTime.getUTCHours() + 6,
-                                minutes:
-                                    currentWorkTime.startTime.getUTCMinutes(),
-                                seconds:
-                                    currentWorkTime.startTime.getUTCSeconds(),
-                            })
-                            .format(),
-                    );
-                    const endDate = new Date(
-                        moment(currentDate)
-                            .set({
-                                hours:
-                                    currentWorkTime.endTime.getUTCHours() + 6,
-                                minutes:
-                                    currentWorkTime.endTime.getUTCMinutes(),
-                                seconds:
-                                    currentWorkTime.endTime.getUTCSeconds(),
-                            })
-                            .format(),
-                    );
-                    const checkTimeLine = await this.findOneWithOptions({
-                        fields: ['startDate', 'endDate', 'doctorId'],
-                        values: [
-                            { $lte: startDate },
-                            { $gte: endDate },
-                            val._id,
-                        ],
-                    });
-                    if (checkTimeLine) continue;
-                    const timeLine: Timeline = {
-                        doctorId: val._id,
-                        startDate,
-                        endDate,
-                    };
-                    await this.insertOne(timeLine);
-                }
-            }),
-        );
-    }
-
     findCursorWithAddictives(
         args: Partial<Timeline>,
     ): AggregationCursor<TimelineAddictive> {
