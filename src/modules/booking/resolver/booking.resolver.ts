@@ -21,6 +21,7 @@ import { BookingService } from '../service/booking.service';
 import { Token, TokenRoles } from '../../helpers/token/token.interface';
 import { ObjectId } from 'mongodb';
 import { BookingProgress } from '../model/booking.interface';
+import { BookingAddictive } from '../model/booking.addictive';
 
 @Resolver()
 export class BookingResolver {
@@ -147,5 +148,74 @@ export class BookingResolver {
             (val) => new BookingGraph({ ...val }),
         );
         return bookingsResponce;
+    }
+
+    @Query(() => [BookingGraph])
+    @Roles('admin', 'doctor')
+    @UseGuards(PreAuthGuard)
+    async getUpcomingBookingsOfUser(
+        @Args('userId', { type: () => String }) userId: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const bookings =
+            payload.role === TokenRoles.User
+                ? await this.bookingService
+                      .findWithAddictivesCursor<BookingAddictive>({
+                          find: {
+                              userId: user._id,
+                              progress: BookingProgress.Upcoming,
+                          },
+                          lookups: this.bookingService.basicLookups,
+                          sort: { startDate: 1 },
+                      })
+                      .toArray()
+                : await this.bookingService
+                      .findWithAddictivesCursor<BookingAddictive>({
+                          find: {
+                              userId: new ObjectId(userId),
+                              progress: BookingProgress.Upcoming,
+                          },
+                          lookups: this.bookingService.basicLookups,
+                          sort: { startDate: 1 },
+                      })
+                      .toArray();
+        const bookingsRespononce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
+        return bookingsRespononce;
+    }
+
+    @Query(() => [BookingGraph])
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async getBookingsOfUser(
+        @Args('userId', { type: () => String }) userId: string,
+        @Args('page', { type: () => Int }) page: number,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const bookingsCursor =
+            payload.role === TokenRoles.User
+                ? this.bookingService.findWithAddictivesCursor({
+                      find: {
+                          userId: user._id,
+                      },
+                      lookups: this.bookingService.basicLookups,
+                      sort: { startDate: -1 },
+                  })
+                : this.bookingService.findWithAddictivesCursor({
+                      find: {
+                          userId: new ObjectId(userId),
+                      },
+                      lookups: this.bookingService.basicLookups,
+                      sort: { startDate: -1 },
+                  });
+        const bookings = await paginate({
+            cursor: bookingsCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        return bookings;
     }
 }
