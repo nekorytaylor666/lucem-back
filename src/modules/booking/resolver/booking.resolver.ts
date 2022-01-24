@@ -194,28 +194,35 @@ export class BookingResolver {
         @Args('page', { type: () => Int }) page: number,
         @CurrentUserGraph() user: { _id: ObjectId },
         @CurrentTokenPayload() payload: Token,
-    ) {
+    ): Promise<BookingGraph[]> {
         const bookingsCursor =
             payload.role === TokenRoles.User
-                ? this.bookingService.findWithAddictivesCursor({
-                      find: {
-                          userId: user._id,
+                ? this.bookingService.findWithAddictivesCursor<BookingAddictive>(
+                      {
+                          find: {
+                              userId: user._id,
+                          },
+                          lookups: this.bookingService.basicLookups,
+                          sort: { startDate: -1 },
                       },
-                      lookups: this.bookingService.basicLookups,
-                      sort: { startDate: -1 },
-                  })
-                : this.bookingService.findWithAddictivesCursor({
-                      find: {
-                          userId: new ObjectId(userId),
+                  )
+                : this.bookingService.findWithAddictivesCursor<BookingAddictive>(
+                      {
+                          find: {
+                              userId: new ObjectId(userId),
+                          },
+                          lookups: this.bookingService.basicLookups,
+                          sort: { startDate: -1 },
                       },
-                      lookups: this.bookingService.basicLookups,
-                      sort: { startDate: -1 },
-                  });
+                  );
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
             elementsPerPage: 10,
         });
-        return bookings;
+        const bookingsResponce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
+        return bookingsResponce;
     }
 }
