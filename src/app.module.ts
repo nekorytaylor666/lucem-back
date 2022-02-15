@@ -8,7 +8,6 @@ import { UserModule } from './modules/user/user.module';
 import { DeseasesModule } from './modules/deseases/deseases.module';
 import { DoctorModule } from './modules/doctor/doctor.module';
 import { ServiceModule } from './modules/service/service.module';
-import { TimelineModule } from './modules/timeline/timeline.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { SpecializationModule } from './modules/specialization/specialization.module';
 import { SmartSearchModule } from './modules/helpers/smartSearch/search.module';
@@ -20,7 +19,6 @@ import { ImageUploadController } from './modules/helpers/uploadFiles/imageUpload
 import { AdminModule } from './modules/admin/admin.module';
 import { AppointmentBlankModule } from './modules/appointmentBlank/appointmentBlank.module';
 import { ForwardsModule } from './modules/forwards/forwards.module';
-import { WorkTimeModule } from './modules/workTime/workTime.module';
 import { ScriptModule } from './modules/script/script.module';
 import { StatsModule } from './modules/stats/stats.module';
 import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
@@ -50,7 +48,6 @@ import { SpecializationStatsModule } from './modules/specializationStats/special
         DeseasesModule,
         DoctorModule,
         ServiceModule,
-        TimelineModule,
         BookingModule,
         SpecializationModule,
         SearchModule,
@@ -59,7 +56,6 @@ import { SpecializationStatsModule } from './modules/specializationStats/special
         AdminModule,
         AppointmentBlankModule,
         ForwardsModule,
-        WorkTimeModule,
         ScriptModule,
         StatsModule,
         DoctorStatsModule,
