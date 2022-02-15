@@ -1,16 +1,18 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
+import { Service } from 'src/modules/service/model/service.interface';
 import { ServiceGraph } from 'src/modules/service/model/service.model';
+import { User } from 'src/modules/user/model/user.interface';
 import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
-import { BookingAddictive } from './booking.addictive';
 import { Booking, BookingProgress } from './booking.interface';
 
 @ObjectType('Booking')
 export class BookingGraph
     implements
         Modify<
-            Omit<Booking, 'serviceId' | 'userId' | 'timelineId' | 'doctorId'>,
+            Omit<Booking, 'serviceId' | 'userId' | 'doctorId'>,
             {
                 _id: string;
             }
@@ -37,7 +39,15 @@ export class BookingGraph
     @Field(() => BookingProgress)
     progress: BookingProgress;
 
-    constructor(booking: Partial<BookingAddictive>) {
+    constructor(
+        booking: Partial<
+            Booking & {
+                service: Service;
+                user: User;
+                doctor: Doctor;
+            }
+        >,
+    ) {
         if (booking._id) this._id = booking._id.toHexString();
         if (booking.service)
             this.service = new ServiceGraph({ ...booking.service });

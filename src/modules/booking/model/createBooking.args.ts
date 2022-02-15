@@ -9,16 +9,12 @@ export class CreateBooking
             Omit<Booking, '_id' | 'userId' | 'progress'>,
             {
                 serviceId?: string;
-                timelineId: string;
                 doctorId: string;
             }
         >
 {
     @Field({ nullable: true })
     serviceId?: string;
-
-    @Field()
-    timelineId: string;
 
     @Field(() => GraphQLISODateTime)
     startDate: Date;

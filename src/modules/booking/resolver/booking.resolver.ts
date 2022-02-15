@@ -20,12 +20,18 @@ import { CreateBooking } from '../model/createBooking.args';
 import { BookingService } from '../service/booking.service';
 import { Token, TokenRoles } from '../../helpers/token/token.interface';
 import { ObjectId } from 'mongodb';
-import { BookingProgress } from '../model/booking.interface';
-import { BookingAddictive } from '../model/booking.addictive';
+import { Booking, BookingProgress } from '../model/booking.interface';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { Service } from 'src/modules/service/model/service.interface';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 
 @Resolver()
 export class BookingResolver {
-    constructor(private bookingService: BookingService) {}
+    constructor(
+        private bookingService: BookingService,
+        private doctorService: DoctorService,
+    ) {}
+
     @Mutation(() => BookingGraph)
     @Roles('user', 'doctor')
     @UseGuards(PreAuthGuard)
@@ -35,14 +41,19 @@ export class BookingResolver {
         user: User,
         @CurrentTokenPayload() payload: Token,
     ) {
+        const doctor = await this.doctorService.findOne({
+            _id: new ObjectId(args.doctorId),
+        });
         const createBooking =
             payload.role === TokenRoles.User
                 ? await this.bookingService.create({
                       ...args,
+                      doctor,
                       userId: user._id.toHexString(),
                   })
                 : await this.bookingService.create({
                       ...args,
+                      doctor,
                   });
         const bookingResponce = new BookingGraph({ ...createBooking });
         return bookingResponce;
@@ -161,7 +172,13 @@ export class BookingResolver {
         const bookings =
             payload.role === TokenRoles.User
                 ? await this.bookingService
-                      .findWithAddictivesCursor<BookingAddictive>({
+                      .findWithAddictivesCursor<
+                          Booking & {
+                              user: User;
+                              service: Service;
+                              doctor: Doctor;
+                          }
+                      >({
                           find: {
                               userId: user._id,
                               progress: BookingProgress.Upcoming,
@@ -171,7 +188,13 @@ export class BookingResolver {
                       })
                       .toArray()
                 : await this.bookingService
-                      .findWithAddictivesCursor<BookingAddictive>({
+                      .findWithAddictivesCursor<
+                          Booking & {
+                              user: User;
+                              service: Service;
+                              doctor: Doctor;
+                          }
+                      >({
                           find: {
                               userId: new ObjectId(userId),
                               progress: BookingProgress.Upcoming,
@@ -197,24 +220,32 @@ export class BookingResolver {
     ): Promise<BookingGraph[]> {
         const bookingsCursor =
             payload.role === TokenRoles.User
-                ? this.bookingService.findWithAddictivesCursor<BookingAddictive>(
-                      {
-                          find: {
-                              userId: user._id,
-                          },
-                          lookups: this.bookingService.basicLookups,
-                          sort: { startDate: -1 },
+                ? this.bookingService.findWithAddictivesCursor<
+                      Booking & {
+                          user: User;
+                          service: Service;
+                          doctor: Doctor;
+                      }
+                  >({
+                      find: {
+                          userId: user._id,
                       },
-                  )
-                : this.bookingService.findWithAddictivesCursor<BookingAddictive>(
-                      {
-                          find: {
-                              userId: new ObjectId(userId),
-                          },
-                          lookups: this.bookingService.basicLookups,
-                          sort: { startDate: -1 },
+                      lookups: this.bookingService.basicLookups,
+                      sort: { startDate: -1 },
+                  })
+                : this.bookingService.findWithAddictivesCursor<
+                      Booking & {
+                          user: User;
+                          service: Service;
+                          doctor: Doctor;
+                      }
+                  >({
+                      find: {
+                          userId: new ObjectId(userId),
                       },
-                  );
+                      lookups: this.bookingService.basicLookups,
+                      sort: { startDate: -1 },
+                  });
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,

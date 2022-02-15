@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
 import { Db, ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { BasicService } from 'src/modules/helpers/basic.service';
-import { BookingAddictive } from '../model/booking.addictive';
+import { Service } from 'src/modules/service/model/service.interface';
+import { User } from 'src/modules/user/model/user.interface';
+import { parseTime } from 'src/utils/parseTime';
 import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
 
@@ -42,7 +45,13 @@ export class BookingService extends BasicService<Booking> {
         secondDate: Date;
     }) {
         const { doctorId, firstDate, secondDate } = args;
-        const bookings = await this.findWithAddictivesCursor<BookingAddictive>({
+        const bookings = await this.findWithAddictivesCursor<
+            Booking & {
+                user: User;
+                service: Service;
+                doctor: Doctor;
+            }
+        >({
             matchQuery: {
                 doctorId: doctorId,
                 startDate: { $gte: firstDate, $lte: secondDate },
@@ -52,45 +61,43 @@ export class BookingService extends BasicService<Booking> {
         return bookings;
     }
 
-    async create(args: CreateBooking & { userId: string }) {
+    async create(
+        args: Omit<CreateBooking, 'doctorId'> & {
+            userId: string;
+            doctor: Doctor;
+        },
+    ) {
         const {
             serviceId: _serviceId,
             userId: _userId,
-            timelineId: _timelineId,
             startDate,
             endDate,
-            doctorId: _doctorId,
+            doctor,
         } = args;
-        const [serviceId, userId, timelineId, doctorId] = [
+        const [serviceId, userId] = [
             new ObjectId(_serviceId),
             new ObjectId(_userId),
-            new ObjectId(_timelineId),
-            new ObjectId(_doctorId),
         ];
+        const checkIfWorkTimeExists = doctor.workTimes.find(
+            (val) =>
+                val.startTime <= parseTime(startDate) &&
+                val.endTime >= parseTime(endDate),
+        );
+        if (!checkIfWorkTimeExists)
+            throw new ApolloError("he doesn't work during this time");
         const checkIfTimeIsTaken = await this.findOneWithOptions({
-            fields: ['timelineId', 'startDate', 'endDate'],
-            values: [timelineId, { $lte: startDate }, { $gte: endDate }],
+            fields: ['startDate', 'endDate', 'doctorId'],
+            values: [{ $lte: startDate }, { $gte: endDate }, doctor._id],
         });
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
-        // const timeline = await this.timelineService.findOne({
-        //     _id: timelineId,
-        //     doctorId,
-        // });
-        // if (
-        //     timeline.startDate > startDate ||
-        //     timeline.endDate < endDate ||
-        //     timeline.isVacation
-        // )
-        //     throw new ApolloError("doctor doesn't work during this time");
         const booking: Booking = {
             serviceId,
             userId,
             startDate,
             endDate,
-            timelineId,
-            doctorId,
             progress: BookingProgress.Upcoming,
+            doctorId: doctor._id,
         };
         const insertBooking = await this.insertOne(booking);
         booking._id = insertBooking;
@@ -102,7 +109,13 @@ export class BookingService extends BasicService<Booking> {
         doctorId: ObjectId;
     }) {
         const { currentDate, doctorId } = args;
-        const bookings = this.findWithAddictivesCursor<BookingAddictive>({
+        const bookings = this.findWithAddictivesCursor<
+            Booking & {
+                user: User;
+                service: Service;
+                doctor: Doctor;
+            }
+        >({
             matchQuery: {
                 doctorId: doctorId,
                 startDate: { $gt: currentDate },
@@ -113,7 +126,13 @@ export class BookingService extends BasicService<Booking> {
     }
 
     findUpcomingBookingsCursor(currentDate: Date) {
-        const bookings = this.findWithAddictivesCursor<BookingAddictive>({
+        const bookings = this.findWithAddictivesCursor<
+            Booking & {
+                user: User;
+                service: Service;
+                doctor: Doctor;
+            }
+        >({
             matchQuery: {
                 startDate: { $gt: currentDate },
             },
