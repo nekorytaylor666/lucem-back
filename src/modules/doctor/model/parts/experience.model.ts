@@ -7,9 +7,9 @@ export interface ExperienceAndEducation {
     name: AllowedExperienceAndEducationTypes;
     data: {
         years: [number, number];
-        description: string;
+        institutionName: string;
+        specialty: string;
     }[];
-    doctorId: ObjectId;
 }
 
 @ObjectType('ExperienceAndEducationData')
@@ -18,11 +18,20 @@ export class ExperienceAndEducationDataGraph {
     years: [number, number];
 
     @Field()
-    description: string;
+    institutionName: string;
 
-    constructor(args: { years?: [number, number]; description: string }) {
+    @Field()
+    specialty: string;
+
+    constructor(args: {
+        years?: [number, number];
+        institutionName: string;
+        specialty: string;
+    }) {
         if (args.years != null) this.years = args.years;
-        if (args.description != null) this.description = args.description;
+        if (args.institutionName != null)
+            this.institutionName = args.institutionName;
+        if (args.specialty != null) this.specialty = args.specialty;
     }
 }
 
