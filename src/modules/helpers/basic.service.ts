@@ -4,7 +4,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
     protected dbService: Collection<T>;
     basicLookups: {
         from: string;
-        localField?: string;
+        localField?: keyof T;
         foreignField?: string;
         let?: {
             [index: string]: keyof T;

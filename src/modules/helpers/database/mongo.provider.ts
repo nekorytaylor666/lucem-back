@@ -1,7 +1,8 @@
 import { FactoryProvider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Db, MongoClient } from 'mongodb';
-import { join } from 'path';
+
+export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 
 export const mongodDbFactory: FactoryProvider<Promise<Db>> = {
     provide: 'DATABASE_CONNECTION',
