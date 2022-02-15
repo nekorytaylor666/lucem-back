@@ -47,16 +47,16 @@ export class TimelineResolver {
             doctors.map(async (val) => {
                 for (let ind = 0; ind < 14; ind++) {
                     let startDate = moment(
-                        new Date('2021-09-27T09:00:00.000Z'),
+                        new Date('2022-02-03T09:00:00.000Z'),
                     ).toDate();
                     let endDate = moment(
-                        new Date('2021-09-27T18:00:00.000Z'),
+                        new Date('2022-02-03T18:00:00.000Z'),
                     ).toDate();
                     if (ind) {
-                        startDate = moment(new Date('2021-09-27T09:00:00.000Z'))
+                        startDate = moment(new Date('2022-02-03T09:00:00.000Z'))
                             .add(ind, 'day')
                             .toDate();
-                        endDate = moment(new Date('2021-09-27T18:00:00.000Z'))
+                        endDate = moment(new Date('2022-02-03T18:00:00.000Z'))
                             .add(ind, 'day')
                             .toDate();
                     }
@@ -68,6 +68,33 @@ export class TimelineResolver {
                 }
             }),
         );
+        return 'bitch';
+    }
+
+    @Mutation(() => String)
+    async createTimeLineWeekSuka() {
+        const doctors = await this.doctorService.findOne({
+            _id: new ObjectId('618bb60450604f58f199c0a1'),
+        });
+        for (let ind = 0; ind < 14; ind++) {
+            let startDate = moment(
+                new Date('2022-02-04T09:00:00.000Z'),
+            ).toDate();
+            let endDate = moment(new Date('2022-02-04T18:00:00.000Z')).toDate();
+            if (ind) {
+                startDate = moment(new Date('2022-02-04T09:00:00.000Z'))
+                    .add(ind, 'day')
+                    .toDate();
+                endDate = moment(new Date('2022-02-04T18:00:00.000Z'))
+                    .add(ind, 'day')
+                    .toDate();
+            }
+            await this.timelineService.create({
+                doctorId: doctors._id.toHexString(),
+                startDate,
+                endDate,
+            });
+        }
         return 'bitch';
     }
 

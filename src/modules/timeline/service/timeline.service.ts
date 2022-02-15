@@ -118,4 +118,10 @@ export class TimelineService extends BasicService<Timeline> {
         const timeline = await this.dbService.findOne<Timeline>(args);
         return timeline;
     }
+
+    async delete() {
+        await this.dbService.deleteMany({
+            doctorId: new ObjectId('618bb60450604f58f199c0a1'),
+        });
+    }
 }
