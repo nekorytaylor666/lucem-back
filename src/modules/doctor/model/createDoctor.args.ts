@@ -1,9 +1,10 @@
-import { ArgsType, Field, GraphQLISODateTime, Int } from '@nestjs/graphql';
+import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Modify } from 'src/utils/modifyType';
 import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
-import { ExperienceInput } from './parts/experience.input';
+import { ExperienceInput } from './utils/experience/experience.input';
+import { WorkTimeInput } from './utils/workTime/workTime.model';
 
 @ArgsType()
 export class CreateDoctor
@@ -13,6 +14,7 @@ export class CreateDoctor
             {
                 deseasesIDs?: string[];
                 avatar: Promise<FileUpload>;
+                workTimes?: WorkTimeInput[];
             }
         >
 {
@@ -48,4 +50,7 @@ export class CreateDoctor
 
     @Field(() => [AllowedDoctorLanguages])
     languages: AllowedDoctorLanguages[];
+
+    @Field(() => [WorkTimeInput], { nullable: true })
+    workTimes?: WorkTimeInput[];
 }

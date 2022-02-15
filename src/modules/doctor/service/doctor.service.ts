@@ -7,11 +7,12 @@ import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Modify } from 'src/utils/modifyType';
-import { ExperienceAndEducation } from '../model/parts/experience.model';
 import { FileUpload } from 'graphql-upload';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { Specialization } from 'src/modules/specialization/model/specialization.interface';
-import { Timeline } from 'src/modules/timeline/model/timeline.interface';
+import { ExperienceAndEducation } from '../model/utils/experience/experience.model';
+import { WorkTime } from '../model/utils/workTime/workTime.model';
+import { parseTime } from 'src/utils/parseTime';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -48,28 +49,6 @@ export class DoctorService extends BasicService<Doctor> {
                 as: 'specializations',
                 isArray: true,
             },
-            {
-                from: 'timeline',
-                let: {
-                    id: '_id',
-                },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ['$doctorId', '$$id'] },
-                                    {
-                                        $gt: [new Date(), '$endTime'],
-                                    },
-                                ],
-                            },
-                        },
-                    },
-                ],
-                as: 'timelines',
-                isArray: true,
-            },
         ];
     }
 
@@ -89,6 +68,7 @@ export class DoctorService extends BasicService<Doctor> {
             avatar,
             experience,
             languages,
+            workTimes: _workTimes,
         } = args;
         const avatarURL =
             avatar &&
@@ -105,6 +85,12 @@ export class DoctorService extends BasicService<Doctor> {
                 name: val.name,
             };
         });
+        const workTimes: WorkTime[] = _workTimes.map((val) => {
+            return {
+                startTime: parseTime(val.startTime),
+                endTime: parseTime(val.endTime),
+            };
+        });
         const doctor: Doctor = {
             _id: new ObjectId(),
             fullName,
@@ -117,6 +103,7 @@ export class DoctorService extends BasicService<Doctor> {
             avatar: avatarURL,
             experiences,
             languages,
+            workTimes,
         };
         await this.insertOne(doctor);
         const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
@@ -162,7 +149,6 @@ export class DoctorService extends BasicService<Doctor> {
         const doctor = await this.findWithAddictivesCursor<
             Doctor & {
                 specializations?: Specialization[];
-                timelines?: Timeline[];
             }
         >({
             find: { _id },
@@ -176,7 +162,6 @@ export class DoctorService extends BasicService<Doctor> {
             .aggregate<
                 Doctor & {
                     specializations?: Specialization[];
-                    timelines?: Timeline[];
                 }
             >([
                 {
@@ -202,29 +187,6 @@ export class DoctorService extends BasicService<Doctor> {
                             },
                         ],
                         as: 'specializations',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'timeline',
-                        let: {
-                            id: '$_id',
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [
-                                            { $eq: ['$doctorId', '$$id'] },
-                                            {
-                                                $gt: [new Date(), '$endTime'],
-                                            },
-                                        ],
-                                    },
-                                },
-                            },
-                        ],
-                        as: 'timelines',
                     },
                 },
             ])

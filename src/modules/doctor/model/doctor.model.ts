@@ -3,13 +3,12 @@ import { Desease } from 'src/modules/deseases/model/desease.interface';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
-import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
 import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
-import { ExperienceAndEducationGraph } from './parts/experience.model';
 import { Specialization } from 'src/modules/specialization/model/specialization.interface';
-import { Timeline } from 'src/modules/timeline/model/timeline.interface';
+import { ExperienceAndEducationGraph } from './utils/experience/experience.model';
+import { WorkTimeGraph } from './utils/workTime/workTime.model';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -20,6 +19,7 @@ export class DoctorGraph
                 _id: string;
                 rating: number;
                 experiences: ExperienceAndEducationGraph[];
+                workTimes: WorkTimeGraph[];
             }
         >
 {
@@ -50,9 +50,6 @@ export class DoctorGraph
     @Field(() => Int, { defaultValue: 0 })
     numOfRatings: number;
 
-    @Field(() => [TimelineGraph], { nullable: true })
-    timelines: TimelineGraph[];
-
     @Field({ nullable: true })
     acceptableAgeGroup: AcceptableAgeGroup;
 
@@ -68,12 +65,14 @@ export class DoctorGraph
     @Field(() => [AllowedDoctorLanguages])
     languages: AllowedDoctorLanguages[];
 
+    @Field(() => [WorkTimeGraph], { nullable: true })
+    workTimes: WorkTimeGraph[];
+
     constructor(
         doctor: Partial<
             Doctor & {
                 deseases?: Desease[];
                 specializations?: Specialization[];
-                timelines?: Timeline[];
             }
         >,
     ) {
@@ -93,10 +92,6 @@ export class DoctorGraph
             const rating = sumOfRatings / numberOfRatings;
             this.rating = rating;
         }
-        if (doctor.timelines != null)
-            this.timelines = doctor.timelines.map(
-                (val) => new TimelineGraph({ ...val }),
-            );
         if (doctor.acceptableAgeGroup != null)
             this.acceptableAgeGroup = doctor.acceptableAgeGroup;
         if (doctor.avatar != null)
@@ -110,5 +105,9 @@ export class DoctorGraph
                 (val) => new ExperienceAndEducationGraph({ ...val }),
             );
         if (doctor.languages != null) this.languages = doctor.languages;
+        if (doctor.workTimes != null)
+            this.workTimes = doctor.workTimes.map(
+                (val) => new WorkTimeGraph({ ...val }),
+            );
     }
 }

@@ -2,13 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
 import * as excel from 'exceljs';
 import { Specialization } from 'src/modules/specialization/model/specialization.interface';
-import {
-    AcceptableAgeGroup,
-    Doctor,
-} from 'src/modules/doctor/model/doctor.interface';
-import * as bcrypt from 'bcryptjs';
-import { ExperienceAndEducation } from 'src/modules/doctor/model/parts/experience.model';
-import { AllowedExperienceAndEducationTypes } from 'src/modules/doctor/model/parts/experience.enum';
 import { Service } from 'src/modules/service/model/service.interface';
 
 @Injectable()

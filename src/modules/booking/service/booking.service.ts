@@ -2,17 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ApolloError } from 'apollo-server-express';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
-import { TimelineService } from 'src/modules/timeline/service/timeline.service';
 import { BookingAddictive } from '../model/booking.addictive';
 import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
 
 @Injectable()
 export class BookingService extends BasicService<Booking> {
-    constructor(
-        @Inject('DATABASE_CONNECTION') private database: Db,
-        private timelineService: TimelineService,
-    ) {
+    constructor(@Inject('DATABASE_CONNECTION') private database: Db) {
         super();
         this.dbService = this.database.collection<Booking>('booking');
         this.basicLookups = [
@@ -77,16 +73,16 @@ export class BookingService extends BasicService<Booking> {
         });
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
-        const timeline = await this.timelineService.findOne({
-            _id: timelineId,
-            doctorId,
-        });
-        if (
-            timeline.startDate > startDate ||
-            timeline.endDate < endDate ||
-            timeline.isVacation
-        )
-            throw new ApolloError("doctor doesn't work during this time");
+        // const timeline = await this.timelineService.findOne({
+        //     _id: timelineId,
+        //     doctorId,
+        // });
+        // if (
+        //     timeline.startDate > startDate ||
+        //     timeline.endDate < endDate ||
+        //     timeline.isVacation
+        // )
+        //     throw new ApolloError("doctor doesn't work during this time");
         const booking: Booking = {
             serviceId,
             userId,
