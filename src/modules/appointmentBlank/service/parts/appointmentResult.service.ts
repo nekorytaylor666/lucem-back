@@ -30,13 +30,13 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
                 as: 'user',
                 isArray: false,
             },
-            {
-                from: 'session',
-                localField: 'sessionId',
-                foreignField: '_id',
-                as: 'session',
-                isArray: false,
-            },
+            // {
+            //     from: 'session',
+            //     // localField: 'sessionId',
+            //     foreignField: '_id',
+            //     as: 'session',
+            //     isArray: false,
+            // },
         ];
     }
 
