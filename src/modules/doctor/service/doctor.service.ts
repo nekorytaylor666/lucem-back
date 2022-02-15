@@ -3,22 +3,20 @@ import { Db, ObjectId } from 'mongodb';
 import { CreateDoctor } from '../model/createDoctor.args';
 import * as bcrypt from 'bcryptjs';
 import { Doctor } from '../model/doctor.interface';
-import { TokenService } from 'src/modules/helpers/token/token.service';
-import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { DeseaseService } from 'src/modules/deseases/service/desease.service';
-import { DoctorAddictives } from '../model/doctor.addictives';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Modify } from 'src/utils/modifyType';
 import { ExperienceAndEducation } from '../model/parts/experience.model';
 import { FileUpload } from 'graphql-upload';
 import { BasicService } from 'src/modules/helpers/basic.service';
+import { Specialization } from 'src/modules/specialization/model/specialization.interface';
+import { Timeline } from 'src/modules/timeline/model/timeline.interface';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
-        private tokenService: TokenService,
         private deseaseService: DeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
         private fileUploadService: ImageUploadService,
@@ -51,13 +49,6 @@ export class DoctorService extends BasicService<Doctor> {
                 isArray: true,
             },
             {
-                from: 'experience',
-                localField: '_id',
-                foreignField: 'doctorId',
-                as: 'experiences',
-                isArray: true,
-            },
-            {
                 from: 'timeline',
                 let: {
                     id: '_id',
@@ -82,86 +73,58 @@ export class DoctorService extends BasicService<Doctor> {
         ];
     }
 
-    private get experienceCollection() {
-        return this.database.collection('experience');
-    }
-
     private get searchCollection() {
         return this.client.collections('doctor').documents();
     }
 
-    async createDoctor(
-        args: CreateDoctor,
-        req: string,
-    ): Promise<Doctor & DoctorAddictives> {
+    async createDoctor(args: CreateDoctor, req: string): Promise<Doctor> {
         const {
             fullName,
             email,
             phoneNumber: _phoneNumber,
             password,
-            deseasesIDs,
-            yearsOfExperience,
+            startingExperienceDate,
             description,
             acceptableAgeGroup,
             avatar,
             experience,
+            languages,
         } = args;
-        const avatarURL = await this.fileUploadService.storeImages(
-            (await avatar).createReadStream(),
-            req,
-        );
+        const avatarURL =
+            avatar &&
+            (await this.fileUploadService.storeImages(
+                (await avatar).createReadStream(),
+                req,
+            ));
         const passwordHASH = await bcrypt.hash(password, 12);
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
-        const deseases =
-            deseasesIDs &&
-            (await Promise.all(
-                deseasesIDs.map(async (id) => {
-                    const desease = await this.deseaseService.findOne({
-                        _id: new ObjectId(id),
-                    });
-                    return desease;
-                }),
-            ));
-        const doctor: Doctor & DoctorAddictives = {
-            fullName,
-            email,
-            passwordHASH,
-            phoneNumber,
-            yearsOfExperience,
-            description,
-            acceptableAgeGroup,
-            avatar: avatarURL,
-        };
-
-        const insertDoctor = await this.insertOne(doctor);
-        const searchDoctor: Modify<Doctor, { _id: string }> = {
-            ...doctor,
-            _id: doctor._id.toHexString(),
-        };
-        await this.searchCollection.create(searchDoctor);
-        const token = this.tokenService.create({
-            user: {
-                _id: insertDoctor.toHexString(),
-                email,
-                phoneNumber,
-                fullName,
-            },
-            role: TokenRoles.Doctor,
-        });
-        [doctor._id, doctor.token, doctor.deseases] = [
-            insertDoctor,
-            token,
-            deseases,
-        ];
         const experiences: ExperienceAndEducation[] = experience.map((val) => {
             return {
                 _id: new ObjectId(),
-                doctorId: doctor._id,
                 data: val.data,
                 name: val.name,
             };
         });
-        await this.experienceCollection.insertMany(experiences);
+        const doctor: Doctor = {
+            _id: new ObjectId(),
+            fullName,
+            email,
+            passwordHASH,
+            phoneNumber,
+            startingExperienceDate,
+            description,
+            acceptableAgeGroup,
+            avatar: avatarURL,
+            experiences,
+            languages,
+        };
+        await this.insertOne(doctor);
+        const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
+            ...doctor,
+            _id: doctor._id.toHexString(),
+            num: 12,
+        };
+        await this.searchCollection.create(searchDoctor);
         return doctor;
     }
 
@@ -173,14 +136,6 @@ export class DoctorService extends BasicService<Doctor> {
             doctor.passwordHASH,
         );
         if (!checkPassword) throw new ApolloError('password or email is wrong');
-        const token = await this.tokenService.create({
-            user: {
-                ...doctor,
-                _id: doctor._id.toHexString(),
-            },
-            role: TokenRoles.Doctor,
-        });
-        doctor.token = token;
         return doctor;
     }
 
@@ -204,7 +159,12 @@ export class DoctorService extends BasicService<Doctor> {
     }
 
     async findByIdWithAddictives(_id: ObjectId) {
-        const doctor = await this.findWithAddictivesCursor<DoctorAddictives>({
+        const doctor = await this.findWithAddictivesCursor<
+            Doctor & {
+                specializations?: Specialization[];
+                timelines?: Timeline[];
+            }
+        >({
             find: { _id },
             lookups: this.basicLookups,
         }).toArray();
@@ -213,7 +173,12 @@ export class DoctorService extends BasicService<Doctor> {
 
     async listWithAddictives() {
         const doctors = await this.dbService
-            .aggregate<DoctorAddictives>([
+            .aggregate<
+                Doctor & {
+                    specializations?: Specialization[];
+                    timelines?: Timeline[];
+                }
+            >([
                 {
                     $lookup: {
                         from: 'specialization',
@@ -237,14 +202,6 @@ export class DoctorService extends BasicService<Doctor> {
                             },
                         ],
                         as: 'specializations',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'experience',
-                        localField: '_id',
-                        foreignField: 'doctorId',
-                        as: 'experiences',
                     },
                 },
                 {

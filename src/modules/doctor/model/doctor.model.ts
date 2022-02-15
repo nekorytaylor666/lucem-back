@@ -1,19 +1,26 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
+import { Desease } from 'src/modules/deseases/model/desease.interface';
 import { DeseaseGraph } from 'src/modules/deseases/model/desease.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
 import { TimelineGraph } from 'src/modules/timeline/model/timeline.model';
 import { Modify } from 'src/utils/modifyType';
-import { DoctorAddictives } from './doctor.addictives';
+import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { ExperienceAndEducationGraph } from './parts/experience.model';
+import { Specialization } from 'src/modules/specialization/model/specialization.interface';
+import { Timeline } from 'src/modules/timeline/model/timeline.interface';
 
 @ObjectType('Doctor')
 export class DoctorGraph
     implements
         Modify<
             Omit<Doctor, 'passwordHASH' | 'numberOfRatings' | 'sumOfRatings'>,
-            { _id: string; rating: number }
+            {
+                _id: string;
+                rating: number;
+                experiences: ExperienceAndEducationGraph[];
+            }
         >
 {
     @Field()
@@ -28,14 +35,11 @@ export class DoctorGraph
     @Field()
     phoneNumber: string;
 
-    @Field({ nullable: true })
-    token?: string;
-
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
-    @Field(() => Int, { nullable: true })
-    yearsOfExperience: number;
+    @Field(() => GraphQLISODateTime)
+    startingExperienceDate: Date;
 
     @Field({ nullable: true, defaultValue: 10 })
     rating: number;
@@ -58,21 +62,32 @@ export class DoctorGraph
     @Field(() => [SpecializationGraph], { nullable: true })
     specializations: SpecializationGraph[];
 
-    @Field(() => ExperienceAndEducationGraph, { nullable: true })
+    @Field(() => [ExperienceAndEducationGraph], { nullable: true })
     experiences: ExperienceAndEducationGraph[];
 
-    constructor(doctor: Partial<DoctorAddictives>) {
+    @Field(() => [AllowedDoctorLanguages])
+    languages: AllowedDoctorLanguages[];
+
+    constructor(
+        doctor: Partial<
+            Doctor & {
+                deseases?: Desease[];
+                specializations?: Specialization[];
+                timelines?: Timeline[];
+            }
+        >,
+    ) {
         if (doctor._id != null) this._id = doctor._id.toHexString();
         if (doctor.fullName != null) this.fullName = doctor.fullName;
         if (doctor.email != null) this.email = doctor.email;
         if (doctor.phoneNumber != null) this.phoneNumber = doctor.phoneNumber;
-        if (doctor.token != null) this.token = doctor.token;
         if (doctor.deseases != null)
             this.deseases = doctor.deseases.map(
                 (val) => new DeseaseGraph({ ...val }),
             );
         if (doctor.description != null) this.description = doctor.description;
-        if (doctor.numberOfRatings != null) this.numOfRatings = doctor.numberOfRatings;
+        if (doctor.numberOfRatings != null)
+            this.numOfRatings = doctor.numberOfRatings;
         if (doctor.sumOfRatings != null) {
             const { numberOfRatings, sumOfRatings } = doctor;
             const rating = sumOfRatings / numberOfRatings;
@@ -94,5 +109,6 @@ export class DoctorGraph
             this.experiences = doctor.experiences.map(
                 (val) => new ExperienceAndEducationGraph({ ...val }),
             );
+        if (doctor.languages != null) this.languages = doctor.languages;
     }
 }

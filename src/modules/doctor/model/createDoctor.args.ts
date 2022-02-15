@@ -1,6 +1,7 @@
 import { ArgsType, Field, GraphQLISODateTime, Int } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Modify } from 'src/utils/modifyType';
+import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { ExperienceInput } from './parts/experience.input';
 
@@ -30,21 +31,21 @@ export class CreateDoctor
     @Field(() => GraphQLISODateTime)
     dateOfBirth: Date;
 
-    @Field(() => [String], { nullable: true })
-    deseasesIDs?: string[];
-
-    @Field(() => Int)
-    yearsOfExperience: number;
+    @Field(() => GraphQLISODateTime)
+    startingExperienceDate: Date;
 
     @Field()
     description: string;
 
-    @Field()
+    @Field(() => AcceptableAgeGroup)
     acceptableAgeGroup: AcceptableAgeGroup;
 
-    @Field(() => GraphQLUpload)
+    @Field(() => GraphQLUpload, { nullable: true })
     avatar: Promise<FileUpload>;
 
-    @Field(() => ExperienceInput, { nullable: true })
+    @Field(() => [ExperienceInput], { nullable: true })
     experience: ExperienceInput[];
+
+    @Field(() => [AllowedDoctorLanguages])
+    languages: AllowedDoctorLanguages[];
 }

@@ -7,33 +7,56 @@ import {
     CurrentRequestURLGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { TokenService } from 'src/modules/helpers/token/token.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
+import { DoctorTokenGraph } from '../model/doctor.token.model';
 import { DoctorService } from '../service/doctor.service';
 
 @Resolver()
 export class DoctorResolver {
-    constructor(private doctorService: DoctorService) {}
+    constructor(
+        private doctorService: DoctorService,
+        private tokenService: TokenService,
+    ) {}
 
-    @Mutation(() => DoctorGraph)
+    @Mutation(() => DoctorTokenGraph)
     @UseGuards(PreAuthGuard)
     @Roles('none')
     async registerDoctor(
         @Args() args: CreateDoctor,
         @CurrentRequestURLGraph() req: string,
     ) {
-        const createDoctor = await this.doctorService.createDoctor(args, req);
-        const doctorResponce = new DoctorGraph({ ...createDoctor });
+        const doctor = await this.doctorService.createDoctor(args, req);
+        const token = this.tokenService.create({
+            user: {
+                ...doctor,
+                _id: doctor._id.toHexString(),
+            },
+            role: TokenRoles.Doctor,
+        });
+        const doctorResponce = new DoctorTokenGraph({ doctor, token });
         return doctorResponce;
     }
 
-    @Query(() => DoctorGraph)
+    @Query(() => DoctorTokenGraph)
     async loginDoctor(
         @Args('email', { type: () => String }) email: string,
         @Args('password', { type: () => String }) password: string,
     ) {
         const doctor = await this.doctorService.login({ email, password });
-        const doctorResponce = new DoctorGraph({ ...doctor });
+        const token = this.tokenService.create({
+            user: {
+                ...doctor,
+                _id: doctor._id.toHexString(),
+            },
+            role: TokenRoles.Doctor,
+        });
+        const doctorResponce = new DoctorTokenGraph({
+            doctor,
+            token,
+        });
         return doctorResponce;
     }
 
@@ -74,9 +97,4 @@ export class DoctorResolver {
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
-
-    // @Query(() => [DoctorGraph])
-    // async getDoctorsByService(
-    //     @Args('serviceId', { type: () => String }) serviceId: string,
-    // ) {}
 }

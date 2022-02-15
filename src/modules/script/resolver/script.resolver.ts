@@ -9,17 +9,17 @@ import { ScriptService } from '../service/script.service';
 export class ScriptResolver {
     constructor(private scriptService: ScriptService) {}
 
-    @Mutation(() => String)
-    async doctorScript() {
-        const pathToDoctorSheets = join(process.cwd(), 'lucemData.xlsx');
-        const doctorWorkbook = new excel.Workbook();
-        const doctorWorkSheets = await doctorWorkbook.xlsx.readFile(
-            pathToDoctorSheets,
-        );
-        const doctorWorkSheet = doctorWorkSheets.getWorksheet('Данные врачей');
-        await this.scriptService.addDoctorsToDatabase(doctorWorkSheet);
-        return 'string';
-    }
+    // @Mutation(() => String)
+    // async doctorScript() {
+    //     const pathToDoctorSheets = join(process.cwd(), 'lucemData.xlsx');
+    //     const doctorWorkbook = new excel.Workbook();
+    //     const doctorWorkSheets = await doctorWorkbook.xlsx.readFile(
+    //         pathToDoctorSheets,
+    //     );
+    //     const doctorWorkSheet = doctorWorkSheets.getWorksheet('Данные врачей');
+    //     await this.scriptService.addDoctorsToDatabase(doctorWorkSheet);
+    //     return 'string';
+    // }
 
     @Mutation(() => String)
     async serviceScript() {
