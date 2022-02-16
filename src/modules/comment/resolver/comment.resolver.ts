@@ -4,11 +4,9 @@ import { ObjectId } from 'mongodb';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
-    CurrentTokenPayload,
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { Token } from 'src/modules/helpers/token/token.interface';
 import { paginate } from 'src/utils/paginate';
 import { CommentGraph } from '../model/comment.model';
 import { CreateComment } from '../model/createComment.args';
