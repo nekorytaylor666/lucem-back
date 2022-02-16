@@ -10,7 +10,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { ComplaintGraph } from '../../model/parts/complaint.model';
-import { ComplaintService } from '../../service/parts/complaint.service';
+import { ComplaintService } from '../../service/utils/complaint.service';
 
 @Resolver()
 export class ComplaintResolver {

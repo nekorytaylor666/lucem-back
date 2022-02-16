@@ -10,7 +10,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { InspectionsGraph } from '../../model/parts/inspections.model';
-import { InspectionsService } from '../../service/parts/inspections.service';
+import { InspectionsService } from '../../service/utils/inspections.service';
 
 @Resolver()
 export class InspectionsResolver {

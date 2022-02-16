@@ -10,7 +10,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { DiagnoseGraph } from '../../model/parts/diagnose.model';
-import { DiagnoseService } from '../../service/parts/diagnose.service';
+import { DiagnoseService } from '../../service/utils/diagnose.service';
 
 @Resolver()
 export class DiagnoseResolver {

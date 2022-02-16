@@ -4,11 +4,11 @@ import { DeseaseGraph } from 'src/modules/deseases/model/desease.model';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 import { SpecializationGraph } from 'src/modules/specialization/model/specialization.model';
 import { Modify } from 'src/utils/modifyType';
-import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { Specialization } from 'src/modules/specialization/model/specialization.interface';
 import { ExperienceAndEducationGraph } from './utils/experience/experience.model';
 import { WorkTimeGraph } from './utils/workTime/workTime.model';
+import { LanguageGraph } from './utils/language/language.model';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -62,8 +62,8 @@ export class DoctorGraph
     @Field(() => [ExperienceAndEducationGraph], { nullable: true })
     experiences: ExperienceAndEducationGraph[];
 
-    @Field(() => [AllowedDoctorLanguages])
-    languages: AllowedDoctorLanguages[];
+    @Field(() => [LanguageGraph])
+    languages: LanguageGraph[];
 
     @Field(() => [WorkTimeGraph], { nullable: true })
     workTimes: WorkTimeGraph[];
@@ -104,7 +104,10 @@ export class DoctorGraph
             this.experiences = doctor.experiences.map(
                 (val) => new ExperienceAndEducationGraph({ ...val }),
             );
-        if (doctor.languages != null) this.languages = doctor.languages;
+        if (doctor.languages != null)
+            this.languages = doctor.languages.map(
+                (val) => new LanguageGraph({ ...val }),
+            );
         if (doctor.workTimes != null)
             this.workTimes = doctor.workTimes.map(
                 (val) => new WorkTimeGraph({ ...val }),

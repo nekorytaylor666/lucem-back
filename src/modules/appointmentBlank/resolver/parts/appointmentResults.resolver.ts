@@ -15,7 +15,7 @@ import {
     AppointmentResults,
     AppointmentResultsGraph,
 } from '../../model/parts/AppointmenResults.model';
-import { AppointmenResultsService } from '../../service/parts/appointmentResult.service';
+import { AppointmenResultsService } from '../../service/utils/appointmentResult.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Session } from 'src/modules/session/model/session.interface';
 import { User } from 'src/modules/user/model/user.interface';

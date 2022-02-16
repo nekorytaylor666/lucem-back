@@ -1,8 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { PhotoURL } from '../../helpers/uploadFiles/imageUpload/photoURL.interface';
-import { AllowedDoctorLanguages } from './doctor.enum';
 import { ExperienceAndEducation } from './utils/experience/experience.model';
+import { Language } from './utils/language/language.model';
 import { WorkTime } from './utils/workTime/workTime.model';
 
 export enum AcceptableAgeGroup {
@@ -24,7 +24,7 @@ export interface Doctor {
     acceptableAgeGroup: AcceptableAgeGroup;
     avatar?: PhotoURL;
     experiences?: ExperienceAndEducation[];
-    languages: AllowedDoctorLanguages[];
+    languages: Language[];
     startingExperienceDate: Date;
     workTimes?: WorkTime[];
 }

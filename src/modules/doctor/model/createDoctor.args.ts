@@ -1,9 +1,9 @@
 import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Modify } from 'src/utils/modifyType';
-import { AllowedDoctorLanguages } from './doctor.enum';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { ExperienceInput } from './utils/experience/experience.input';
+import { LanguageInput } from './utils/language/language.model';
 import { WorkTimeInput } from './utils/workTime/workTime.model';
 
 @ArgsType()
@@ -48,8 +48,8 @@ export class CreateDoctor
     @Field(() => [ExperienceInput], { nullable: true })
     experience: ExperienceInput[];
 
-    @Field(() => [AllowedDoctorLanguages])
-    languages: AllowedDoctorLanguages[];
+    @Field(() => [LanguageInput])
+    languages: LanguageInput[];
 
     @Field(() => [WorkTimeInput], { nullable: true })
     workTimes?: WorkTimeInput[];
