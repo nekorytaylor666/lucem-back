@@ -24,12 +24,18 @@ import { Booking, BookingProgress } from '../model/booking.interface';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { Service } from 'src/modules/service/model/service.interface';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { UserService } from 'src/modules/user/service/user.service';
+import { ServiceService } from 'src/modules/service/service/service.service';
+import { NotificationService } from 'src/modules/notification/service/notification.service';
 
 @Resolver()
 export class BookingResolver {
     constructor(
         private bookingService: BookingService,
         private doctorService: DoctorService,
+        private userService: UserService,
+        private serviceService: ServiceService,
+        private notificationService: NotificationService,
     ) {}
 
     @Mutation(() => BookingGraph)
@@ -38,7 +44,7 @@ export class BookingResolver {
     async createBooking(
         @Args() args: CreateBooking,
         @CurrentUserGraph()
-        user: User,
+        _user: User,
         @CurrentTokenPayload() payload: Token,
     ) {
         const doctor = await this.doctorService.findOne({
@@ -49,13 +55,25 @@ export class BookingResolver {
                 ? await this.bookingService.create({
                       ...args,
                       doctor,
-                      userId: user._id.toHexString(),
+                      userId: _user._id.toHexString(),
                   })
                 : await this.bookingService.create({
                       ...args,
                       doctor,
                   });
         const bookingResponce = new BookingGraph({ ...createBooking });
+        const [service, user] = [
+            await this.serviceService.findOne({ _id: createBooking.serviceId }),
+            await this.userService.findOne({ _id: createBooking.userId }),
+        ];
+        this.notificationService.setNotification({
+            user,
+            service,
+            booking: createBooking,
+            dateToSend: createBooking.startDate,
+            currentDate: new Date(),
+            doctor,
+        });
         return bookingResponce;
     }
 

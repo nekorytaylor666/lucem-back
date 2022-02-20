@@ -23,6 +23,7 @@ import { StatsModule } from './modules/stats/stats.module';
 import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
 import { SpecializationStatsModule } from './modules/specializationStats/specializationStats.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
     imports: [
@@ -60,6 +61,7 @@ import { CommentModule } from './modules/comment/comment.module';
         DoctorStatsModule,
         SpecializationStatsModule,
         CommentModule,
+        NotificationModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],

@@ -53,4 +53,7 @@ export class CreateDoctor
 
     @Field(() => [WorkTimeInput], { nullable: true })
     workTimes?: WorkTimeInput[];
+
+    @Field()
+    cabinet: string;
 }

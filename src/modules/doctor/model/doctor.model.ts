@@ -68,6 +68,9 @@ export class DoctorGraph
     @Field(() => [WorkTimeGraph], { nullable: true })
     workTimes: WorkTimeGraph[];
 
+    @Field()
+    cabinet: string;
+
     constructor(
         doctor: Partial<
             Doctor & {
@@ -112,5 +115,6 @@ export class DoctorGraph
             this.workTimes = doctor.workTimes.map(
                 (val) => new WorkTimeGraph({ ...val }),
             );
+        if (doctor.cabinet != null) this.cabinet = doctor.cabinet;
     }
 }

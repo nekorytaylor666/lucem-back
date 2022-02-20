@@ -69,6 +69,7 @@ export class DoctorService extends BasicService<Doctor> {
             experience,
             languages,
             workTimes: _workTimes,
+            cabinet,
         } = args;
         const avatarURL =
             avatar &&
@@ -104,6 +105,7 @@ export class DoctorService extends BasicService<Doctor> {
             experiences,
             languages,
             workTimes,
+            cabinet,
         };
         await this.insertOne(doctor);
         const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
