@@ -27,6 +27,7 @@ export interface Doctor {
     languages: Language[];
     startingExperienceDate: Date;
     workTimes?: WorkTime[];
+    cabinet: string;
 }
 
 registerEnumType(AcceptableAgeGroup, {
