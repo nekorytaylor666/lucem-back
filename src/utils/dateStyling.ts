@@ -7,3 +7,9 @@ export function dateStyling(args: { date: Date; locale: string }) {
     const time = date.toLocaleTimeString(locale).slice(0, -3);
     return `${time} ${monthYearDay} ${weekDay}`;
 }
+
+export function timeStyling(args: { date: Date; locale: string }) {
+    const { date, locale } = args;
+    const time = date.toLocaleTimeString(locale).slice(0, -3);
+    return time;
+}

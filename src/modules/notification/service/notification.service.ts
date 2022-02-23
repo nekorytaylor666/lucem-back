@@ -4,14 +4,16 @@ import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Service } from 'src/modules/service/model/service.interface';
 import { Booking } from 'src/modules/booking/model/booking.interface';
-import { dateStyling } from 'src/utils/dateStyling';
+import { dateStyling, timeStyling } from 'src/utils/dateStyling';
 import { User } from 'src/modules/user/model/user.interface';
+import { CalendarService } from 'src/modules/helpers/calendar/service/calendar.service';
 
 @Injectable()
 export class NotificationService {
     constructor(
         private mailService: MailService,
         private configService: ConfigService,
+        private calendarService: CalendarService,
     ) {}
 
     private senderMail = this.configService.get('CLINIC_MAIL_USERNAME');
@@ -46,5 +48,39 @@ export class NotificationService {
                 });
             }, millsecondsToSend - dayInMilliseconds),
         ]);
+    }
+
+    async calendarNotification(args: {
+        user: User;
+        doctor: Doctor;
+        service: Service;
+        booking: Booking;
+    }) {
+        const { user, doctor, service, booking } = args;
+        const calendar = this.calendarService.createEvent({
+            eventName: `${service.name}`,
+            startDate: booking.startDate,
+            endDate: booking.endDate,
+            summary: `${service.name}, врач ${doctor.fullName}, кабинет ${doctor.cabinet}`,
+            description: `${doctor.fullName} будет ждать вас в ${timeStyling({
+                date: booking.startDate,
+                locale: 'ru',
+            })}. По адресу "ул. Аманат 2, Нур-Султан 020000", кабинет ${
+                doctor.cabinet
+            }. стоимость услуги ${service.price} тенге`,
+            location: '',
+            organizer: {
+                name: 'Lucem',
+                email: this.senderMail,
+            },
+            timezone: 'Asia/Almaty',
+        });
+        await this.mailService.sendOneMailWithCalendarEvent({
+            calendar,
+            sender: this.senderMail,
+            reciever: user.email,
+            text: 'что то там',
+            subject: 'что то там',
+        });
     }
 }

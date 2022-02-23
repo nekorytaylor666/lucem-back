@@ -74,6 +74,12 @@ export class BookingResolver {
             currentDate: new Date(),
             doctor,
         });
+        this.notificationService.calendarNotification({
+            user,
+            service,
+            booking: createBooking,
+            doctor,
+        });
         return bookingResponce;
     }
 
