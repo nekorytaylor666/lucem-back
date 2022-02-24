@@ -56,4 +56,7 @@ export class CreateDoctor
 
     @Field()
     cabinet: string;
+
+    @Field(() => [String], { nullable: true })
+    specializationIds: string[];
 }

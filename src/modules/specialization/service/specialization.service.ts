@@ -169,4 +169,17 @@ export class SpecializationService extends BasicService<Specialization> {
         });
         return specialization;
     }
+
+    async attachManyToDoctor(args: {
+        specializationIds: ObjectId[];
+        doctorId: ObjectId;
+    }) {
+        const { specializationIds, doctorId } = args;
+        await this.dbService.updateMany(
+            { _id: { $in: specializationIds } },
+            {
+                $addToSet: doctorId,
+            },
+        );
+    }
 }
