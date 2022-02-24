@@ -89,7 +89,7 @@ export class SpecializationService extends BasicService<Specialization> {
                     $lookup: {
                         from: 'service',
                         let: {
-                            id: '_id',
+                            id: '$_id',
                         },
                         pipeline: [
                             {
