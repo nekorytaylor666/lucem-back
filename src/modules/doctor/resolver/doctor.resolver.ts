@@ -9,6 +9,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { TokenService } from 'src/modules/helpers/token/token.service';
+import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorTokenGraph } from '../model/doctor.token.model';
@@ -19,6 +20,7 @@ export class DoctorResolver {
     constructor(
         private doctorService: DoctorService,
         private tokenService: TokenService,
+        private specService: SpecializationService,
     ) {}
 
     @Mutation(() => DoctorTokenGraph)
@@ -36,6 +38,13 @@ export class DoctorResolver {
             },
             role: TokenRoles.Doctor,
         });
+        args.specializationIds &&
+            (await this.specService.attachManyToDoctor({
+                specializationIds: args.specializationIds.map(
+                    (val) => new ObjectId(val),
+                ),
+                doctorId: doctor._id,
+            }));
         const doctorResponce = new DoctorTokenGraph({ doctor, token });
         return doctorResponce;
     }
