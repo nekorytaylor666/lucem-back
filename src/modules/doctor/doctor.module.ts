@@ -5,6 +5,7 @@ import { MongoModule } from '../helpers/database/mongo.module';
 import { SmartSearchModule } from '../helpers/smartSearch/search.module';
 import { TokenModule } from '../helpers/token/token.module';
 import { UploadFileModule } from '../helpers/uploadFiles/uploadFiles.module';
+import { SecretaryModule } from '../secretary/secretary.module';
 import { SpecializationModule } from '../specialization/specialization.module';
 import { UserModule } from '../user/user.module';
 import { DoctorResolver } from './resolver/doctor.resolver';
@@ -20,6 +21,7 @@ import { DoctorService } from './service/doctor.service';
         UploadFileModule,
         forwardRef(() => AdminModule),
         forwardRef(() => SpecializationModule),
+        forwardRef(() => SecretaryModule),
     ],
     providers: [DoctorService, DoctorResolver],
     exports: [DoctorService],

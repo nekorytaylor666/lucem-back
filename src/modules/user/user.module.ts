@@ -6,6 +6,7 @@ import { MongoModule } from '../helpers/database/mongo.module';
 import { SMSModule } from '../helpers/SMS/SMS.module';
 import { TokenModule } from '../helpers/token/token.module';
 import { UploadFileModule } from '../helpers/uploadFiles/uploadFiles.module';
+import { SecretaryModule } from '../secretary/secretary.module';
 import { UserResolver } from './resolver/user.resolver';
 import { UserService } from './service/user.service';
 
@@ -19,6 +20,7 @@ import { UserService } from './service/user.service';
         SMSModule,
         CacheModule.register(),
         forwardRef(() => AdminModule),
+        forwardRef(() => SecretaryModule),
     ],
     providers: [UserService, UserResolver],
     exports: [UserService],
