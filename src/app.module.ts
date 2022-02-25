@@ -24,6 +24,7 @@ import { DoctorStatsModule } from './modules/doctorStats/doctorStats.module';
 import { SpecializationStatsModule } from './modules/specializationStats/specializationStats.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { SecretaryModule } from './modules/secretary/secretary.module';
 
 @Module({
     imports: [
@@ -62,6 +63,7 @@ import { NotificationModule } from './modules/notification/notification.module';
         SpecializationStatsModule,
         CommentModule,
         NotificationModule,
+        SecretaryModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
