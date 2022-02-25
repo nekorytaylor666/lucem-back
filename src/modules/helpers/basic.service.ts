@@ -113,7 +113,11 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const updateQuery = {
             [method]: updateFieldsValues,
         };
-        await this.dbService.updateMany(findQuery, updateQuery);
+        const responce = await this.dbService.updateMany(
+            findQuery,
+            updateQuery,
+        );
+        return responce.acknowledged;
     }
 
     async insertOne(args: T): Promise<ObjectId> {

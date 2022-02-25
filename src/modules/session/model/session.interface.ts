@@ -9,4 +9,5 @@ export interface Session {
     serviceId: ObjectId;
     doctorId: ObjectId;
     userId: ObjectId;
+    isPayed?: true;
 }
