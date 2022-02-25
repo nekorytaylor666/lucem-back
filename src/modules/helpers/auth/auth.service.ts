@@ -9,6 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { AdminService } from 'src/modules/admin/service/admin.service';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { SecretaryService } from 'src/modules/secretary/service/secretary.service';
 import { UserService } from 'src/modules/user/service/user.service';
 import { matchRoles } from 'src/utils/matchRoles';
 import { TokenRoles } from '../token/token.interface';
@@ -22,6 +23,7 @@ export class PreAuthGuard implements CanActivate {
         private reflector: Reflector,
         private doctorService: DoctorService,
         private adminService: AdminService,
+        private secretaryService: SecretaryService,
     ) {}
 
     async canActivate(context: ExecutionContext) {
@@ -48,7 +50,11 @@ export class PreAuthGuard implements CanActivate {
                     ? await this.doctorService.findOne({
                           _id: new ObjectId(payload._id),
                       })
-                    : await this.adminService.findOne({
+                    : payload.role === TokenRoles.Admin
+                    ? await this.adminService.findOne({
+                          _id: new ObjectId(payload._id),
+                      })
+                    : await this.secretaryService.findOne({
                           _id: new ObjectId(payload._id),
                       });
             if (!user) return false;

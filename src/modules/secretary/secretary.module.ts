@@ -3,21 +3,19 @@ import { AdminModule } from '../admin/admin.module';
 import { DoctorModule } from '../doctor/doctor.module';
 import { MongoModule } from '../helpers/database/mongo.module';
 import { TokenModule } from '../helpers/token/token.module';
-import { UploadFileModule } from '../helpers/uploadFiles/uploadFiles.module';
 import { UserModule } from '../user/user.module';
-import { SpecializationResolver } from './resolver/specialization.resolver';
-import { SpecializationService } from './service/specialization.service';
+import { SecretaryResolver } from './resolver/secretary.resolver';
+import { SecretaryService } from './service/secretary.service';
 
 @Module({
     imports: [
-        MongoModule,
-        UploadFileModule,
+        forwardRef(() => DoctorModule),
         forwardRef(() => UserModule),
         forwardRef(() => AdminModule),
-        forwardRef(() => DoctorModule),
         TokenModule,
+        MongoModule,
     ],
-    providers: [SpecializationResolver, SpecializationService],
-    exports: [SpecializationService],
+    providers: [SecretaryResolver, SecretaryService],
+    exports: [SecretaryService],
 })
-export class SpecializationModule {}
+export class SecretaryModule {}
