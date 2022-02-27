@@ -143,16 +143,19 @@ export class ServiceService extends BasicService<Service> {
             price,
             isShown,
             specializationIds: _specializationIds,
+            doctorIds: _doctorIds,
         } = args;
         const specializationIds = _specializationIds.map(
             (val) => new ObjectId(val),
         );
+        const doctorIds = _doctorIds.map((val) => new ObjectId(val));
         const service: Service = {
             name,
             description,
             price,
             isShown,
             specializationIds,
+            doctorIds,
         };
         const insertService = await this.insertOne(service);
         const searchService: ServiceSearch = {

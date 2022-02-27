@@ -12,10 +12,14 @@ import {
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
 import { ServiceAddictive } from '../model/service.addictive';
+import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 
 @Resolver()
 export class ServiceResolver {
-    constructor(private serviceService: ServiceService) {}
+    constructor(
+        private serviceService: ServiceService,
+        private specService: SpecializationService,
+    ) {}
 
     @Mutation(() => ServiceGraph)
     async createService(@Args() args: CreateService) {
@@ -138,5 +142,25 @@ export class ServiceResolver {
         });
         const serviceResponce = new ServiceGraph({ ...service });
         return serviceResponce;
+    }
+
+    @Query(() => String)
+    async attachAllDoctorsToServicesScript() {
+        const specs = await this.specService.listWithAddictives();
+        await Promise.all([
+            specs.map(async (spec) => {
+                await Promise.all([
+                    spec.doctorIds.map(async (doctorId) => {
+                        await this.serviceService.updateManyWithOptions({
+                            findField: ['specializationIds'],
+                            findValue: [spec._id],
+                            updateField: ['doctorIds'],
+                            updateValue: [doctorId],
+                            method: '$addToSet',
+                        });
+                    }),
+                ]);
+            }),
+        ]);
     }
 }

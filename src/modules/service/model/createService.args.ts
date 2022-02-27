@@ -9,6 +9,7 @@ export class CreateService
             Omit<Service, '_id'>,
             {
                 specializationIds: string[];
+                doctorIds?: string[];
             }
         >
 {
@@ -26,4 +27,7 @@ export class CreateService
 
     @Field(() => [String], { nullable: true })
     specializationIds: string[];
+
+    @Field(() => [String], { nullable: true })
+    doctorIds?: string[];
 }
