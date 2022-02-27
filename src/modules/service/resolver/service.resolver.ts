@@ -11,7 +11,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
-import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
+
 @Resolver()
 export class ServiceResolver {
     constructor(private serviceService: ServiceService) {}
@@ -47,6 +47,7 @@ export class ServiceResolver {
         const service = await this.serviceService.findByDoctorId(
             new ObjectId(doctorId),
         );
+        console.log(service);
         const serviceResponce = service.map(
             (val) => new ServiceGraph({ ...val }),
         );
@@ -81,7 +82,7 @@ export class ServiceResolver {
         const attachService = await this.serviceService.updateOneWithOptions({
             findField: ['_id'],
             findValue: [new ObjectId(serviceId)],
-            updateField: ['doctorId'],
+            updateField: ['doctorIds'],
             updateValue: [new ObjectId(doctorId)],
             method: '$addToSet',
         });
@@ -94,7 +95,7 @@ export class ServiceResolver {
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
         const service = await this.serviceService.findWithOptions({
-            fields: ['doctorId', 'isShown'],
+            fields: ['doctorIds', 'isShown'],
             values: [
                 { $elemMatch: new ObjectId(doctorId) },
                 { $exists: false },

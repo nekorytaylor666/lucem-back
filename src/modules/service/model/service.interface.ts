@@ -5,7 +5,7 @@ export interface Service {
     name: string;
     price: number;
     description: string;
-    doctorId?: ObjectId[];
+    doctorIds?: ObjectId[];
     isShown?: false;
     showServices?: ObjectId[];
     specializationIds: ObjectId[];

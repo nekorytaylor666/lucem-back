@@ -132,6 +132,7 @@ export class SearchService {
             this.searchDoctorCollection.create({
                 ...val,
                 _id: val._id.toHexString(),
+                num: 1,
             } as Modify<Doctor, { _id: string }>),
         );
         deseases.map((val) =>

@@ -18,13 +18,13 @@ export class ServiceService extends BasicService<Service> {
             {
                 from: 'doctor',
                 let: {
-                    doctorId: 'doctorId',
+                    doctorIds: 'doctorIds',
                 },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
-                                $in: ['$_id', '$$doctorId'],
+                                $in: ['$_id', '$$doctorIds'],
                             },
                         },
                     },
@@ -41,7 +41,7 @@ export class ServiceService extends BasicService<Service> {
                     {
                         $match: {
                             $expr: {
-                                $in: ['$_id', '$$specializationId'],
+                                $in: ['$_id', '$$specializationIds'],
                             },
                         },
                     },
@@ -67,7 +67,7 @@ export class ServiceService extends BasicService<Service> {
     async findByDoctorId(doctorId: ObjectId) {
         const services = await this.findWithAddictivesCursor<ServiceAddictive>({
             matchQuery: {
-                doctorId: { $elemMatch: { $eq: new ObjectId(doctorId) } },
+                doctorIds: { $elemMatch: { $eq: doctorId } },
             },
             lookups: this.basicLookups,
         }).toArray();
@@ -77,7 +77,7 @@ export class ServiceService extends BasicService<Service> {
     async findByDoctorIdsCursor(doctorIds: ObjectId[]) {
         const services = this.findWithAddictivesCursor<ServiceAddictive>({
             matchQuery: {
-                doctorId: { $in: doctorIds },
+                doctorIds: { $in: doctorIds },
             },
             lookups: this.basicLookups,
         });
