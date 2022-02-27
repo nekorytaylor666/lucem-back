@@ -1,4 +1,4 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
 import { Modify } from 'src/utils/modifyType';
 import { Service } from './service.interface';
 
@@ -8,7 +8,7 @@ export class CreateService
         Modify<
             Omit<Service, '_id'>,
             {
-                specializationIds: string[];
+                specializationId: string;
                 doctorIds?: string[];
             }
         >
@@ -25,9 +25,12 @@ export class CreateService
     @Field(() => Boolean, { nullable: true })
     isShown: false;
 
-    @Field(() => [String], { nullable: true })
-    specializationIds: string[];
+    @Field(() => String, { nullable: true })
+    specializationId: string;
 
     @Field(() => [String], { nullable: true })
     doctorIds?: string[];
+
+    @Field(() => Int, { nullable: true })
+    durationInMinutes?: number;
 }

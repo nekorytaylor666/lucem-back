@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
+import { Modify } from 'src/utils/modifyType';
 import { CreateService } from '../model/createService.args';
 import { ServiceAddictive } from '../model/service.addictive';
 import { Service } from '../model/service.interface';
@@ -34,20 +35,10 @@ export class ServiceService extends BasicService<Service> {
             },
             {
                 from: 'specialization',
-                let: {
-                    specializationIds: 'specializationIds',
-                },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $in: ['$_id', '$$specializationIds'],
-                            },
-                        },
-                    },
-                ],
-                as: 'specializations',
-                isArray: true,
+                localField: 'specializationId',
+                foreignField: '_id',
+                as: 'specialization',
+                isArray: false,
             },
         ];
     }
@@ -136,34 +127,39 @@ export class ServiceService extends BasicService<Service> {
         return unshownServicesArray;
     }
 
-    async create(args: CreateService) {
+    async create(
+        args: Modify<
+            CreateService,
+            {
+                doctorIds: ObjectId[];
+            }
+        >,
+    ) {
         const {
             description,
             name,
             price,
             isShown,
-            specializationIds: _specializationIds,
-            doctorIds: _doctorIds,
+            specializationId,
+            doctorIds,
+            durationInMinutes,
         } = args;
-        const specializationIds = _specializationIds.map(
-            (val) => new ObjectId(val),
-        );
-        const doctorIds = _doctorIds.map((val) => new ObjectId(val));
         const service: Service = {
+            _id: new ObjectId(),
             name,
             description,
             price,
             isShown,
-            specializationIds,
+            specializationId: new ObjectId(specializationId),
             doctorIds,
+            durationInMinutes,
         };
-        const insertService = await this.insertOne(service);
+        await this.insertOne(service);
         const searchService: ServiceSearch = {
             ...service,
             _id: service._id.toHexString(),
         };
         await this.searchCollection.create(searchService);
-        service._id = insertService;
         return service;
     }
 }

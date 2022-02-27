@@ -13,17 +13,29 @@ import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
 import { ServiceAddictive } from '../model/service.addictive';
 import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 
 @Resolver()
 export class ServiceResolver {
     constructor(
         private serviceService: ServiceService,
         private specService: SpecializationService,
+        private doctorService: DoctorService,
     ) {}
 
     @Mutation(() => ServiceGraph)
     async createService(@Args() args: CreateService) {
-        const insertService = await this.serviceService.create(args);
+        const spec = args.doctorIds
+            ? undefined
+            : await this.specService.findOne({
+                  _id: new ObjectId(args.specializationId),
+              });
+        const insertService = await this.serviceService.create({
+            ...args,
+            doctorIds: spec
+                ? spec.doctorIds
+                : args.doctorIds.map((val) => new ObjectId(val)),
+        });
         const serviceResponce = new ServiceGraph({ ...insertService });
         return serviceResponce;
     }
@@ -43,16 +55,9 @@ export class ServiceResolver {
     async getServicesByDoctorId(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
-        // const service = await this.serviceService
-        //     .findWithAddictivesCursor({
-        //         fields: ['doctorId'],
-        //         values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }],
-        //     })
-        //     .then((val) => val.toArray());
         const service = await this.serviceService.findByDoctorId(
             new ObjectId(doctorId),
         );
-        console.log(service);
         const serviceResponce = service.map(
             (val) => new ServiceGraph({ ...val }),
         );
@@ -152,7 +157,7 @@ export class ServiceResolver {
                 await Promise.all([
                     spec.doctorIds.map(async (doctorId) => {
                         await this.serviceService.updateManyWithOptions({
-                            findField: ['specializationIds'],
+                            findField: ['specializationId'],
                             findValue: [spec._id],
                             updateField: ['doctorIds'],
                             updateValue: [doctorId],

@@ -21,13 +21,13 @@ export class ScriptResolver {
     //     return 'string';
     // }
 
-    @Mutation(() => String)
-    async serviceScript() {
-        const pathToServiceSheets = join(process.cwd(), 'lucemData.xlsx');
-        const workbook = new excel.Workbook();
-        const workSheets = await workbook.xlsx.readFile(pathToServiceSheets);
-        const serviceWorkSheet = workSheets.getWorksheet('Список услуг');
-        await this.scriptService.addServicesToDatabase(serviceWorkSheet);
-        return 'string';
-    }
+    // @Mutation(() => String)
+    // async serviceScript() {
+    //     const pathToServiceSheets = join(process.cwd(), 'lucemData.xlsx');
+    //     const workbook = new excel.Workbook();
+    //     const workSheets = await workbook.xlsx.readFile(pathToServiceSheets);
+    //     const serviceWorkSheet = workSheets.getWorksheet('Список услуг');
+    //     await this.scriptService.addServicesToDatabase(serviceWorkSheet);
+    //     return 'string';
+    // }
 }

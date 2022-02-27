@@ -4,5 +4,5 @@ import { Service } from './service.interface';
 
 export interface ServiceAddictive extends Service {
     doctors?: Doctor[];
-    specializations?: Specialization[];
+    specialization?: Specialization;
 }

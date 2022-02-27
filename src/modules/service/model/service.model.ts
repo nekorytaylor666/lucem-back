@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { Modify } from 'src/utils/modifyType';
 import { ServiceAddictive } from './service.addictive';
@@ -6,7 +6,7 @@ import { Service } from './service.interface';
 
 @ObjectType('Service')
 export class ServiceGraph
-    implements Omit<Modify<Service, { _id: string }>, 'specializationIds'>
+    implements Omit<Modify<Service, { _id: string }>, 'specializationId'>
 {
     @Field()
     _id: string;
@@ -23,14 +23,19 @@ export class ServiceGraph
     @Field(() => [DoctorGraph], { nullable: true })
     doctors: DoctorGraph[];
 
+    @Field(() => Int)
+    durationInMinutes?: number;
+
     constructor(service: Partial<ServiceAddictive>) {
-        if (service._id) this._id = service._id.toHexString();
-        if (service.name) this.name = service.name;
-        if (service.price) this.price = service.price;
-        if (service.description) this.description = service.description;
-        if (service.doctors)
+        if (service._id != null) this._id = service._id.toHexString();
+        if (service.name != null) this.name = service.name;
+        if (service.price != null) this.price = service.price;
+        if (service.description != null) this.description = service.description;
+        if (service.doctors != null)
             this.doctors = service.doctors.map(
                 (val) => new DoctorGraph({ ...val }),
             );
+        if (service.durationInMinutes != null)
+            this.durationInMinutes = service.durationInMinutes;
     }
 }
