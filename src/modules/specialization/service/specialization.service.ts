@@ -8,6 +8,8 @@ import { EditSpecialization } from '../model/editSpecialization.args';
 import { SpecializationAddictive } from '../model/specialization.addictive';
 import { Specialization } from '../model/specialization.interface';
 
+export const SpecializationCollectionName = 'specialization';
+
 @Injectable()
 export class SpecializationService extends BasicService<Specialization> {
     constructor(

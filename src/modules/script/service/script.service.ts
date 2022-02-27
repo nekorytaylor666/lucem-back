@@ -152,40 +152,40 @@ export class ScriptService {
     //     }
     // }
 
-    async addServicesToDatabase(serviceSheet: excel.Worksheet) {
-        for (let i = 2; i < 251; i++) {
-            const [_specializations, name, isViewed, price, childAllowed] = [
-                serviceSheet.getRow(i).getCell(1).value as string,
-                serviceSheet.getRow(i).getCell(2).value as string,
-                serviceSheet.getRow(i).getCell(3).value as string,
-                serviceSheet.getRow(i).getCell(4).value as number | string,
-                serviceSheet.getRow(i).getCell(6).value as string,
-            ];
-            const specializations = _specializations.toString().split(', ');
-            const specializationIds = await Promise.all(
-                specializations.map(async (val) => {
-                    const specialization =
-                        await this.specializationCollection.findOne({
-                            name: val,
-                        });
-                    return specialization && specialization._id;
-                }),
-            );
+    // async addServicesToDatabase(serviceSheet: excel.Worksheet) {
+    //     for (let i = 2; i < 251; i++) {
+    //         const [_specializations, name, isViewed, price, childAllowed] = [
+    //             serviceSheet.getRow(i).getCell(1).value as string,
+    //             serviceSheet.getRow(i).getCell(2).value as string,
+    //             serviceSheet.getRow(i).getCell(3).value as string,
+    //             serviceSheet.getRow(i).getCell(4).value as number | string,
+    //             serviceSheet.getRow(i).getCell(6).value as string,
+    //         ];
+    //         const specializations = _specializations.toString().split(', ');
+    //         const specializationId = await Promise.all(
+    //             specializations.map(async (val) => {
+    //                 const specialization =
+    //                     await this.specializationCollection.findOne({
+    //                         name: val,
+    //                     });
+    //                 return specialization && specialization._id;
+    //             }),
+    //         );
 
-            const service: Service = {
-                _id: new ObjectId(),
-                name,
-                description: 'this is a service',
-                price:
-                    typeof price === 'number'
-                        ? price
-                        : Number(price.replace('от ', '')),
-                isShown: isViewed === 'Да' ? undefined : false,
-                specializationIds,
-            };
-            await this.serviceCollection.insertOne(service, {
-                ignoreUndefined: true,
-            });
-        }
-    }
+    //         const service: Service = {
+    //             _id: new ObjectId(),
+    //             name,
+    //             description: 'this is a service',
+    //             price:
+    //                 typeof price === 'number'
+    //                     ? price
+    //                     : Number(price.replace('от ', '')),
+    //             isShown: isViewed === 'Да' ? undefined : false,
+    //             specializationId,
+    //         };
+    //         await this.serviceCollection.insertOne(service, {
+    //             ignoreUndefined: true,
+    //         });
+    //     }
+    // }
 }
