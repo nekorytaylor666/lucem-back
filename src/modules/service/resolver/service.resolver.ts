@@ -11,6 +11,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { paginate } from 'src/utils/paginate';
+import { ServiceAddictive } from '../model/service.addictive';
 
 @Resolver()
 export class ServiceResolver {
@@ -94,17 +95,19 @@ export class ServiceResolver {
     async getShownForMainByDoctorIdServices(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
-        const service = await this.serviceService.findWithOptions({
-            fields: ['doctorIds', 'isShown'],
-            values: [
-                { $elemMatch: new ObjectId(doctorId) },
-                { $exists: false },
-            ],
-        });
-        const serviceResponce = service.map(
+        const services = await this.serviceService
+            .findWithAddictivesCursor<ServiceAddictive>({
+                matchQuery: {
+                    doctorIds: { $elemMatch: { $eq: new ObjectId(doctorId) } },
+                    isShown: { $exists: false },
+                },
+                lookups: this.serviceService.basicLookups,
+            })
+            .toArray();
+        const servicesResponce = services.map(
             (val) => new ServiceGraph({ ...val }),
         );
-        return serviceResponce;
+        return servicesResponce;
     }
 
     @Query(() => [ServiceGraph])
