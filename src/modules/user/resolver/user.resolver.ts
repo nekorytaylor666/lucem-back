@@ -1,6 +1,7 @@
 import { CACHE_MANAGER, Inject, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
+    CurrentTokenPayload,
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
@@ -13,6 +14,9 @@ import { User } from '../model/user.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import { ObjectId } from 'mongodb';
 import { TokenService } from 'src/modules/helpers/token/token.service';
+import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { EditUser } from '../model/editUser.args';
+import { ApolloError } from 'apollo-server-express';
 
 @Resolver()
 export class UserResolver {
@@ -87,5 +91,31 @@ export class UserResolver {
         });
         const usersResponce = users.map((val) => new UserGraph({ ...val }));
         return usersResponce;
+    }
+
+    @Mutation(() => UserGraph)
+    @Roles('user', 'admin', 'doctor')
+    @UseGuards(PreAuthGuard)
+    async editUser(
+        @CurrentTokenPayload() payload: Token,
+        @CurrentUserGraph() _user: { _id: ObjectId },
+        @Args() args: EditUser,
+    ) {
+        const user =
+            payload.role === TokenRoles.User
+                ? await this.userService.edit({
+                      ...args,
+                      userId: _user._id.toHexString(),
+                  })
+                : payload.role === TokenRoles.Admin ||
+                  payload.role === TokenRoles.Doctor
+                ? await this.userService.edit({
+                      peculiarities: args.peculiarities,
+                      userId: args.userId,
+                  })
+                : undefined;
+        if (!user) throw new ApolloError("you don't have access rights");
+        const userResponce = new UserGraph({ ...user });
+        return userResponce;
     }
 }

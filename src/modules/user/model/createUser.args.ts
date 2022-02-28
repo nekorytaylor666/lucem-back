@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 import { Modify } from 'src/utils/modifyType';
 import { User } from './user.interface';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { PeculiaritiesInput } from './utils/peculiarities.input';
 
 @ArgsType()
 export class CreateUser
@@ -10,6 +10,7 @@ export class CreateUser
             Omit<User, '_id' | 'passwordHASH'>,
             {
                 dateOfBirth: string;
+                peculiarities?: PeculiaritiesInput;
             }
         >
 {
@@ -24,4 +25,7 @@ export class CreateUser
 
     @Field()
     phoneNumber: string;
+
+    @Field(() => PeculiaritiesInput, { nullable: true })
+    peculiarities?: PeculiaritiesInput;
 }
