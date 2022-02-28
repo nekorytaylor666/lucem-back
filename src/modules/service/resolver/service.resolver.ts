@@ -14,6 +14,7 @@ import { paginate } from 'src/utils/paginate';
 import { ServiceAddictive } from '../model/service.addictive';
 import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
+import { EditService } from '../model/editService.args';
 
 @Resolver()
 export class ServiceResolver {
@@ -167,5 +168,12 @@ export class ServiceResolver {
                 ]);
             }),
         ]);
+    }
+
+    @Mutation(() => ServiceGraph)
+    async editService(@Args() args: EditService) {
+        const service = await this.serviceService.edit(args);
+        const serviceResponce = new ServiceGraph({ ...service });
+        return serviceResponce;
     }
 }

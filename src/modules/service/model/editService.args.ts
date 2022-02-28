@@ -3,30 +3,33 @@ import { Modify } from 'src/utils/modifyType';
 import { Service } from './service.interface';
 
 @ArgsType()
-export class CreateService
+export class EditService
     implements
         Modify<
-            Omit<Service, '_id'>,
+            Omit<Partial<Service>, '_id'>,
             {
-                specializationId: string;
+                specializationId?: string;
                 doctorIds?: string[];
             }
         >
 {
     @Field()
-    name: string;
-
-    @Field(() => Int)
-    price: number;
-
-    @Field()
-    description: string;
-
-    @Field(() => Boolean, { nullable: true })
-    isShown: false;
+    serviceId: string;
 
     @Field({ nullable: true })
-    specializationId: string;
+    name?: string;
+
+    @Field({ nullable: true })
+    price: number;
+
+    @Field({ nullable: true })
+    description?: string;
+
+    @Field(() => Boolean, { nullable: true })
+    isShown?: false;
+
+    @Field({ nullable: true })
+    specializationId?: string;
 
     @Field(() => [String], { nullable: true })
     doctorIds?: string[];

@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { Modify } from 'src/utils/modifyType';
 import { CreateService } from '../model/createService.args';
+import { EditService } from '../model/editService.args';
 import { ServiceAddictive } from '../model/service.addictive';
 import { Service } from '../model/service.interface';
 import { ServiceSearch } from '../model/service.schema';
@@ -161,5 +163,30 @@ export class ServiceService extends BasicService<Service> {
         };
         await this.searchCollection.create(searchService);
         return service;
+    }
+
+    async edit(args: EditService): Promise<Service> {
+        const {
+            specializationId: _specializationId,
+            doctorIds: _doctorIds,
+            serviceId: _serviceId,
+        } = args;
+        delete args['serviceId'];
+        const specializationId =
+            _specializationId && new ObjectId(_specializationId);
+        const doctorIds =
+            _doctorIds && _doctorIds.map((val) => new ObjectId(val));
+        const service: Omit<Partial<Service>, '_id'> = {
+            ...args,
+            specializationId,
+            doctorIds,
+        };
+        removeUndefinedFromObject(service);
+        const serviceResponce = await this.updateOne({
+            find: { _id: new ObjectId(_serviceId) },
+            update: service,
+            method: '$set',
+        });
+        return serviceResponce;
     }
 }
