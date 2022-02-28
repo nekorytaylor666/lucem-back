@@ -8,6 +8,8 @@ import { Cache } from 'cache-manager';
 import { ApolloError } from 'apollo-server-express';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { BasicService } from 'src/modules/helpers/basic.service';
+import { EditUser } from '../model/editUser.args';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 
 @Injectable()
 export class UserService extends BasicService<User> {
@@ -89,5 +91,18 @@ export class UserService extends BasicService<User> {
         });
         insertUser.value.token = token;
         return insertUser.value;
+    }
+
+    async edit(args: EditUser) {
+        const user: Omit<Partial<User>, '_id'> = {
+            ...args,
+        };
+        removeUndefinedFromObject(user);
+        const userResponce = await this.updateOne({
+            find: { _id: new ObjectId(args.userId) },
+            update: user,
+            method: '$set',
+        });
+        return userResponce;
     }
 }

@@ -70,7 +70,7 @@ export class BookingResolver {
         const user = await this.userService.findOne({
             _id: createBooking.userId,
         });
-        this.notificationService.setNotification({
+        this.notificationService.setMailNotification({
             user,
             service,
             booking: createBooking,

@@ -18,7 +18,7 @@ export class NotificationService {
 
     private senderMail = this.configService.get('CLINIC_MAIL_USERNAME');
 
-    async setNotification(args: {
+    async setMailNotification(args: {
         user: User;
         doctor: Doctor;
         service: Service;
