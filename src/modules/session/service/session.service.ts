@@ -147,6 +147,7 @@ export class SessionService extends BasicService<Session> {
         const currentDate = new Date();
         const booking = await this.bookingService.findOne({
             _id: new ObjectId(bookingId),
+            progress: BookingProgress.Upcoming,
         });
         const previousSessions = await this.findWithOptions({
             fields: ['endDate', 'userId', 'doctorId'],

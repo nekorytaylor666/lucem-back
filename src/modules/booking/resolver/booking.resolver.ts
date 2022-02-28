@@ -284,4 +284,37 @@ export class BookingResolver {
         );
         return bookingsResponce;
     }
+
+    @Mutation(() => BookingGraph)
+    @Roles('user', 'doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async cancelBooking(
+        @CurrentTokenPayload() payload: Token,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @Args('bookingId', { type: () => String }) bookingId: string,
+    ) {
+        const findQuery: Partial<Booking> =
+            payload.role === TokenRoles.User
+                ? {
+                      userId: user._id,
+                      _id: new ObjectId(bookingId),
+                  }
+                : payload.role === TokenRoles.Doctor
+                ? {
+                      doctorId: user._id,
+                      _id: new ObjectId(bookingId),
+                  }
+                : payload.role === TokenRoles.Admin
+                ? {
+                      _id: new ObjectId(bookingId),
+                  }
+                : undefined;
+        const booking = await this.bookingService.updateOne({
+            find: findQuery,
+            update: { progress: BookingProgress.Canceled },
+            method: '$set',
+        });
+        const bookingResponce = new BookingGraph({ ...booking });
+        return bookingResponce;
+    }
 }
