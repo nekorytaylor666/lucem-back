@@ -8,6 +8,7 @@ import { User } from 'src/modules/user/model/user.interface';
 import { parseTime } from 'src/utils/parseTime';
 import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
+import * as moment from 'moment';
 
 @Injectable()
 export class BookingService extends BasicService<Booking> {
@@ -62,22 +63,23 @@ export class BookingService extends BasicService<Booking> {
     }
 
     async create(
-        args: Omit<CreateBooking, 'doctorId'> & {
+        args: Omit<CreateBooking, 'doctorId' | 'serviceId'> & {
             userId: string;
             doctor: Doctor;
+            service: Service;
         },
     ) {
         const {
-            serviceId: _serviceId,
             userId: _userId,
             startDate,
-            endDate,
+            endDate: _endDate,
             doctor,
+            service,
         } = args;
-        const [serviceId, userId] = [
-            new ObjectId(_serviceId),
-            new ObjectId(_userId),
-        ];
+        const userId = new ObjectId(_userId);
+        const endDate = service
+            ? moment().add(service.durationInMinutes, 'minutes').toDate()
+            : _endDate;
         const checkIfWorkTimeExists = doctor.workTimes.find(
             (val) =>
                 val.startTime <= parseTime(startDate) &&
@@ -92,7 +94,7 @@ export class BookingService extends BasicService<Booking> {
         if (checkIfTimeIsTaken)
             throw new ApolloError('the time is already booked');
         const booking: Booking = {
-            serviceId,
+            serviceId: service._id,
             userId,
             startDate,
             endDate,
