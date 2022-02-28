@@ -75,14 +75,6 @@ export class SpecializationService extends BasicService<Specialization> {
                                     },
                                 },
                             },
-                            {
-                                $lookup: {
-                                    from: 'timeline',
-                                    localField: '_id',
-                                    foreignField: 'doctorId',
-                                    as: 'timelines',
-                                },
-                            },
                         ],
                         as: 'doctors',
                     },
@@ -90,18 +82,8 @@ export class SpecializationService extends BasicService<Specialization> {
                 {
                     $lookup: {
                         from: 'service',
-                        let: {
-                            id: '$_id',
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $in: ['$$id', '$specializationIds'],
-                                    },
-                                },
-                            },
-                        ],
+                        localField: '_id',
+                        foreignField: 'specializationId',
                         as: 'services',
                     },
                 },
