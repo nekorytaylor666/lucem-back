@@ -50,22 +50,26 @@ export class BookingResolver {
         const doctor = await this.doctorService.findOne({
             _id: new ObjectId(args.doctorId),
         });
+        const service = await this.serviceService.findOne({
+            _id: new ObjectId(args.serviceId),
+        });
         const createBooking =
             payload.role === TokenRoles.User
                 ? await this.bookingService.create({
                       ...args,
                       doctor,
                       userId: _user._id.toHexString(),
+                      service,
                   })
                 : await this.bookingService.create({
                       ...args,
                       doctor,
+                      service,
                   });
         const bookingResponce = new BookingGraph({ ...createBooking });
-        const [service, user] = [
-            await this.serviceService.findOne({ _id: createBooking.serviceId }),
-            await this.userService.findOne({ _id: createBooking.userId }),
-        ];
+        const user = await this.userService.findOne({
+            _id: createBooking.userId,
+        });
         this.notificationService.setNotification({
             user,
             service,

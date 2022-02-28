@@ -19,7 +19,7 @@ export class CreateBooking
     @Field(() => GraphQLISODateTime)
     startDate: Date;
 
-    @Field(() => GraphQLISODateTime)
+    @Field(() => GraphQLISODateTime, { nullable: true })
     endDate: Date;
 
     @Field()
