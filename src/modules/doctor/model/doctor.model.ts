@@ -68,7 +68,7 @@ export class DoctorGraph
     @Field(() => [WorkTimeGraph], { nullable: true })
     workTimes: WorkTimeGraph[];
 
-    @Field()
+    @Field({ nullable: true })
     cabinet: string;
 
     constructor(

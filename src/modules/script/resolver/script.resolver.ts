@@ -30,4 +30,28 @@ export class ScriptResolver {
     //     await this.scriptService.addServicesToDatabase(serviceWorkSheet);
     //     return 'string';
     // }
+
+    @Mutation(() => String)
+    async specScript() {
+        const pathToDoctorSheets = join(process.cwd(), 'lucemData.xlsx');
+        const doctorWorkbook = new excel.Workbook();
+        const doctorWorkSheets = await doctorWorkbook.xlsx.readFile(
+            pathToDoctorSheets,
+        );
+        const doctorWorkSheet = doctorWorkSheets.getWorksheet('Данные врачей');
+        await this.scriptService.addSpecToDatabase(doctorWorkSheet);
+        return 'success';
+    }
+
+    @Mutation(() => String)
+    async doctorScript() {
+        const pathToDoctorSheets = join(process.cwd(), 'lucemData.xlsx');
+        const doctorWorkbook = new excel.Workbook();
+        const doctorWorkSheets = await doctorWorkbook.xlsx.readFile(
+            pathToDoctorSheets,
+        );
+        const doctorWorkSheet = doctorWorkSheets.getWorksheet('Данные врачей');
+        await this.scriptService.addDoctorsToDatabase(doctorWorkSheet);
+        return 'success';
+    }
 }
