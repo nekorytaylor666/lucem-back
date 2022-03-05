@@ -106,4 +106,21 @@ export class DoctorResolver {
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
+
+    @Mutation(() => DoctorGraph)
+    @Roles('none') //TODO change to admin role
+    @UseGuards(PreAuthGuard)
+    async editDoctor(
+        @Args() args: CreateDoctor,
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @CurrentRequestURLGraph() req: string,
+    ) {
+        const doctor = await this.doctorService.edit({
+            ...args,
+            req,
+            doctorId: new ObjectId(doctorId),
+        });
+        const doctorResponce = new DoctorGraph({ ...doctor });
+        return doctorResponce;
+    }
 }
