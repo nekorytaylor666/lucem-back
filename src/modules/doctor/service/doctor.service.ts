@@ -13,6 +13,7 @@ import { Specialization } from 'src/modules/specialization/model/specialization.
 import { ExperienceAndEducation } from '../model/utils/experience/experience.model';
 import { WorkTime } from '../model/utils/workTime/workTime.model';
 import { parseTime } from 'src/utils/parseTime';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -144,6 +145,78 @@ export class DoctorService extends BasicService<Doctor> {
             update: { avatar: photoURL },
             method: '$set',
         });
+        return doctor;
+    }
+
+    async edit(args: CreateDoctor & { req: string; doctorId: ObjectId }) {
+        const {
+            avatar,
+            req,
+            workTimes,
+            doctorId,
+            fullName,
+            email,
+            password,
+            description,
+            languages,
+            startingExperienceDate,
+            cabinet,
+            acceptableAgeGroup,
+        } = args;
+        const passwordHASH = password && (await bcrypt.hash(password, 12));
+        const avatarURL =
+            avatar &&
+            (await this.fileUploadService.storeImages(
+                (await avatar).createReadStream(),
+                req,
+            ));
+        if (workTimes) {
+            Promise.all([
+                workTimes.map(async (val) => {
+                    const workTime: WorkTime = {
+                        startTime: parseTime(val.startTime),
+                        endTime: parseTime(val.endTime),
+                    };
+                    await this.dbService.updateOne(
+                        {
+                            _id: doctorId,
+                            workTimes: {
+                                $elemMatch: {
+                                    startTime: {
+                                        $lte: parseTime(val.startTime),
+                                    },
+                                    endTime: { $gte: parseTime(val.endTime) },
+                                },
+                            },
+                        },
+                        {
+                            $set: {
+                                'workTimes.$': workTime,
+                            },
+                        },
+                    );
+                }),
+            ]);
+        }
+        const doctor: Partial<Doctor> = {
+            fullName,
+            email,
+            passwordHASH,
+            languages,
+            description,
+            startingExperienceDate,
+            cabinet,
+            acceptableAgeGroup,
+            avatar: avatarURL && avatarURL,
+        };
+        removeUndefinedFromObject(doctor);
+        await this.updateOne({
+            find: { _id: doctorId },
+            update: doctor,
+            method: '$set',
+            ignoreUndefined: true,
+        });
+        doctor.workTimes = workTimes;
         return doctor;
     }
 
