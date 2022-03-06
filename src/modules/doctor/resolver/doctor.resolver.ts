@@ -112,7 +112,7 @@ export class DoctorResolver {
     }
 
     @Mutation(() => DoctorGraph)
-    @Roles('none') //TODO change to admin role
+    @Roles('doctor', 'admin') //TODO change to admin role
     @UseGuards(PreAuthGuard)
     async editDoctor(
         @Args() args: EditDoctor,
