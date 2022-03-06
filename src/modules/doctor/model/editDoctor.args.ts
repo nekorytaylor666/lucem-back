@@ -19,7 +19,7 @@ export class EditDoctor
             }
         >
 {
-    @Field()
+    @Field({ nullable: true })
     doctorId: string;
 
     @Field({ nullable: true })
