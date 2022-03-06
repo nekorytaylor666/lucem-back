@@ -188,4 +188,17 @@ export class ServiceResolver {
         });
         return doctorResponce;
     }
+
+    @Mutation(() => Boolean)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async deleteServices(
+        @Args('serviceIds', { type: () => [String] }) serviceIds: string[],
+    ) {
+        const doctor = await this.doctorService.deleteManyWithOptions({
+            fields: ['_id'],
+            values: [{ $in: serviceIds.map((val) => new ObjectId(val)) }],
+        });
+        return doctor;
+    }
 }
