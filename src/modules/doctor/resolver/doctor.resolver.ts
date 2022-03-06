@@ -5,12 +5,15 @@ import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentRequestURLGraph,
+    CurrentTokenPayload,
+    CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { TokenService } from 'src/modules/helpers/token/token.service';
 import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 import { CreateDoctor } from '../model/createDoctor.args';
+import { Doctor } from '../model/doctor.interface';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorTokenGraph } from '../model/doctor.token.model';
 import { EditDoctor } from '../model/editDoctor.args';
@@ -118,6 +121,27 @@ export class DoctorResolver {
         const doctor = await this.doctorService.edit({
             ...args,
             req,
+        });
+        const doctorResponce = new DoctorGraph({ ...doctor });
+        return doctorResponce;
+    }
+
+    @Mutation(() => DoctorGraph)
+    @Roles('doctor', 'admin')
+    @UseGuards(PreAuthGuard)
+    async deleteDoctor(
+        @Args('doctorId', { nullable: true }) doctorId: string,
+        @CurrentTokenPayload() payload: Token,
+        @CurrentUserGraph() user: { _id: ObjectId },
+    ) {
+        const findQuery: Partial<Doctor> =
+            payload.role === TokenRoles.Doctor
+                ? { _id: user._id }
+                : { _id: new ObjectId(doctorId) };
+        const doctor = await this.doctorService.updateOne({
+            find: findQuery,
+            update: { isDeleted: true },
+            method: '$set',
         });
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
