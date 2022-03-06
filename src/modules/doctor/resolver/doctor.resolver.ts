@@ -18,6 +18,7 @@ import { DoctorGraph } from '../model/doctor.model';
 import { DoctorTokenGraph } from '../model/doctor.token.model';
 import { EditDoctor } from '../model/editDoctor.args';
 import { DoctorService } from '../service/doctor.service';
+import * as bcrypt from 'bcryptjs';
 
 @Resolver()
 export class DoctorResolver {
