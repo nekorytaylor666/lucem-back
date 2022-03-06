@@ -2,7 +2,10 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
-import { CurrentUserGraph, PreAuthGuard } from 'src/modules/helpers/auth/auth.service';
+import {
+    CurrentUserGraph,
+    PreAuthGuard,
+} from 'src/modules/helpers/auth/auth.service';
 import { AdminGraph } from '../model/admin.model';
 import { CreateAdmin } from '../model/createAdmin.args';
 import { EditAdmin } from '../model/editAdmin.args';
@@ -40,10 +43,13 @@ export class AdminResolver {
     @UseGuards(PreAuthGuard)
     async editAdmin(
         @CurrentUserGraph() user: { _id: string },
-        @Args() args: EditAdmin
+        @Args() args: EditAdmin,
     ) {
-        const updateAdmin = await this.adminService.edit({ ...args ,_id: new ObjectId(user._id)});
-        const adminResponce = new AdminGraph({...updateAdmin});
+        const updateAdmin = await this.adminService.edit({
+            ...args,
+            _id: new ObjectId(user._id),
+        });
+        const adminResponce = new AdminGraph({ ...updateAdmin });
         return adminResponce;
     }
 }

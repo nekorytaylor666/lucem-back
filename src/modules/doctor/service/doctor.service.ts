@@ -157,7 +157,7 @@ export class DoctorService extends BasicService<Doctor> {
         return doctor;
     }
 
-    async edit(args: EditDoctor & { req: string }) {
+    async edit(args: EditDoctor & { req: string }): Promise<Doctor> {
         const {
             avatar,
             req,
@@ -187,24 +187,71 @@ export class DoctorService extends BasicService<Doctor> {
                         startTime: parseTime(val.startTime),
                         endTime: parseTime(val.endTime),
                     };
-                    await this.dbService.updateOne(
-                        {
-                            _id: doctorId,
-                            workTimes: {
-                                $elemMatch: {
-                                    startTime: {
-                                        $lte: parseTime(val.startTime),
+                    try {
+                        await this.dbService.updateOne(
+                            {
+                                $or: [
+                                    {
+                                        _id: doctorId,
+                                        workTimes: {
+                                            $elemMatch: {
+                                                startTime: {
+                                                    $lte: parseTime(
+                                                        val.startTime,
+                                                    ),
+                                                },
+                                                endTime: {
+                                                    $gte: parseTime(
+                                                        val.endTime,
+                                                    ),
+                                                },
+                                            },
+                                        },
                                     },
-                                    endTime: { $gte: parseTime(val.endTime) },
+                                    {
+                                        _id: doctorId,
+                                    },
+                                ],
+                            },
+                            {
+                                $set: {
+                                    'workTimes.$': workTime,
                                 },
                             },
-                        },
-                        {
-                            $set: {
-                                'workTimes.$': workTime,
+                        );
+                    } catch (e) {
+                        await this.dbService.updateOne(
+                            {
+                                $or: [
+                                    {
+                                        _id: doctorId,
+                                        workTimes: {
+                                            $elemMatch: {
+                                                startTime: {
+                                                    $lte: parseTime(
+                                                        val.startTime,
+                                                    ),
+                                                },
+                                                endTime: {
+                                                    $gte: parseTime(
+                                                        val.endTime,
+                                                    ),
+                                                },
+                                            },
+                                        },
+                                    },
+                                    {
+                                        _id: doctorId,
+                                    },
+                                ],
                             },
-                        },
-                    );
+                            {
+                                $set: {
+                                    workTimes: [workTime],
+                                },
+                            },
+                        );
+                    }
                 }),
             ]);
         }
@@ -220,14 +267,15 @@ export class DoctorService extends BasicService<Doctor> {
             avatar: avatarURL && avatarURL,
         };
         removeUndefinedFromObject(doctor);
-        await this.updateOne({
-            find: { _id: doctorId },
-            update: doctor,
-            method: '$set',
-            ignoreUndefined: true,
-        });
-        doctor.workTimes = workTimes;
-        return doctor;
+        const updatedDoctor = doctor
+            ? await this.updateOne({
+                  find: { _id: doctorId },
+                  update: doctor,
+                  method: '$set',
+                  ignoreUndefined: true,
+              })
+            : await this.findOne({ _id: doctorId });
+        return updatedDoctor;
     }
 
     async findByIdWithAddictives(_id: ObjectId) {
