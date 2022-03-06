@@ -1,4 +1,10 @@
-import { AggregationCursor, Collection, FindCursor, ObjectId } from 'mongodb';
+import {
+    AggregationCursor,
+    Collection,
+    Filter,
+    FindCursor,
+    ObjectId,
+} from 'mongodb';
 
 export abstract class BasicService<T extends any = Record<string, unknown>> {
     protected dbService: Collection<T>;
@@ -206,5 +212,10 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
 
     async list() {
         return this.dbService.find().toArray();
+    }
+
+    async deleteOne(find: Filter<T>): Promise<boolean> {
+        const doctor = await this.dbService.deleteOne(find);
+        return doctor.acknowledged;
     }
 }
