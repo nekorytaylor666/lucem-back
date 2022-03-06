@@ -13,6 +13,7 @@ import { SpecializationService } from 'src/modules/specialization/service/specia
 import { CreateDoctor } from '../model/createDoctor.args';
 import { DoctorGraph } from '../model/doctor.model';
 import { DoctorTokenGraph } from '../model/doctor.token.model';
+import { EditDoctor } from '../model/editDoctor.args';
 import { DoctorService } from '../service/doctor.service';
 
 @Resolver()
@@ -111,14 +112,12 @@ export class DoctorResolver {
     @Roles('none') //TODO change to admin role
     @UseGuards(PreAuthGuard)
     async editDoctor(
-        @Args() args: CreateDoctor,
-        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args() args: EditDoctor,
         @CurrentRequestURLGraph() req: string,
     ) {
         const doctor = await this.doctorService.edit({
             ...args,
             req,
-            doctorId: new ObjectId(doctorId),
         });
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;

@@ -14,6 +14,7 @@ import { ExperienceAndEducation } from '../model/utils/experience/experience.mod
 import { WorkTime } from '../model/utils/workTime/workTime.model';
 import { parseTime } from 'src/utils/parseTime';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
+import { EditDoctor } from '../model/editDoctor.args';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -148,12 +149,12 @@ export class DoctorService extends BasicService<Doctor> {
         return doctor;
     }
 
-    async edit(args: CreateDoctor & { req: string; doctorId: ObjectId }) {
+    async edit(args: EditDoctor & { req: string }) {
         const {
             avatar,
             req,
             workTimes,
-            doctorId,
+            doctorId: _doctorId,
             fullName,
             email,
             password,
@@ -163,6 +164,7 @@ export class DoctorService extends BasicService<Doctor> {
             cabinet,
             acceptableAgeGroup,
         } = args;
+        const doctorId = new ObjectId(_doctorId);
         const passwordHASH = password && (await bcrypt.hash(password, 12));
         const avatarURL =
             avatar &&
