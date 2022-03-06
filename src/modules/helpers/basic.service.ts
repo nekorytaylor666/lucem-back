@@ -218,4 +218,15 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const doctor = await this.dbService.deleteOne(find);
         return doctor.acknowledged;
     }
+
+    async deleteManyWithOptions(args: {
+        fields: (keyof T)[];
+        values: any[];
+    }): Promise<boolean> {
+        const { fields, values } = args;
+        const query: any = {};
+        fields.map((val, ind) => (query[val] = values[ind]));
+        const deleteResponce = await this.dbService.deleteMany(query);
+        return deleteResponce.acknowledged;
+    }
 }
