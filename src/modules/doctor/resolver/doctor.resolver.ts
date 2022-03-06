@@ -117,11 +117,20 @@ export class DoctorResolver {
     async editDoctor(
         @Args() args: EditDoctor,
         @CurrentRequestURLGraph() req: string,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
     ) {
-        const doctor = await this.doctorService.edit({
-            ...args,
-            req,
-        });
+        const doctor =
+            payload.role === TokenRoles.Doctor
+                ? await this.doctorService.edit({
+                      ...args,
+                      doctorId: user._id.toHexString(),
+                      req,
+                  })
+                : await this.doctorService.edit({
+                      ...args,
+                      req,
+                  });
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
