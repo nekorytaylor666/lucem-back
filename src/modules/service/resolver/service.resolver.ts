@@ -176,4 +176,16 @@ export class ServiceResolver {
         const serviceResponce = new ServiceGraph({ ...service });
         return serviceResponce;
     }
+
+    @Mutation(() => Boolean)
+    @Roles('none')
+    @UseGuards(PreAuthGuard)
+    async deleteService(
+        @Args('serviceId', { type: () => String }) serviceId: string,
+    ) {
+        const doctorResponce = await this.doctorService.deleteOne({
+            _id: new ObjectId(serviceId),
+        });
+        return doctorResponce;
+    }
 }

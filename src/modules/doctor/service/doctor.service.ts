@@ -94,8 +94,7 @@ export class DoctorService extends BasicService<Doctor> {
                 endTime: parseTime(val.endTime),
             };
         });
-        const doctor: Doctor = {
-            _id: new ObjectId(),
+        const doctor: Omit<Doctor, '_id'> = {
             fullName,
             email,
             passwordHASH,
@@ -109,19 +108,28 @@ export class DoctorService extends BasicService<Doctor> {
             workTimes,
             cabinet,
         };
-        await this.insertOne(doctor);
+        const insertDoctor = await this.dbService.findOneAndReplace(
+            {
+                email,
+            },
+            doctor,
+            { upsert: true },
+        );
         const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
             ...doctor,
-            _id: doctor._id.toHexString(),
+            _id: insertDoctor.value._id.toHexString(),
             num: 12,
         };
         await this.searchCollection.create(searchDoctor);
-        return doctor;
+        return insertDoctor.value;
     }
 
     async login(args: { email: string; password: string }) {
         const { email, password } = args;
-        const doctor = await this.findOne({ email });
+        const doctor = await this.findOneWithOptions({
+            fields: ['email', 'isDeleted'],
+            values: [email, { $exists: false }],
+        });
         const checkPassword = await bcrypt.compare(
             password,
             doctor.passwordHASH,

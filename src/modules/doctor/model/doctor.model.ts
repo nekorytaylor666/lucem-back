@@ -71,6 +71,9 @@ export class DoctorGraph
     @Field({ nullable: true })
     cabinet: string;
 
+    @Field(() => Boolean, { nullable: true })
+    isDeleted?: true;
+
     constructor(
         doctor: Partial<
             Doctor & {
@@ -116,5 +119,6 @@ export class DoctorGraph
                 (val) => new WorkTimeGraph({ ...val }),
             );
         if (doctor.cabinet != null) this.cabinet = doctor.cabinet;
+        if (doctor.isDeleted != null) this.isDeleted = doctor.isDeleted;
     }
 }
