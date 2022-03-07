@@ -8,6 +8,6 @@ export interface Service {
     doctorIds?: ObjectId[];
     isShown?: false;
     showServices?: ObjectId[];
-    specializationId: ObjectId;
+    specializationIds: ObjectId[];
     durationInMinutes?: number;
 }

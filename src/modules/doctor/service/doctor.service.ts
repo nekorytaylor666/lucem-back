@@ -15,7 +15,6 @@ import { WorkTime } from '../model/utils/workTime/workTime.model';
 import { parseTime } from 'src/utils/parseTime';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { EditDoctor } from '../model/editDoctor.args';
-import * as moment from 'moment';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {

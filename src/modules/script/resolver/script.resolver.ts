@@ -1,4 +1,4 @@
-import { Mutation, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // const xlsx = require('xlsx');
 import * as excel from 'exceljs';
@@ -53,5 +53,17 @@ export class ScriptResolver {
         const doctorWorkSheet = doctorWorkSheets.getWorksheet('Данные врачей');
         await this.scriptService.addDoctorsToDatabase(doctorWorkSheet);
         return 'success';
+    }
+
+    @Mutation(() => String)
+    async serviceScript() {
+        const pathToserviceSheets = join(process.cwd(), 'lucemData.xlsx');
+        const serviceWorkbook = new excel.Workbook();
+        const serviceWorkSheets = await serviceWorkbook.xlsx.readFile(
+            pathToserviceSheets,
+        );
+        const serviceWorkSheet = serviceWorkSheets.getWorksheet('Список услуг');
+        this.scriptService.addServicesToDatabase(serviceWorkSheet);
+        return 'shit';
     }
 }
