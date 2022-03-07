@@ -222,32 +222,11 @@ export class DoctorService extends BasicService<Doctor> {
                     } catch (e) {
                         await this.dbService.updateOne(
                             {
-                                $or: [
-                                    {
-                                        _id: doctorId,
-                                        workTimes: {
-                                            $elemMatch: {
-                                                startTime: {
-                                                    $lte: parseTime(
-                                                        val.startTime,
-                                                    ),
-                                                },
-                                                endTime: {
-                                                    $gte: parseTime(
-                                                        val.endTime,
-                                                    ),
-                                                },
-                                            },
-                                        },
-                                    },
-                                    {
-                                        _id: doctorId,
-                                    },
-                                ],
+                                _id: doctorId,
                             },
                             {
-                                $set: {
-                                    workTimes: [workTime],
+                                $addToSet: {
+                                    workTimes: workTime,
                                 },
                             },
                         );
