@@ -37,9 +37,21 @@ export class ServiceService extends BasicService<Service> {
             },
             {
                 from: 'specialization',
-                localField: 'specializationId',
-                foreignField: '_id',
-                as: 'specialization',
+                let: {
+                    specializationIds: 'specializationIds',
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                _id: {
+                                    $in: ['$_id', '$$specializationIds'],
+                                },
+                            },
+                        },
+                    },
+                ],
+                as: 'specializations',
                 isArray: false,
             },
         ];
@@ -142,7 +154,7 @@ export class ServiceService extends BasicService<Service> {
             name,
             price,
             isShown,
-            specializationId,
+            specializationIds,
             doctorIds,
             durationInMinutes,
         } = args;
@@ -152,7 +164,9 @@ export class ServiceService extends BasicService<Service> {
             description,
             price,
             isShown,
-            specializationId: new ObjectId(specializationId),
+            specializationIds: specializationIds.map(
+                (val) => new ObjectId(val),
+            ),
             doctorIds,
             durationInMinutes,
         };
@@ -167,18 +181,17 @@ export class ServiceService extends BasicService<Service> {
 
     async edit(args: EditService): Promise<Service> {
         const {
-            specializationId: _specializationId,
+            specializationId,
             doctorIds: _doctorIds,
             serviceId: _serviceId,
         } = args;
         delete args['serviceId'];
-        const specializationId =
-            _specializationId && new ObjectId(_specializationId);
+
         const doctorIds =
             _doctorIds && _doctorIds.map((val) => new ObjectId(val));
         const service: Omit<Partial<Service>, '_id'> = {
             ...args,
-            specializationId,
+            specializationIds: specializationId.map((val) => new ObjectId(val)),
             doctorIds,
         };
         removeUndefinedFromObject(service);

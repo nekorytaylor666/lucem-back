@@ -8,7 +8,7 @@ export class EditService
         Modify<
             Omit<Partial<Service>, '_id'>,
             {
-                specializationId?: string;
+                specializationId?: string[];
                 doctorIds?: string[];
             }
         >
@@ -28,8 +28,8 @@ export class EditService
     @Field(() => Boolean, { nullable: true })
     isShown?: false;
 
-    @Field({ nullable: true })
-    specializationId?: string;
+    @Field(() => [String], { nullable: true })
+    specializationId?: string[];
 
     @Field(() => [String], { nullable: true })
     doctorIds?: string[];

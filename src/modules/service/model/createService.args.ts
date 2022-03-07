@@ -8,7 +8,7 @@ export class CreateService
         Modify<
             Omit<Service, '_id'>,
             {
-                specializationId: string;
+                specializationIds: string[];
                 doctorIds?: string[];
             }
         >
@@ -25,8 +25,8 @@ export class CreateService
     @Field(() => Boolean, { nullable: true })
     isShown: false;
 
-    @Field({ nullable: true })
-    specializationId: string;
+    @Field(() => [String], { nullable: true })
+    specializationIds: string[];
 
     @Field(() => [String], { nullable: true })
     doctorIds?: string[];

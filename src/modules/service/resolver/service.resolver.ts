@@ -26,15 +26,23 @@ export class ServiceResolver {
 
     @Mutation(() => ServiceGraph)
     async createService(@Args() args: CreateService) {
-        const spec = args.doctorIds
+        const specs = args.doctorIds
             ? undefined
-            : await this.specService.findOne({
-                  _id: new ObjectId(args.specializationId),
+            : await this.specService.findWithOptions({
+                  fields: ['_id'],
+                  values: [
+                      {
+                          $in: args.specializationIds.map(
+                              (val) => new ObjectId(val),
+                          ),
+                      },
+                  ],
               });
+        const specDoctorIds = specs && specs.flatMap((val) => val.doctorIds);
         const insertService = await this.serviceService.create({
             ...args,
-            doctorIds: spec
-                ? spec.doctorIds
+            doctorIds: specDoctorIds
+                ? specDoctorIds
                 : args.doctorIds.map((val) => new ObjectId(val)),
         });
         const serviceResponce = new ServiceGraph({ ...insertService });
@@ -158,8 +166,8 @@ export class ServiceResolver {
                 await Promise.all([
                     spec.doctorIds.map(async (doctorId) => {
                         await this.serviceService.updateManyWithOptions({
-                            findField: ['specializationId'],
-                            findValue: [spec._id],
+                            findField: ['specializationIds'],
+                            findValue: [{ $in: spec._id }],
                             updateField: ['doctorIds'],
                             updateValue: [doctorId],
                             method: '$addToSet',
