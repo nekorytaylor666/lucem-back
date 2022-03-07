@@ -15,6 +15,7 @@ import { WorkTime } from '../model/utils/workTime/workTime.model';
 import { parseTime } from 'src/utils/parseTime';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { EditDoctor } from '../model/editDoctor.args';
+import * as moment from 'moment';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -181,58 +182,20 @@ export class DoctorService extends BasicService<Doctor> {
                 req,
             ));
         if (workTimes) {
-            Promise.all([
-                workTimes.map(async (val) => {
-                    const workTime: WorkTime = {
-                        startTime: parseTime(val.startTime),
-                        endTime: parseTime(val.endTime),
-                    };
-                    try {
-                        await this.dbService.updateOne(
-                            {
-                                $or: [
-                                    {
-                                        _id: doctorId,
-                                        workTimes: {
-                                            $elemMatch: {
-                                                startTime: {
-                                                    $lte: parseTime(
-                                                        val.startTime,
-                                                    ),
-                                                },
-                                                endTime: {
-                                                    $gte: parseTime(
-                                                        val.endTime,
-                                                    ),
-                                                },
-                                            },
-                                        },
-                                    },
-                                    {
-                                        _id: doctorId,
-                                    },
-                                ],
-                            },
-                            {
-                                $set: {
-                                    'workTimes.$': workTime,
-                                },
-                            },
-                        );
-                    } catch (e) {
-                        await this.dbService.updateOne(
-                            {
-                                _id: doctorId,
-                            },
-                            {
-                                $addToSet: {
-                                    workTimes: workTime,
-                                },
-                            },
-                        );
-                    }
-                }),
-            ]);
+            const workTime = workTimes.map((val) => {
+                return {
+                    startTime: parseTime(val.startTime),
+                    endTime: parseTime(val.endTime),
+                } as WorkTime;
+            });
+            await this.dbService.updateOne(
+                { _id: doctorId },
+                {
+                    $set: {
+                        workTimes: workTime,
+                    },
+                },
+            );
         }
         const doctor: Partial<Doctor> = {
             fullName,
