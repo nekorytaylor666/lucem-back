@@ -155,4 +155,16 @@ export class DoctorResolver {
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }
+
+    @Query(() => [DoctorGraph])
+    async getShit() {
+        const doctors = await this.doctorService.findWithOptions({
+            fields: ['experiences'],
+            values: [{ $elemMatch: { $eq: null } }],
+        });
+        const doctorsResponce = doctors.map(
+            (val) => new DoctorGraph({ ...val }),
+        );
+        return doctorsResponce;
+    }
 }

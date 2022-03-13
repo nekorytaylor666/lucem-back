@@ -77,9 +77,13 @@ export class BookingService extends BasicService<Booking> {
             service,
         } = args;
         const userId = new ObjectId(_userId);
-        const endDate = service
-            ? moment().add(service.durationInMinutes, 'minutes').toDate()
+        const endDate = service.durationInMinutes
+            ? moment(startDate)
+                  .add(service.durationInMinutes, 'minutes')
+                  .toDate()
             : _endDate;
+        console.log(parseTime(startDate));
+        console.log(parseTime(endDate));
         const checkIfWorkTimeExists = doctor.workTimes.find(
             (val) =>
                 val.startTime <= parseTime(startDate) &&
