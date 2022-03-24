@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentTokenPayload,
@@ -9,7 +10,8 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
-import { ComplaintGraph } from '../../model/parts/complaint.model';
+import { User } from 'src/modules/user/model/user.interface';
+import { Complaint, ComplaintGraph } from '../../model/parts/complaint.model';
 import { ComplaintService } from '../../service/utils/complaint.service';
 
 @Resolver()
@@ -27,12 +29,28 @@ export class ComplaintResolver {
     ) {
         const complaints =
             payload.role === TokenRoles.Doctor
-                ? await this.complaintService.findWithAddictives({
-                      doctorId: user._id,
-                  })
-                : await this.complaintService.findWithAddictives({
-                      doctorId: new ObjectId(doctorId),
-                  });
+                ? await this.complaintService
+                      .findWithAddictivesCursor<
+                          Complaint & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { doctorId: user._id },
+                          lookups: this.complaintService.basicLookups,
+                      })
+                      .toArray()
+                : await this.complaintService
+                      .findWithAddictivesCursor<
+                          Complaint & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { doctorId: new ObjectId(doctorId) },
+                          lookups: this.complaintService.basicLookups,
+                      })
+                      .toArray();
         const complaintResponce = complaints.map(
             (val) => new ComplaintGraph({ ...val }),
         );
@@ -49,11 +67,23 @@ export class ComplaintResolver {
     ) {
         const complaints =
             payload.role === TokenRoles.User
-                ? await this.complaintService.findWithAddictives({
-                      userId: user._id,
+                ? await this.complaintService.findWithAddictivesCursor<
+                      Complaint & {
+                          doctor: Doctor;
+                          user: User;
+                      }
+                  >({
+                      find: { userId: user._id },
+                      lookups: this.complaintService.basicLookups,
                   })
-                : await this.complaintService.findWithAddictives({
-                      userId: new ObjectId(userId),
+                : await this.complaintService.findWithAddictivesCursor<
+                      Complaint & {
+                          doctor: Doctor;
+                          user: User;
+                      }
+                  >({
+                      find: { userId: new ObjectId(userId) },
+                      lookups: this.complaintService.basicLookups,
                   });
         const complaintsResponce = complaints.map(
             (val) => new ComplaintGraph({ ...val }),
@@ -78,6 +108,30 @@ export class ComplaintResolver {
         )
             throw new ApolloError('this is not your complaint');
         const complaintResponce = new ComplaintGraph({ ...complaint });
+        return complaintResponce;
+    }
+
+    @Mutation(() => ComplaintGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async editComplaint(
+        @Args('complaintId', { type: () => String }) complaintId: string,
+        @Args('complaintText', { type: () => String }) complaintText: string,
+        @Args('sicknessTimeDuration', { type: () => String })
+        sicknessTimeDuration: string,
+        @Args('reason', { type: () => String }) reason: string,
+        @CurrentUserGraph() doctor: Doctor,
+    ) {
+        const complaint = await this.complaintService.edit({
+            complaintId: new ObjectId(complaintId),
+            complaint: complaintText,
+            sicknessTimeDuration,
+            reason,
+            doctorId: doctor._id,
+        });
+        const complaintResponce = new ComplaintGraph({
+            ...complaint,
+        });
         return complaintResponce;
     }
 }

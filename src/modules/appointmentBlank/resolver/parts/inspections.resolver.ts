@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentTokenPayload,
@@ -9,7 +10,11 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
-import { InspectionsGraph } from '../../model/parts/inspections.model';
+import { User } from 'src/modules/user/model/user.interface';
+import {
+    Inspections,
+    InspectionsGraph,
+} from '../../model/parts/inspections.model';
 import { InspectionsService } from '../../service/utils/inspections.service';
 
 @Resolver()
@@ -27,11 +32,23 @@ export class InspectionsResolver {
     ) {
         const inspections =
             payload.role === TokenRoles.Doctor
-                ? await this.inspectionsService.findOneWithAddictions({
-                      doctorId: user._id,
+                ? await this.inspectionsService.findWithAddictivesCursor<
+                      Inspections & {
+                          doctor: Doctor;
+                          user: User;
+                      }
+                  >({
+                      find: { doctorId: user._id },
+                      lookups: this.inspectionsService.basicLookups,
                   })
-                : await this.inspectionsService.findOneWithAddictions({
-                      doctorId: new ObjectId(doctorId),
+                : await this.inspectionsService.findWithAddictivesCursor<
+                      Inspections & {
+                          doctor: Doctor;
+                          user: User;
+                      }
+                  >({
+                      find: { userId: new ObjectId(doctorId) },
+                      lookups: this.inspectionsService.basicLookups,
                   });
         const inspectionsResponce = inspections.map(
             (val) => new InspectionsGraph({ ...val }),
@@ -49,12 +66,28 @@ export class InspectionsResolver {
     ) {
         const inspections =
             payload.role === TokenRoles.User
-                ? await this.inspectionsService.findOneWithAddictions({
-                      userId: user._id,
-                  })
-                : await this.inspectionsService.findOneWithAddictions({
-                      userId: new ObjectId(userId),
-                  });
+                ? await this.inspectionsService
+                      .findWithAddictivesCursor<
+                          Inspections & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { userId: user._id },
+                          lookups: this.inspectionsService.basicLookups,
+                      })
+                      .toArray()
+                : await this.inspectionsService
+                      .findWithAddictivesCursor<
+                          Inspections & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { userId: new ObjectId(userId) },
+                          lookups: this.inspectionsService.basicLookups,
+                      })
+                      .toArray();
         const inspectionsResponce = inspections.map(
             (val) => new InspectionsGraph({ ...val }),
         );

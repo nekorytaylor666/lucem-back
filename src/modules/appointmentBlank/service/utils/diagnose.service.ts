@@ -1,65 +1,49 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
+import { BasicService } from 'src/modules/helpers/basic.service';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { Diagnose } from '../../model/parts/diagnose.model';
 
 @Injectable()
-export class DiagnoseService {
-    constructor(@Inject('DATABASE_CONNECTION') private database: Db) {}
-
-    private get diagnoseCollection() {
-        return this.database.collection('diagnose');
+export class DiagnoseService extends BasicService<Diagnose> {
+    constructor(@Inject('DATABASE_CONNECTION') private database: Db) {
+        super();
+        this.dbService = this.database.collection('diagnose');
+        this.basicLookups = [
+            {
+                from: 'doctor',
+                localField: 'doctorId',
+                foreignField: '_id',
+                as: 'doctor',
+                isArray: false,
+            },
+            {
+                from: 'user',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'user',
+                isArray: false,
+            },
+        ];
     }
 
-    async findOne(args: Partial<Diagnose>) {
-        const diagnose = await this.diagnoseCollection.findOne<Diagnose>(args);
+    async edit(args: {
+        preliminary?: boolean;
+        deseaseDBCode?: string;
+        diagnose?: string;
+        natureOfTheDesease?: string;
+        diagnoseId: ObjectId;
+        doctorId: ObjectId;
+    }): Promise<Diagnose> {
+        const { diagnoseId, doctorId } = args;
+        delete args['diagnoseId'];
+        delete args['doctorId'];
+        removeUndefinedFromObject(args);
+        const diagnose = await this.updateOne({
+            find: { _id: diagnoseId, doctorId },
+            update: args,
+            method: '$set',
+        });
         return diagnose;
-    }
-
-    async findOneWithAddictives(args: Partial<Diagnose>) {
-        const diagnoses = await this.diagnoseCollection
-            .aggregate([
-                {
-                    $match: args,
-                },
-                {
-                    $lookup: {
-                        from: 'doctor',
-                        localField: 'doctorId',
-                        foreignField: '_id',
-                        as: 'doctors',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'user',
-                        localField: 'userId',
-                        foreignField: '_id',
-                        as: 'users',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'session',
-                        localField: 'sessionId',
-                        foreignField: '_id',
-                        as: 'sessions',
-                    },
-                },
-                {
-                    $addFields: {
-                        user: {
-                            $arrayElemAt: ['$users', 0],
-                        },
-                        doctor: {
-                            $arrayElemAt: ['$doctors', 0],
-                        },
-                        session: {
-                            $arrayElemAt: ['$sessions', 0],
-                        },
-                    },
-                },
-            ])
-            .toArray();
-        return diagnoses;
     }
 }

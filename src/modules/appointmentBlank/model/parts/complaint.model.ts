@@ -73,7 +73,8 @@ export class ComplaintGraph
             this.sicknessTimeDuration = complaint.sicknessTimeDuration;
         if (complaint.doctor != null)
             this.doctor = new DoctorGraph({ ...complaint.doctor });
-        if (complaint.user != null) this.user = new UserGraph({ ...complaint.user });
+        if (complaint.user != null)
+            this.user = new UserGraph({ ...complaint.user });
         if (complaint.session != null)
             this.session = new SessionGraph({ ...complaint.session });
     }

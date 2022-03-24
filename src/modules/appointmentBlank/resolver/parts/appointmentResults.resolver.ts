@@ -151,4 +151,28 @@ export class AppointmenResultsResolver {
         });
         return appointmentResultsResponce;
     }
+
+    @Mutation(() => AppointmentResultsGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async editAppointmentResults(
+        @Args('image', { type: () => GraphQLUpload, nullable: true })
+        image: Promise<FileUpload>,
+        @Args('description', { type: () => String, nullable: true })
+        description: string,
+        @Args('appointmentResultId', { type: () => String, nullable: true })
+        appointmentResultId: string,
+        @CurrentUserGraph() doctor: Doctor,
+    ) {
+        const appointmentResults = await this.appointmentResultsService.edit({
+            image,
+            description,
+            doctorId: doctor._id,
+            appointmentResultId: new ObjectId(appointmentResultId),
+        });
+        const appointmentResultsResponce = new AppointmentResultsGraph({
+            ...appointmentResults,
+        });
+        return appointmentResultsResponce;
+    }
 }

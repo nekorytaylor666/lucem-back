@@ -79,10 +79,12 @@ export class DiagnoseGraph
         if (diagnose.diagnose != null) this.diagnose = diagnose.diagnose;
         if (diagnose.natureOfTheDesease != null)
             this.natureOfTheDesease = diagnose.natureOfTheDesease;
-        if (diagnose.deseaseDBCode != null) this.deseaseDBCode = diagnose.deseaseDBCode;
+        if (diagnose.deseaseDBCode != null)
+            this.deseaseDBCode = diagnose.deseaseDBCode;
         if (diagnose.doctor != null)
             this.doctor = new DoctorGraph({ ...diagnose.doctor });
-        if (diagnose.user != null) this.user = new UserGraph({ ...diagnose.user });
+        if (diagnose.user != null)
+            this.user = new UserGraph({ ...diagnose.user });
         if (diagnose.session != null)
             this.session = new SessionGraph({ ...diagnose.session });
     }

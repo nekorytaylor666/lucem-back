@@ -10,7 +10,6 @@ import { AppointmentBlank } from '../appointmentBlank.model';
 
 export interface Inspections extends AppointmentBlank {
     _id: ObjectId;
-    doctorId: ObjectId;
     inspections: string[];
 }
 
@@ -41,7 +40,8 @@ export class InspectionsGraph {
         if (inspections._id != null) this._id = inspections._id.toHexString();
         if (inspections.doctor != null)
             this.doctor = new DoctorGraph({ ...inspections.doctor });
-        if (inspections.inspections != null) this.inspections = inspections.inspections;
+        if (inspections.inspections != null)
+            this.inspections = inspections.inspections;
         if (inspections.user != null)
             this.session = new SessionGraph({ ...inspections.session });
     }

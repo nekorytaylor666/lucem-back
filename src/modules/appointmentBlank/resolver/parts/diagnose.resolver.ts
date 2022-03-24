@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentTokenPayload,
@@ -9,7 +10,8 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
-import { DiagnoseGraph } from '../../model/parts/diagnose.model';
+import { User } from 'src/modules/user/model/user.interface';
+import { Diagnose, DiagnoseGraph } from '../../model/parts/diagnose.model';
 import { DiagnoseService } from '../../service/utils/diagnose.service';
 
 @Resolver()
@@ -17,7 +19,7 @@ export class DiagnoseResolver {
     constructor(private diagnoseService: DiagnoseService) {}
 
     @Query(() => [DiagnoseGraph])
-    @Roles('doctor', 'user', 'admin')
+    @Roles('doctor', 'admin')
     @UseGuards(PreAuthGuard)
     async getDiagnoseOfDoctor(
         @Args('doctorId', { type: () => String, nullable: true })
@@ -27,12 +29,28 @@ export class DiagnoseResolver {
     ) {
         const diagnoses =
             payload.role === TokenRoles.Doctor
-                ? await this.diagnoseService.findOneWithAddictives({
-                      doctorId: user._id,
-                  })
-                : await this.diagnoseService.findOneWithAddictives({
-                      doctorId: new ObjectId(doctorId),
-                  });
+                ? await this.diagnoseService
+                      .findWithAddictivesCursor<
+                          Diagnose & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { doctorId: user._id },
+                          lookups: this.diagnoseService.basicLookups,
+                      })
+                      .toArray()
+                : await this.diagnoseService
+                      .findWithAddictivesCursor<
+                          Diagnose & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { doctorId: new ObjectId(doctorId) },
+                          lookups: this.diagnoseService.basicLookups,
+                      })
+                      .toArray();
         const diagnosesResponce = diagnoses.map(
             (val) => new DiagnoseGraph({ ...val }),
         );
@@ -49,12 +67,28 @@ export class DiagnoseResolver {
     ) {
         const diagnoses =
             payload.role === TokenRoles.User
-                ? await this.diagnoseService.findOneWithAddictives({
-                      userId: user._id,
-                  })
-                : await this.diagnoseService.findOneWithAddictives({
-                      userId: new ObjectId(userId),
-                  });
+                ? await this.diagnoseService
+                      .findWithAddictivesCursor<
+                          Diagnose & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { userId: user._id },
+                          lookups: this.diagnoseService.basicLookups,
+                      })
+                      .toArray()
+                : await this.diagnoseService
+                      .findWithAddictivesCursor<
+                          Diagnose & {
+                              doctor: Doctor;
+                              user: User;
+                          }
+                      >({
+                          find: { userId: new ObjectId(userId) },
+                          lookups: this.diagnoseService.basicLookups,
+                      })
+                      .toArray();
         const diagnosesResponce = diagnoses.map(
             (val) => new DiagnoseGraph({ ...val }),
         );

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ReadStream, writeFileSync } from 'fs';
+import { ReadStream, writeFileSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import * as sharp from 'sharp';
 import Buffer from 'sharp';
@@ -47,6 +47,40 @@ export class ImageUploadService {
             join(process.cwd(), 'uploads') + `/xl-${keyStr}.jpg`,
             resizedImages[2],
         );
+        const photoUrl: PhotoURL = {
+            thumbnail: `${req}/media/thumbnail-${keyStr}.jpg`,
+            m: `${req}/media/m-${keyStr}.jpg`,
+            xl: `${req}/media/xl-${keyStr}.jpg`,
+        };
+        return photoUrl;
+    }
+
+    async updateImage(args: {
+        stream: ReadStream;
+        req: string;
+        oldUrls: string[];
+    }) {
+        const { stream, req, oldUrls } = args;
+        const resizedImages = await this.imageResize(stream);
+        const keyStr =
+            new Date().getTime().toString() +
+            Math.random().toString(36).substr(2, 5);
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/thumbnail-${keyStr}.jpg`,
+            resizedImages[0],
+        );
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/m-${keyStr}.jpg`,
+            resizedImages[1],
+        );
+        writeFileSync(
+            join(process.cwd(), 'uploads') + `/xl-${keyStr}.jpg`,
+            resizedImages[2],
+        );
+        oldUrls.map((val) => {
+            const fileName = val.replace(`${req}/media/`, '');
+            unlinkSync(join(process.cwd(), 'uploads') + fileName);
+        });
         const photoUrl: PhotoURL = {
             thumbnail: `${req}/media/thumbnail-${keyStr}.jpg`,
             m: `${req}/media/m-${keyStr}.jpg`,

@@ -4,6 +4,7 @@ import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { SessionService } from 'src/modules/session/service/session.service';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { AppointmentResults } from '../../model/parts/AppointmenResults.model';
 
 @Injectable()
@@ -43,7 +44,7 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
     async create(args: {
         image?: FileUpload;
         description?: string;
-        req: string;
+        req?: string;
         doctorId: ObjectId;
         userId: ObjectId;
     }) {
@@ -63,5 +64,55 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
         };
         await this.insertOne(appointmentResults);
         return appointmentResults;
+    }
+
+    async edit(args: {
+        image?: Promise<FileUpload>;
+        description?: string;
+        req?: string;
+        doctorId: ObjectId;
+        appointmentResultId: ObjectId;
+    }) {
+        const {
+            image: _image,
+            description,
+            req,
+            doctorId,
+            appointmentResultId,
+        } = args;
+        const resultsWithImage =
+            _image &&
+            (await this.findOneWithOptions({
+                fields: ['_id', 'photoURL'],
+                values: [appointmentResultId, { $exists: true }],
+            }));
+        const image =
+            _image && resultsWithImage
+                ? await this.imageService.updateImage({
+                      stream: (await _image).createReadStream(),
+                      req,
+                      oldUrls: [
+                          resultsWithImage.photoURL.xl,
+                          resultsWithImage.photoURL.m,
+                          resultsWithImage.photoURL.thumbnail,
+                      ],
+                  })
+                : _image && !resultsWithImage
+                ? await this.imageService.storeImages(
+                      (await _image).createReadStream(),
+                      req,
+                  )
+                : undefined;
+        const appointmentResults: Partial<AppointmentResults> = {
+            description,
+            photoURL: image && image,
+        };
+        removeUndefinedFromObject(appointmentResults);
+        const results = await this.updateOne({
+            find: { doctorId, _id: appointmentResultId },
+            update: appointmentResults,
+            method: '$set',
+        });
+        return results;
     }
 }
