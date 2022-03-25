@@ -164,12 +164,13 @@ export class ServiceService extends BasicService<Service> {
             description,
             price,
             isShown,
-            specializationIds: specializationIds.map(
-                (val) => new ObjectId(val),
-            ),
+            specializationIds:
+                specializationIds &&
+                specializationIds.map((val) => new ObjectId(val)),
             doctorIds,
             durationInMinutes,
         };
+        removeUndefinedFromObject(service);
         await this.insertOne(service);
         const searchService: ServiceSearch = {
             ...service,
