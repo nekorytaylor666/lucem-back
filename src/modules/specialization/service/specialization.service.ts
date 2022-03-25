@@ -141,7 +141,7 @@ export class SpecializationService extends BasicService<Specialization> {
         await this.dbService.updateMany(
             { _id: { $in: specializationIds } },
             {
-                $addToSet: doctorId,
+                $addToSet: { doctorIds: doctorId },
             },
         );
     }

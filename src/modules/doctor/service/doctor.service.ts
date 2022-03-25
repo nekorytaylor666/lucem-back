@@ -113,7 +113,7 @@ export class DoctorService extends BasicService<Doctor> {
                 email,
             },
             doctor,
-            { upsert: true },
+            { upsert: true, returnDocument: 'after' },
         );
         const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
             ...doctor,
