@@ -1,5 +1,13 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, GraphQLISODateTime, Query, Resolver } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { Roles } from 'src/modules/helpers/auth/auth.roles';
+import {
+    CurrentTokenPayload,
+    CurrentUserGraph,
+    PreAuthGuard,
+} from 'src/modules/helpers/auth/auth.service';
+import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { DoctorSpecStatsGraph } from '../model/doctorStats.model';
 import { DoctorStatsService } from '../service/doctorStats.service';
 
@@ -30,12 +38,21 @@ export class DoctorStatsResolver {
     }
 
     @Query(() => DoctorSpecStatsGraph)
+    @Roles('admin', 'doctor', 'secretary')
+    @UseGuards(PreAuthGuard)
     async getStatsOfDoctorByPeriodsOfTime(
-        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args('doctorId', { type: () => String, nullable: true })
+        _doctorId: string,
         @Args('firstDate', { type: () => GraphQLISODateTime }) firstDate: Date,
         @Args('secondDate', { type: () => GraphQLISODateTime })
         secondDate: Date,
+        @CurrentUserGraph() user: { _id: ObjectId },
+        @CurrentTokenPayload() payload: Token,
     ) {
+        const doctorId =
+            payload.role === TokenRoles.Doctor
+                ? user._id
+                : new ObjectId(_doctorId);
         const stats =
             await this.doctorStatsService.getStatsOfDoctorByPeriodsOfTime({
                 doctorId: new ObjectId(doctorId),

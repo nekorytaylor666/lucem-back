@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Service } from 'src/modules/service/model/service.interface';
 import { Booking } from 'src/modules/booking/model/booking.interface';
 import { dateStyling, timeStyling } from 'src/utils/dateStyling';
 import { User } from 'src/modules/user/model/user.interface';
 import { CalendarService } from 'src/modules/helpers/calendar/service/calendar.service';
+import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
 
 @Injectable()
 export class NotificationService {
@@ -40,6 +41,12 @@ export class NotificationService {
         const text = `${user.fullName}, Здравствуйте! ${doctor.fullName} будет ждать вас в ${date} на прием "${service.name}" в кабинете "${doctor.cabinet}"`;
         await Promise.all([
             setTimeout(async () => {
+                // await this.mailService.sendMail({
+                //     sender: this.senderMail,
+                //     subject: 'Прием к врачу Lucem',
+                //     text,
+                //     to: user.email,
+                // });
                 await this.mailService.sendOneMail({
                     sender: this.senderMail,
                     subject: 'Прием к врачу Lucem',

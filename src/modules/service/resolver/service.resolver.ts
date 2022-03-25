@@ -15,8 +15,6 @@ import { ServiceAddictive } from '../model/service.addictive';
 import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { EditService } from '../model/editService.args';
-import { Specialization } from 'src/modules/specialization/model/specialization.interface';
-import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { SpecializationAddictive } from 'src/modules/specialization/model/specialization.addictive';
 
 @Resolver()

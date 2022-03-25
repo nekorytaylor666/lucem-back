@@ -25,6 +25,7 @@ import { SpecializationStatsModule } from './modules/specializationStats/special
 import { CommentModule } from './modules/comment/comment.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { SecretaryModule } from './modules/secretary/secretary.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
     imports: [
@@ -34,6 +35,18 @@ import { SecretaryModule } from './modules/secretary/secretary.module';
         ConfigModule.forRoot({
             isGlobal: true,
         }),
+        // MailerModule.forRootAsync({
+        //     useFactory: () => ({
+        //         transport: {
+        //             host: 'smtp.gmail.com',
+        //             port: 587,
+        //             auth: {
+        //                 user: 'cliniclucem@gmail.com',
+        //                 pass: 'Assasin3030',
+        //             },
+        //         },
+        //     }),
+        // }),
         MongoModule,
         SmartSearchModule,
         GraphQLModule.forRoot({
