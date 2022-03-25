@@ -10,6 +10,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { Session } from 'src/modules/session/model/session.interface';
 import { User } from 'src/modules/user/model/user.interface';
 import { Complaint, ComplaintGraph } from '../../model/parts/complaint.model';
 import { ComplaintService } from '../../service/utils/complaint.service';
@@ -34,6 +35,7 @@ export class ComplaintResolver {
                           Complaint & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { doctorId: user._id },
@@ -45,6 +47,7 @@ export class ComplaintResolver {
                           Complaint & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { doctorId: new ObjectId(doctorId) },
@@ -67,24 +70,30 @@ export class ComplaintResolver {
     ) {
         const complaints =
             payload.role === TokenRoles.User
-                ? await this.complaintService.findWithAddictivesCursor<
-                      Complaint & {
-                          doctor: Doctor;
-                          user: User;
-                      }
-                  >({
-                      find: { userId: user._id },
-                      lookups: this.complaintService.basicLookups,
-                  })
-                : await this.complaintService.findWithAddictivesCursor<
-                      Complaint & {
-                          doctor: Doctor;
-                          user: User;
-                      }
-                  >({
-                      find: { userId: new ObjectId(userId) },
-                      lookups: this.complaintService.basicLookups,
-                  });
+                ? await this.complaintService
+                      .findWithAddictivesCursor<
+                          Complaint & {
+                              doctor: Doctor;
+                              user: User;
+                              session: Session;
+                          }
+                      >({
+                          find: { userId: user._id },
+                          lookups: this.complaintService.basicLookups,
+                      })
+                      .toArray()
+                : await this.complaintService
+                      .findWithAddictivesCursor<
+                          Complaint & {
+                              doctor: Doctor;
+                              user: User;
+                              session: Session;
+                          }
+                      >({
+                          find: { userId: new ObjectId(userId) },
+                          lookups: this.complaintService.basicLookups,
+                      })
+                      .toArray();
         const complaintsResponce = complaints.map(
             (val) => new ComplaintGraph({ ...val }),
         );

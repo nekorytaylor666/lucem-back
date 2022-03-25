@@ -10,6 +10,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { Session } from 'src/modules/session/model/session.interface';
 import { User } from 'src/modules/user/model/user.interface';
 import {
     Inspections,
@@ -36,6 +37,7 @@ export class InspectionsResolver {
                       Inspections & {
                           doctor: Doctor;
                           user: User;
+                          session: Session;
                       }
                   >({
                       find: { doctorId: user._id },
@@ -45,6 +47,7 @@ export class InspectionsResolver {
                       Inspections & {
                           doctor: Doctor;
                           user: User;
+                          session: Session;
                       }
                   >({
                       find: { userId: new ObjectId(doctorId) },
@@ -71,6 +74,7 @@ export class InspectionsResolver {
                           Inspections & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { userId: user._id },
@@ -82,6 +86,7 @@ export class InspectionsResolver {
                           Inspections & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { userId: new ObjectId(userId) },

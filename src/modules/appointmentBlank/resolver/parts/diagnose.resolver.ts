@@ -10,6 +10,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
+import { Session } from 'src/modules/session/model/session.interface';
 import { User } from 'src/modules/user/model/user.interface';
 import { Diagnose, DiagnoseGraph } from '../../model/parts/diagnose.model';
 import { DiagnoseService } from '../../service/utils/diagnose.service';
@@ -34,6 +35,7 @@ export class DiagnoseResolver {
                           Diagnose & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { doctorId: user._id },
@@ -45,6 +47,7 @@ export class DiagnoseResolver {
                           Diagnose & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { doctorId: new ObjectId(doctorId) },
@@ -72,6 +75,7 @@ export class DiagnoseResolver {
                           Diagnose & {
                               doctor: Doctor;
                               user: User;
+                              session: Session;
                           }
                       >({
                           find: { userId: user._id },
