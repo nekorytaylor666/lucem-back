@@ -27,9 +27,16 @@ export class SpecializationService extends BasicService<Specialization> {
                 },
                 pipeline: [
                     {
+                        $addFields: {
+                            doctorNullableIds: {
+                                $ifNull: ['$$doctorIds', ['null']],
+                            },
+                        },
+                    },
+                    {
                         $match: {
                             $expr: {
-                                $in: ['$_id', '$$doctorIds'],
+                                $in: ['$_id', '$doctorNullableIds'],
                             },
                         },
                     },
@@ -39,57 +46,29 @@ export class SpecializationService extends BasicService<Specialization> {
             },
             {
                 from: 'service',
-                localField: '_id',
-                foreignField: 'specializationId',
+                let: {
+                    id: '_id',
+                },
+                pipeline: [
+                    {
+                        $addFields: {
+                            specsIds: {
+                                $ifNull: ['$specializationIds', ['tut']],
+                            },
+                        },
+                    },
+                    {
+                        $match: {
+                            $expr: {
+                                $in: ['$$id', '$specsIds'],
+                            },
+                        },
+                    },
+                ],
                 as: 'services',
                 isArray: true,
             },
         ];
-    }
-
-    async list() {
-        return await this.dbService.find().toArray();
-    }
-
-    async listWithAddictives() {
-        const specializations = await this.dbService
-            .aggregate<SpecializationAddictive>([
-                {
-                    $addFields: {
-                        doctorIds: {
-                            $ifNull: ['$doctorIds', ['null']],
-                        },
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'doctor',
-                        let: {
-                            doctorIds: '$doctorIds',
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $in: ['$_id', '$$doctorIds'],
-                                    },
-                                },
-                            },
-                        ],
-                        as: 'doctors',
-                    },
-                },
-                {
-                    $lookup: {
-                        from: 'service',
-                        localField: '_id',
-                        foreignField: 'specializationId',
-                        as: 'services',
-                    },
-                },
-            ])
-            .toArray();
-        return specializations;
     }
 
     async create(args: CreateSpecialization, req: string) {

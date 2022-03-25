@@ -185,7 +185,9 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
             };
         });
         const aggregationUnfiltered = [
-            { $match: find ? find : matchQuery },
+            find || matchQuery
+                ? { $match: find ? find : matchQuery }
+                : undefined,
             ...lookups,
             { $addFields: addFields },
             sort && { $sort: sort },

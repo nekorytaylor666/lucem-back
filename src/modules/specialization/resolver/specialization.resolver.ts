@@ -9,6 +9,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { EditSpecialization } from '../model/editSpecialization.args';
+import { SpecializationAddictive } from '../model/specialization.addictive';
 import { SpecializationGraph } from '../model/specialization.model';
 import { SpecializationService } from '../service/specialization.service';
 
@@ -70,8 +71,11 @@ export class SpecializationResolver {
 
     @Query(() => [SpecializationGraph])
     async getSpecializations() {
-        const specialization =
-            await this.specializationService.listWithAddictives();
+        const specialization = await this.specializationService
+            .findWithAddictivesCursor<SpecializationAddictive>({
+                lookups: this.specializationService.basicLookups,
+            })
+            .toArray();
         const specializationResponce = specialization.map(
             (val) => new SpecializationGraph({ ...val }),
         );
