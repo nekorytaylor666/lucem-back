@@ -45,7 +45,7 @@ export class SessionResolver {
         return sessionResponce;
     }
 
-    @Query(() => SessionGraph, { nullable: true })
+    @Query(() => SessionGraph)
     async getActiveSessionByUserId(
         @Args('userId', { type: () => String }) userId: string,
     ) {

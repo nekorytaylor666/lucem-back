@@ -82,8 +82,6 @@ export class BookingService extends BasicService<Booking> {
                   .add(service.durationInMinutes, 'minutes')
                   .toDate()
             : _endDate;
-        console.log(parseTime(startDate));
-        console.log(parseTime(endDate));
         const checkIfWorkTimeExists = doctor.workTimes.find(
             (val) =>
                 val.startTime <= parseTime(startDate) &&

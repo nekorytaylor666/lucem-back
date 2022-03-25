@@ -26,24 +26,28 @@ export class ServiceResolver {
 
     @Mutation(() => ServiceGraph)
     async createService(@Args() args: CreateService) {
-        const specs = args.doctorIds
-            ? undefined
-            : await this.specService.findWithOptions({
-                  fields: ['_id'],
-                  values: [
-                      {
-                          $in: args.specializationIds.map(
-                              (val) => new ObjectId(val),
-                          ),
-                      },
-                  ],
-              });
+        const specs =
+            !args.doctorIds && args.specializationIds
+                ? await this.specService.findWithOptions({
+                      fields: ['_id'],
+                      values: [
+                          {
+                              $in: args.specializationIds.map(
+                                  (val) => new ObjectId(val),
+                              ),
+                          },
+                      ],
+                  })
+                : undefined;
         const specDoctorIds = specs && specs.flatMap((val) => val.doctorIds);
         const insertService = await this.serviceService.create({
             ...args,
-            doctorIds: specDoctorIds
-                ? specDoctorIds
-                : args.doctorIds.map((val) => new ObjectId(val)),
+            doctorIds:
+                specDoctorIds && !args.doctorIds
+                    ? specDoctorIds
+                    : !specDoctorIds && args.doctorIds
+                    ? args.doctorIds.map((val) => new ObjectId(val))
+                    : undefined,
         });
         const serviceResponce = new ServiceGraph({ ...insertService });
         return serviceResponce;
