@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -115,6 +115,33 @@ export class DiagnoseResolver {
             user._id.toHexString() !== diagnose.userId.toHexString()
         )
             throw new ApolloError('this is not your diagnose');
+        const diagnoseResponce = new DiagnoseGraph({ ...diagnose });
+        return diagnoseResponce;
+    }
+
+    @Mutation(() => DiagnoseGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async edit(
+        @Args('preliminary', { type: () => String, nullable: true })
+        preliminary: boolean,
+        @Args('deseaseDBCode', { type: () => String, nullable: true })
+        deseaseDBCode: string,
+        @Args('diagnose', { type: () => String, nullable: true })
+        _diagnose: string,
+        @Args('natureOfTheDesease', { type: () => String, nullable: true })
+        natureOfTheDesease: string,
+        @Args('diagnoseId', { type: () => String }) diagnoseId: ObjectId,
+        @CurrentUserGraph() doctor: { _id: ObjectId },
+    ) {
+        const diagnose = await this.diagnoseService.edit({
+            preliminary,
+            diagnoseId,
+            diagnose: _diagnose,
+            natureOfTheDesease,
+            doctorId: doctor._id,
+            deseaseDBCode,
+        });
         const diagnoseResponce = new DiagnoseGraph({ ...diagnose });
         return diagnoseResponce;
     }
