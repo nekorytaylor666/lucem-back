@@ -57,12 +57,13 @@ export class AppointmentBlankResolver {
                 ...appointmentBlank.appointmentResult,
                 doctor: user,
             });
-        return [
-            complaintResponce ?? new ComplaintGraph({}),
-            diagnoseResponce ?? new DiagnoseGraph({}),
-            inspecionsResponce ?? new InspectionsGraph({}),
-            appointmentResult ?? new AppointmentResultsGraph({}),
-        ];
+        const appointmentBlankResponce = new AppointmentBlankGraph({
+            complaint: { ...appointmentBlank.complaint },
+            diagnose: { ...appointmentBlank.diagnose },
+            inspection: { ...appointmentBlank.inspections },
+            appointmentResults: { ...appointmentBlank.appointmentResult },
+        });
+        return appointmentBlankResponce;
     }
 
     @Mutation(() => [AppointmentBlankGraph])
@@ -76,21 +77,12 @@ export class AppointmentBlankResolver {
             ...args,
             doctorId: doctor._id,
         });
-        const inspectionsResponce = new InspectionsGraph({
-            ...appointmentBlank[0],
+        const appointmentBlankResponce = new AppointmentBlankGraph({
+            inspection: { ...appointmentBlank[0] },
+            diagnose: { ...appointmentBlank[1] },
+            appointmentResults: { ...appointmentBlank[2] },
+            complaint: { ...appointmentBlank[3] },
         });
-        const diagnoseResponce = new DiagnoseGraph({ ...appointmentBlank[1] });
-        const appointmentResultResponce = new AppointmentResultsGraph({
-            ...appointmentBlank[2],
-        });
-        const complaintResponce = new ComplaintGraph({
-            ...appointmentBlank[3],
-        });
-        return [
-            inspectionsResponce,
-            diagnoseResponce,
-            appointmentResultResponce,
-            complaintResponce,
-        ];
+        return appointmentBlankResponce;
     }
 }
