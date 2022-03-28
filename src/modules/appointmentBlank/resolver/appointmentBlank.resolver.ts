@@ -33,22 +33,30 @@ export class AppointmentBlankResolver {
             doctorId: user._id,
             req,
         });
-        const complaintResponce = new ComplaintGraph({
-            ...appointmentBlank.complaint,
-            doctor: user,
-        });
-        const diagnoseResponce = new DiagnoseGraph({
-            ...appointmentBlank.diagnose,
-            doctor: user,
-        });
-        const inspecionsResponce = new InspectionsGraph({
-            ...appointmentBlank.inspections,
-            doctor: user,
-        });
-        const appointmentResult = new AppointmentResultsGraph({
-            ...appointmentBlank.appointmentResult,
-            doctor: user,
-        });
+        const complaintResponce =
+            appointmentBlank.complaint &&
+            new ComplaintGraph({
+                ...appointmentBlank.complaint,
+                doctor: user,
+            });
+        const diagnoseResponce =
+            appointmentBlank.diagnose &&
+            new DiagnoseGraph({
+                ...appointmentBlank.diagnose,
+                doctor: user,
+            });
+        const inspecionsResponce =
+            appointmentBlank.inspections &&
+            new InspectionsGraph({
+                ...appointmentBlank.inspections,
+                doctor: user,
+            });
+        const appointmentResult =
+            appointmentBlank.appointmentResult &&
+            new AppointmentResultsGraph({
+                ...appointmentBlank.appointmentResult,
+                doctor: user,
+            });
         return [
             complaintResponce,
             diagnoseResponce,

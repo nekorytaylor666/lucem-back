@@ -72,7 +72,7 @@ export class AppointmentBlankService {
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        removeUndefinedFromObject(complaint);
+        complaint && removeUndefinedFromObject(complaint);
         complaint && (await this.complaintCollection.insertOne(complaint));
         const diagnose: Diagnose = _diagnose && {
             ..._diagnose,
@@ -81,7 +81,7 @@ export class AppointmentBlankService {
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        removeUndefinedFromObject(diagnose);
+        diagnose && removeUndefinedFromObject(diagnose);
         diagnose && (await this.diagnodeCollection.insertOne(diagnose));
         const inspections: Inspections = _inspections && {
             _id: new ObjectId(),
@@ -90,7 +90,7 @@ export class AppointmentBlankService {
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        removeUndefinedFromObject(inspections);
+        inspections && removeUndefinedFromObject(inspections);
         inspections &&
             (await this.inspectionsCollection.insertOne(inspections));
         const appointmentResult: AppointmentResults = _appointmentResults && {
@@ -106,7 +106,7 @@ export class AppointmentBlankService {
                     req,
                 )),
         };
-        removeUndefinedFromObject(appointmentResult);
+        appointmentResult && removeUndefinedFromObject(appointmentResult);
         appointmentResult &&
             (await this.appointmentResultsCollection.insertOne(
                 appointmentResult,
