@@ -122,7 +122,7 @@ export class DiagnoseResolver {
     @Mutation(() => DiagnoseGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
-    async edit(
+    async editDiagnose(
         @Args('preliminary', { type: () => String, nullable: true })
         preliminary: boolean,
         @Args('deseaseDBCode', { type: () => String, nullable: true })

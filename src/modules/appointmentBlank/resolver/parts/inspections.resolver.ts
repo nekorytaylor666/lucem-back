@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -116,6 +116,24 @@ export class InspectionsResolver {
         )
             throw new ApolloError('this is not your inspection');
         const inspectionResponce = new InspectionsGraph({ ...inspection });
+        return inspectionResponce;
+    }
+
+    @Mutation(() => InspectionsGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async editInspections(
+        @Args('inspections', { type: () => [String] }) _inspections: string[],
+        @Args('inspectionId', { type: () => String }) inspectionId: string,
+        @CurrentUserGraph() doctor: Doctor,
+        @CurrentTokenPayload() payload: Token,
+    ) {
+        const inspections = await this.inspectionsService.edit({
+            inspections: _inspections,
+            inspectionId: new ObjectId(inspectionId),
+            doctorId: doctor._id,
+        });
+        const inspectionResponce = new InspectionsGraph({ ...inspections });
         return inspectionResponce;
     }
 }
