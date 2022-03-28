@@ -58,10 +58,10 @@ export class AppointmentBlankResolver {
                 doctor: user,
             });
         return [
-            complaintResponce,
-            diagnoseResponce,
-            inspecionsResponce,
-            appointmentResult,
+            complaintResponce ?? new ComplaintGraph({}),
+            diagnoseResponce ?? new DiagnoseGraph({}),
+            inspecionsResponce ?? new InspectionsGraph({}),
+            appointmentResult ?? new AppointmentResultsGraph({}),
         ];
     }
 
