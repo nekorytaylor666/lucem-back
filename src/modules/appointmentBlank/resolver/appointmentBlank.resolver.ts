@@ -45,7 +45,16 @@ export class AppointmentBlankResolver {
             ...appointmentBlank.inspections,
             doctor: user,
         });
-        return [complaintResponce, diagnoseResponce, inspecionsResponce];
+        const appointmentResult = new AppointmentResultsGraph({
+            ...appointmentBlank.appointmentResult,
+            doctor: user,
+        });
+        return [
+            complaintResponce,
+            diagnoseResponce,
+            inspecionsResponce,
+            appointmentResult,
+        ];
     }
 
     @Mutation(() => [AppointmentBlankGraph])

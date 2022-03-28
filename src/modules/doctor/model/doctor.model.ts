@@ -9,6 +9,8 @@ import { Specialization } from 'src/modules/specialization/model/specialization.
 import { ExperienceAndEducationGraph } from './utils/experience/experience.model';
 import { WorkTimeGraph } from './utils/workTime/workTime.model';
 import { LanguageGraph } from './utils/language/language.model';
+import { BookingGraph } from 'src/modules/booking/model/booking.model';
+import { Booking } from 'src/modules/booking/model/booking.interface';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -74,11 +76,15 @@ export class DoctorGraph
     @Field(() => Boolean, { nullable: true })
     isDeleted?: true;
 
+    @Field(() => [BookingGraph], { nullable: true })
+    upcomingBookings: BookingGraph[];
+
     constructor(
         doctor: Partial<
             Doctor & {
                 deseases?: Desease[];
                 specializations?: Specialization[];
+                upcomingBookings?: Booking[];
             }
         >,
     ) {
@@ -120,5 +126,9 @@ export class DoctorGraph
             );
         if (doctor.cabinet != null) this.cabinet = doctor.cabinet;
         if (doctor.isDeleted != null) this.isDeleted = doctor.isDeleted;
+        if (doctor.upcomingBookings != null)
+            this.upcomingBookings = doctor.upcomingBookings.map(
+                (val) => new BookingGraph({ ...val }),
+            );
     }
 }

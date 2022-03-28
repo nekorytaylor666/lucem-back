@@ -5,6 +5,7 @@ import { Db, ObjectId } from 'mongodb';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { SessionAddictive } from 'src/modules/session/model/session.addictive';
 import { SessionService } from 'src/modules/session/service/session.service';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { AppointmentResults } from '../model/parts/AppointmenResults.model';
@@ -53,6 +54,8 @@ export class AppointmentBlankService {
             diagnose: _diagnose,
             doctorId,
             inspections: _inspections,
+            appointmentResults: _appointmentResults,
+            req,
         } = args;
         const sessionId = new ObjectId(_sessionId);
         const session = await this.sessionService
@@ -62,34 +65,57 @@ export class AppointmentBlankService {
             })
             .toArray();
         if (!session) throw new ApolloError('not your session');
-        const complaint: Complaint = {
+        const complaint: Complaint = complaints && {
             ...complaints,
             _id: new ObjectId(),
             doctorId,
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        await this.complaintCollection.insertOne(complaint);
-        const diagnose: Diagnose = {
+        removeUndefinedFromObject(complaint);
+        complaint && (await this.complaintCollection.insertOne(complaint));
+        const diagnose: Diagnose = _diagnose && {
             ..._diagnose,
             _id: new ObjectId(),
             doctorId,
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        await this.diagnodeCollection.insertOne(diagnose);
-        const inspections: Inspections = {
+        removeUndefinedFromObject(diagnose);
+        diagnose && (await this.diagnodeCollection.insertOne(diagnose));
+        const inspections: Inspections = _inspections && {
             _id: new ObjectId(),
             doctorId,
             inspections: _inspections,
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
-        await this.inspectionsCollection.insertOne(inspections);
+        removeUndefinedFromObject(inspections);
+        inspections &&
+            (await this.inspectionsCollection.insertOne(inspections));
+        const appointmentResult: AppointmentResults = _appointmentResults && {
+            ..._appointmentResults,
+            _id: new ObjectId(),
+            userId: session[0].user._id,
+            sessionId: session[0]._id,
+            doctorId,
+            photoURL:
+                _appointmentResults.photoURL &&
+                (await this.imageService.storeImages(
+                    (await _appointmentResults.photoURL).createReadStream(),
+                    req,
+                )),
+        };
+        removeUndefinedFromObject(appointmentResult);
+        appointmentResult &&
+            (await this.appointmentResultsCollection.insertOne(
+                appointmentResult,
+            ));
         const appointmentBlank = {
             complaint,
             diagnose,
             inspections,
+            appointmentResult,
         };
         return appointmentBlank;
     }

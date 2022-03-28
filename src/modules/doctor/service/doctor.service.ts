@@ -51,6 +51,26 @@ export class DoctorService extends BasicService<Doctor> {
                 as: 'specializations',
                 isArray: true,
             },
+            {
+                from: 'booking',
+                let: {
+                    id: '_id',
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            startDate: {
+                                $gte: new Date(),
+                            },
+                            $expr: {
+                                $eq: ['$$id', '$doctorId'],
+                            },
+                        },
+                    },
+                ],
+                as: 'upcomingBookings',
+                isArray: true,
+            },
         ];
     }
 
@@ -261,6 +281,27 @@ export class DoctorService extends BasicService<Doctor> {
                             },
                         ],
                         as: 'specializations',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'booking',
+                        let: {
+                            id: '$_id',
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    startDate: {
+                                        $gt: new Date(),
+                                    },
+                                    $expr: {
+                                        $eq: ['$doctorId', '$$id'],
+                                    },
+                                },
+                            },
+                        ],
+                        as: 'upcomingBookings',
                     },
                 },
             ])
