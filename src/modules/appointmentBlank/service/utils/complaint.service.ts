@@ -24,6 +24,13 @@ export class ComplaintService extends BasicService<Complaint> {
                 as: 'user',
                 isArray: false,
             },
+            {
+                from: 'session',
+                localField: 'sessionId',
+                foreignField: '_id',
+                as: 'session',
+                isArray: false,
+            },
         ];
     }
 
