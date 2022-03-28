@@ -15,6 +15,7 @@ import { WorkTime } from '../model/utils/workTime/workTime.model';
 import { parseTime } from 'src/utils/parseTime';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { EditDoctor } from '../model/editDoctor.args';
+import { BookingProgress } from 'src/modules/booking/model/booking.interface';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -295,6 +296,18 @@ export class DoctorService extends BasicService<Doctor> {
                                     startDate: {
                                         $gt: new Date(),
                                     },
+                                    $or: [
+                                        {
+                                            progress: {
+                                                $eq: BookingProgress.Ongoing,
+                                            },
+                                        },
+                                        {
+                                            progress: {
+                                                $eq: BookingProgress.Upcoming,
+                                            },
+                                        },
+                                    ],
                                     $expr: {
                                         $eq: ['$doctorId', '$$id'],
                                     },
