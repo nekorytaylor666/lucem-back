@@ -10,6 +10,7 @@ import {
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
+import { AppointmentResultsGraph } from '../model/parts/AppointmenResults.model';
 import { ComplaintGraph } from '../model/parts/complaint.model';
 import { DiagnoseGraph } from '../model/parts/diagnose.model';
 import { InspectionsGraph } from '../model/parts/inspections.model';
@@ -53,5 +54,26 @@ export class AppointmentBlankResolver {
     async editSessionBlank(
         @CurrentUserGraph() doctor: Doctor,
         @Args() args: EditAppointmentBlank,
-    ) {}
+    ) {
+        const appointmentBlank = await this.appointmentBlankService.edit({
+            ...args,
+            doctorId: doctor._id,
+        });
+        const inspectionsResponce = new InspectionsGraph({
+            ...appointmentBlank[0],
+        });
+        const diagnoseResponce = new DiagnoseGraph({ ...appointmentBlank[1] });
+        const appointmentResultResponce = new AppointmentResultsGraph({
+            ...appointmentBlank[2],
+        });
+        const complaintResponce = new ComplaintGraph({
+            ...appointmentBlank[3],
+        });
+        return [
+            inspectionsResponce,
+            diagnoseResponce,
+            appointmentResultResponce,
+            complaintResponce,
+        ];
+    }
 }
