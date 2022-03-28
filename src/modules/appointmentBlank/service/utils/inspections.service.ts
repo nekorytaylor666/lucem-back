@@ -36,11 +36,11 @@ export class InspectionsService extends BasicService<Inspections> {
     async edit(args: {
         inspections: string[];
         doctorId: ObjectId;
-        inspectionId: ObjectId;
+        sessionId: ObjectId;
     }) {
-        const { inspections, inspectionId, doctorId } = args;
+        const { inspections, doctorId, sessionId } = args;
         const inspection = await this.updateOne({
-            find: { _id: inspectionId, doctorId },
+            find: { doctorId, sessionId },
             update: { inspections },
             method: '$set',
         });

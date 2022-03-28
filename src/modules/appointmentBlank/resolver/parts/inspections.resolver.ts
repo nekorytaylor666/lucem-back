@@ -124,13 +124,12 @@ export class InspectionsResolver {
     @UseGuards(PreAuthGuard)
     async editInspections(
         @Args('inspections', { type: () => [String] }) _inspections: string[],
-        @Args('inspectionId', { type: () => String }) inspectionId: string,
+        @Args('sessionId', { type: () => String }) sessionId: string,
         @CurrentUserGraph() doctor: Doctor,
-        @CurrentTokenPayload() payload: Token,
     ) {
         const inspections = await this.inspectionsService.edit({
             inspections: _inspections,
-            inspectionId: new ObjectId(inspectionId),
+            sessionId: new ObjectId(sessionId),
             doctorId: doctor._id,
         });
         const inspectionResponce = new InspectionsGraph({ ...inspections });

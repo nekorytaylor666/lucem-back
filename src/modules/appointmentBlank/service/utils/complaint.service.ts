@@ -28,19 +28,14 @@ export class ComplaintService extends BasicService<Complaint> {
     }
 
     async edit(args: {
-        complaintId: ObjectId;
+        sessionId: ObjectId;
         complaint?: string;
         sicknessTimeDuration?: string;
         reason?: string;
         doctorId: ObjectId;
     }) {
-        const {
-            complaintId,
-            complaint,
-            reason,
-            sicknessTimeDuration,
-            doctorId,
-        } = args;
+        const { complaint, reason, sicknessTimeDuration, doctorId, sessionId } =
+            args;
         const newComplaint: Partial<Complaint> = {
             complaint,
             reason,
@@ -48,7 +43,7 @@ export class ComplaintService extends BasicService<Complaint> {
         };
         removeUndefinedFromObject(newComplaint);
         const complaintResponce = this.updateOne({
-            find: { _id: complaintId, doctorId },
+            find: { sessionId, doctorId },
             update: newComplaint,
             method: '$set',
         });

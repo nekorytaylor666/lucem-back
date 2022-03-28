@@ -6,10 +6,15 @@ import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/
 import { SessionAddictive } from 'src/modules/session/model/session.addictive';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
+import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { AppointmentResults } from '../model/parts/AppointmenResults.model';
 import { Complaint } from '../model/parts/complaint.model';
 import { Diagnose } from '../model/parts/diagnose.model';
 import { Inspections } from '../model/parts/inspections.model';
+import { AppointmenResultsService } from './utils/appointmentResult.service';
+import { ComplaintService } from './utils/complaint.service';
+import { DiagnoseService } from './utils/diagnose.service';
+import { InspectionsService } from './utils/inspections.service';
 
 @Injectable()
 export class AppointmentBlankService {
@@ -17,6 +22,10 @@ export class AppointmentBlankService {
         @Inject('DATABASE_CONNECTION') private database: Db,
         private imageService: ImageUploadService,
         private sessionService: SessionService,
+        private inpectionsService: InspectionsService,
+        private diagnoseService: DiagnoseService,
+        private appointmentResultsService: AppointmenResultsService,
+        private complaintService: ComplaintService,
     ) {}
 
     private get complaintCollection() {
@@ -108,5 +117,52 @@ export class AppointmentBlankService {
         if (!updateAppointmentBlank.value)
             throw new ApolloError('this is not your appointment blank');
         return updateAppointmentBlank.value;
+    }
+
+    async edit(
+        args: EditAppointmentBlank & { doctorId: ObjectId },
+    ): Promise<
+        [
+            inspections: Inspections,
+            diagnose: Diagnose,
+            appointmentResults: AppointmentResults,
+            complaint: Complaint,
+        ]
+    > {
+        const {
+            inspections: _inspections,
+            sessionId: _sessionId,
+            doctorId,
+            diagnose: _diagnose,
+            appointmentResults: _appointmentResults,
+            complaints: _complaints,
+        } = args;
+        const sessionId = new ObjectId(_sessionId);
+        const inspections =
+            _inspections &&
+            (await this.inpectionsService.edit({
+                sessionId,
+                doctorId,
+                inspections: _inspections,
+            }));
+        const diagnose =
+            _diagnose &&
+            (await this.diagnoseService.edit({
+                ..._diagnose,
+                sessionId,
+                doctorId,
+            }));
+        const appointmentResults = await this.appointmentResultsService.edit({
+            ..._appointmentResults,
+            image: _appointmentResults.photo,
+            sessionId,
+            doctorId,
+        });
+        const complaints = await this.complaintService.edit({
+            ..._complaints,
+            sessionId,
+            doctorId,
+        });
+        return [inspections, diagnose, appointmentResults, complaints];
     }
 }

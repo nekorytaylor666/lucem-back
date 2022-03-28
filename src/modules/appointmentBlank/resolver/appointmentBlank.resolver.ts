@@ -9,6 +9,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
+import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { ComplaintGraph } from '../model/parts/complaint.model';
 import { DiagnoseGraph } from '../model/parts/diagnose.model';
 import { InspectionsGraph } from '../model/parts/inspections.model';
@@ -45,4 +46,12 @@ export class AppointmentBlankResolver {
         });
         return [complaintResponce, diagnoseResponce, inspecionsResponce];
     }
+
+    @Mutation(() => [AppointmentBlankGraph])
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async editSessionBlank(
+        @CurrentUserGraph() doctor: Doctor,
+        @Args() args: EditAppointmentBlank,
+    ) {}
 }

@@ -47,8 +47,9 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
         req?: string;
         doctorId: ObjectId;
         userId: ObjectId;
+        sessionId: ObjectId;
     }) {
-        const { image, description, req, doctorId, userId } = args;
+        const { image, description, req, doctorId, userId, sessionId } = args;
         const appointmentResultPhotoURL =
             image &&
             (await this.imageService.storeImages(
@@ -61,6 +62,7 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
             doctorId,
             userId: userId,
             photoURL: appointmentResultPhotoURL,
+            sessionId,
         };
         await this.insertOne(appointmentResults);
         return appointmentResults;
@@ -71,20 +73,14 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
         description?: string;
         req?: string;
         doctorId: ObjectId;
-        appointmentResultId: ObjectId;
+        sessionId: ObjectId;
     }) {
-        const {
-            image: _image,
-            description,
-            req,
-            doctorId,
-            appointmentResultId,
-        } = args;
+        const { image: _image, description, req, doctorId, sessionId } = args;
         const resultsWithImage =
             _image &&
             (await this.findOneWithOptions({
-                fields: ['_id', 'photoURL'],
-                values: [appointmentResultId, { $exists: true }],
+                fields: ['photoURL', 'sessionId', 'doctorId'],
+                values: [{ $exists: true }, sessionId, doctorId],
             }));
         const image =
             _image && resultsWithImage
@@ -109,7 +105,7 @@ export class AppointmenResultsService extends BasicService<AppointmentResults> {
         };
         removeUndefinedFromObject(appointmentResults);
         const results = await this.updateOne({
-            find: { doctorId, _id: appointmentResultId },
+            find: { doctorId, sessionId },
             update: appointmentResults,
             method: '$set',
         });

@@ -28,6 +28,18 @@ export class CreateComplaint {
     reason: string;
 }
 
+@InputType()
+export class EditComplaintInput {
+    @Field({ nullable: true })
+    complaint: string;
+
+    @Field({ nullable: true })
+    sicknessTimeDuration: string;
+
+    @Field({ nullable: true })
+    reason: string;
+}
+
 @ObjectType('Complain')
 export class ComplaintGraph
     implements

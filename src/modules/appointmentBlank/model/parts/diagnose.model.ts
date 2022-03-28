@@ -32,6 +32,21 @@ export class CreateDiagnose {
     natureOfTheDesease: string;
 }
 
+@InputType()
+export class EditDiagnoseInput {
+    @Field(() => Boolean, { nullable: true })
+    preliminary: boolean;
+
+    @Field({ nullable: true })
+    deseaseDBCode?: string;
+
+    @Field({ nullable: true })
+    diagnose: string;
+
+    @Field({ nullable: true })
+    natureOfTheDesease: string;
+}
+
 @ObjectType('Diagnose')
 export class DiagnoseGraph
     implements

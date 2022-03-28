@@ -39,15 +39,15 @@ export class DiagnoseService extends BasicService<Diagnose> {
         deseaseDBCode?: string;
         diagnose?: string;
         natureOfTheDesease?: string;
-        diagnoseId: ObjectId;
+        sessionId: ObjectId;
         doctorId: ObjectId;
     }): Promise<Diagnose> {
-        const { diagnoseId, doctorId } = args;
-        delete args['diagnoseId'];
+        const { sessionId, doctorId } = args;
+        delete args['sessionId'];
         delete args['doctorId'];
         removeUndefinedFromObject(args);
         const diagnose = await this.updateOne({
-            find: { _id: diagnoseId, doctorId },
+            find: { _id: sessionId, doctorId },
             update: args,
             method: '$set',
         });

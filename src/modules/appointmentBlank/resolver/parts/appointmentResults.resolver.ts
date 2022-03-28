@@ -136,6 +136,7 @@ export class AppointmenResultsResolver {
         image: Promise<FileUpload>,
         @Args('userId', { type: () => String }) userId: string,
         @Args('description', { type: () => String }) description: string,
+        @Args('sessionId', { type: () => String }) sessionId: string,
         @CurrentRequestURLGraph() req: string,
         @CurrentUserGraph() doctor: Doctor,
     ) {
@@ -145,6 +146,7 @@ export class AppointmenResultsResolver {
             doctorId: doctor._id,
             req,
             userId: new ObjectId(userId),
+            sessionId: new ObjectId(sessionId),
         });
         const appointmentResultsResponce = new AppointmentResultsGraph({
             ...appointmentResults,
@@ -160,15 +162,15 @@ export class AppointmenResultsResolver {
         image: Promise<FileUpload>,
         @Args('description', { type: () => String, nullable: true })
         description: string,
-        @Args('appointmentResultId', { type: () => String, nullable: true })
-        appointmentResultId: string,
+        @Args('sessionId', { type: () => String, nullable: true })
+        sessionId: string,
         @CurrentUserGraph() doctor: Doctor,
     ) {
         const appointmentResults = await this.appointmentResultsService.edit({
             image,
             description,
             doctorId: doctor._id,
-            appointmentResultId: new ObjectId(appointmentResultId),
+            sessionId: new ObjectId(sessionId),
         });
         const appointmentResultsResponce = new AppointmentResultsGraph({
             ...appointmentResults,

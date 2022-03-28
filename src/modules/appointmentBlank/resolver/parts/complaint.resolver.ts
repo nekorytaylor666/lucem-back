@@ -124,15 +124,15 @@ export class ComplaintResolver {
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async editComplaint(
-        @Args('complaintId', { type: () => String }) complaintId: string,
         @Args('complaintText', { type: () => String }) complaintText: string,
         @Args('sicknessTimeDuration', { type: () => String })
         sicknessTimeDuration: string,
         @Args('reason', { type: () => String }) reason: string,
+        @Args('sessionId', { type: () => String }) sessionId: string,
         @CurrentUserGraph() doctor: Doctor,
     ) {
         const complaint = await this.complaintService.edit({
-            complaintId: new ObjectId(complaintId),
+            sessionId: new ObjectId(sessionId),
             complaint: complaintText,
             sicknessTimeDuration,
             reason,

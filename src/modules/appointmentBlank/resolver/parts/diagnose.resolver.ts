@@ -131,12 +131,12 @@ export class DiagnoseResolver {
         _diagnose: string,
         @Args('natureOfTheDesease', { type: () => String, nullable: true })
         natureOfTheDesease: string,
-        @Args('diagnoseId', { type: () => String }) diagnoseId: ObjectId,
+        @Args('sessionId', { type: () => String }) sessionId: ObjectId,
         @CurrentUserGraph() doctor: { _id: ObjectId },
     ) {
         const diagnose = await this.diagnoseService.edit({
             preliminary,
-            diagnoseId,
+            sessionId: new ObjectId(sessionId),
             diagnose: _diagnose,
             natureOfTheDesease,
             doctorId: doctor._id,

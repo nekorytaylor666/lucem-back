@@ -10,8 +10,7 @@ import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
 import { AppointmentBlank } from '../appointmentBlank.model';
 
-export interface AppointmentResults
-    extends Omit<AppointmentBlank, 'sessionId'> {
+export interface AppointmentResults extends AppointmentBlank {
     _id: ObjectId;
     photoURL?: PhotoURL;
     description: string;
@@ -23,6 +22,14 @@ export class CreateAppointmentResults {
     description: string;
     @Field(() => GraphQLUpload, { nullable: true })
     photoURL: Promise<FileUpload>;
+}
+
+@InputType()
+export class EditAppointmentResultsInput {
+    @Field({ nullable: true })
+    description: string;
+    @Field(() => GraphQLUpload, { nullable: true })
+    photo: Promise<FileUpload>;
 }
 
 @ObjectType('AppointmentResults')
