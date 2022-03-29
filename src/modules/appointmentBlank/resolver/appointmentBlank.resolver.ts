@@ -66,7 +66,7 @@ export class AppointmentBlankResolver {
         return appointmentBlankResponce;
     }
 
-    @Mutation(() => [AppointmentBlankGraph])
+    @Mutation(() => AppointmentBlankGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async editSessionBlank(
