@@ -13,6 +13,7 @@ import { DATABASE_CONNECTION } from 'src/modules/helpers/database/mongo.provider
 import { Db, ObjectId } from 'mongodb';
 import { Notification } from '../model/notification.interface';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
+import { NotificationTypes } from '../model/notification.enum';
 
 @Injectable()
 export class NotificationService extends BasicService<Notification> {
@@ -114,7 +115,7 @@ export class NotificationService extends BasicService<Notification> {
         });
     }
 
-    getNotification() {
+    async getNotifications(type?: NotificationTypes) {
         const lookups = [
             {
                 $lookup: {
@@ -133,14 +134,21 @@ export class NotificationService extends BasicService<Notification> {
                 },
             },
         ];
-        const notificationCursor = this.dbService.aggregate([
+        const aggregateUnfiltered = [
+            type
+                ? {
+                      $match: {
+                          type,
+                      },
+                  }
+                : undefined,
             {
                 $addFields: {
                     commentId: {
-                        $ifNull: ['$commentId', 'null'],
+                        $ifNull: ['$commentId', null],
                     },
                     bookingId: {
-                        $ifNull: ['$bookingId', 'null'],
+                        $ifNull: ['$bookingId', null],
                     },
                 },
             },
@@ -159,7 +167,14 @@ export class NotificationService extends BasicService<Notification> {
                             },
                         },
                         ...lookups,
+                        {
+                            $addFields: {
+                                user: { $first: '$users' },
+                                doctor: { $first: '$doctors' },
+                            },
+                        },
                     ],
+                    as: 'comments',
                 },
             },
             {
@@ -177,9 +192,31 @@ export class NotificationService extends BasicService<Notification> {
                             },
                         },
                         ...lookups,
+                        {
+                            $addFields: {
+                                user: { $first: '$users' },
+                                doctor: { $first: '$doctors' },
+                            },
+                        },
                     ],
+                    as: 'bookings',
                 },
             },
-        ]);
+            {
+                $addFields: {
+                    booking: {
+                        $first: '$bookings',
+                    },
+                    comment: {
+                        $first: '$comment',
+                    },
+                },
+            },
+        ];
+        const aggregation = aggregateUnfiltered.filter(
+            (val) => val !== undefined,
+        );
+        const notificationCursor = await this.dbService.aggregate(aggregation);
+        return notificationCursor;
     }
 }
