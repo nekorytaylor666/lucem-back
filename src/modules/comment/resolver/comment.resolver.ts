@@ -7,6 +7,8 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { NotificationTypes } from 'src/modules/notification/model/notification.enum';
+import { NotificationService } from 'src/modules/notification/service/notification.service';
 import { paginate } from 'src/utils/paginate';
 import { CommentGraph } from '../model/comment.model';
 import { CreateComment } from '../model/createComment.args';
@@ -17,6 +19,7 @@ export class CommentResolver {
     constructor(
         private commentService: CommentService,
         private doctorService: DoctorService,
+        private notificationService: NotificationService,
     ) {}
 
     @Mutation(() => CommentGraph)
@@ -34,6 +37,10 @@ export class CommentResolver {
             find: { _id: comment.doctorId },
             update: { numberOfRatings: 1, sumOfRatings: comment.rating },
             method: '$inc',
+        });
+        await this.notificationService.create({
+            type: NotificationTypes.NewComment,
+            commentId: comment._id,
         });
         const commentResponce = new CommentGraph({ ...comment });
         return commentResponce;
