@@ -231,4 +231,9 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const deleteResponce = await this.dbService.deleteMany(query);
         return deleteResponce.acknowledged;
     }
+
+    async countDocuments(args: Filter<T>) {
+        const numOfDocuments = await this.dbService.countDocuments(args);
+        return numOfDocuments;
+    }
 }
