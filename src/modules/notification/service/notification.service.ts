@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Service } from 'src/modules/service/model/service.interface';
@@ -6,18 +6,41 @@ import { Booking } from 'src/modules/booking/model/booking.interface';
 import { dateStyling, timeStyling } from 'src/utils/dateStyling';
 import { User } from 'src/modules/user/model/user.interface';
 import { CalendarService } from 'src/modules/helpers/calendar/service/calendar.service';
-import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
+import { CreateNotification } from '../model/createNotification.args';
+import { BasicService } from 'src/modules/helpers/basic.service';
+import { DATABASE_CONNECTION } from 'src/modules/helpers/database/mongo.provider';
+import { Db, ObjectId } from 'mongodb';
+import { Notification } from '../model/notification.interface';
+import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 
 @Injectable()
-export class NotificationService {
+export class NotificationService extends BasicService<Notification> {
     constructor(
+        @Inject(DATABASE_CONNECTION) private database: Db,
         private mailService: MailService,
         private configService: ConfigService,
         private calendarService: CalendarService,
-    ) {}
+    ) {
+        super();
+        this.dbService = this.database.collection('notification');
+    }
 
     private senderMail = this.configService.get('CLINIC_MAIL_USERNAME');
+
+    async create(args: CreateNotification) {
+        const { commentId, bookingId, type } = args;
+        const notification: Notification = {
+            _id: new ObjectId(),
+            type,
+            commentId: commentId && new ObjectId(commentId),
+            bookingId: bookingId && new ObjectId(bookingId),
+            dateCreated: new Date(),
+        };
+        removeUndefinedFromObject(notification);
+        await this.insertOne(notification);
+        return notification;
+    }
 
     async setMailNotification(args: {
         user: User;
@@ -89,5 +112,13 @@ export class NotificationService {
             text: 'что то там',
             subject: 'что то там',
         });
+    }
+
+    getNotification() {
+        const notificationCursor = this.dbService.aggregate([
+            {
+                $lookup: {},
+            },
+        ]);
     }
 }

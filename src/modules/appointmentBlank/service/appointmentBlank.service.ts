@@ -178,17 +178,21 @@ export class AppointmentBlankService {
                 sessionId,
                 doctorId,
             }));
-        const appointmentResults = await this.appointmentResultsService.edit({
-            ..._appointmentResults,
-            image: _appointmentResults.photo,
-            sessionId,
-            doctorId,
-        });
-        const complaints = await this.complaintService.edit({
-            ..._complaints,
-            sessionId,
-            doctorId,
-        });
+        const appointmentResults =
+            _appointmentResults &&
+            (await this.appointmentResultsService.edit({
+                ..._appointmentResults,
+                image: _appointmentResults.photo,
+                sessionId,
+                doctorId,
+            }));
+        const complaints =
+            _complaints &&
+            (await this.complaintService.edit({
+                ..._complaints,
+                sessionId,
+                doctorId,
+            }));
         return [inspections, diagnose, appointmentResults, complaints];
     }
 }

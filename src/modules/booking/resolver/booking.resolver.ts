@@ -27,6 +27,7 @@ import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { UserService } from 'src/modules/user/service/user.service';
 import { ServiceService } from 'src/modules/service/service/service.service';
 import { NotificationService } from 'src/modules/notification/service/notification.service';
+import { NotificationTypes } from 'src/modules/notification/model/notification.enum';
 
 @Resolver()
 export class BookingResolver {
@@ -70,20 +71,26 @@ export class BookingResolver {
         const user = await this.userService.findOne({
             _id: createBooking.userId,
         });
-        this.notificationService.setMailNotification({
-            user,
-            service,
-            booking: createBooking,
-            dateToSend: createBooking.startDate,
-            currentDate: new Date(),
-            doctor,
-        });
-        this.notificationService.calendarNotification({
-            user,
-            service,
-            booking: createBooking,
-            doctor,
-        });
+        await Promise.all([
+            this.notificationService.setMailNotification({
+                user,
+                service,
+                booking: createBooking,
+                dateToSend: createBooking.startDate,
+                currentDate: new Date(),
+                doctor,
+            }),
+            this.notificationService.calendarNotification({
+                user,
+                service,
+                booking: createBooking,
+                doctor,
+            }),
+            this.notificationService.create({
+                type: NotificationTypes.NewBooking,
+                bookingId: createBooking._id,
+            }),
+        ]);
         return bookingResponce;
     }
 
