@@ -33,7 +33,7 @@ export class BookingGraph
     @Field(() => GraphQLISODateTime)
     endDate: Date;
 
-    @Field(() => DoctorGraph)
+    @Field(() => DoctorGraph, { nullable: true })
     doctor: DoctorGraph;
 
     @Field(() => BookingProgress)

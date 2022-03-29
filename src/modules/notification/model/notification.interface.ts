@@ -57,6 +57,8 @@ export class NotificationGraph
     ) {
         if (notification._id != null) this._id = notification._id.toHexString();
         if (notification.type != null) this.type = notification.type;
+        if (notification.dateCreated != null)
+            this.dateCreated = notification.dateCreated;
         if (notification.comment != null)
             this.data = new CommentGraph({ ...notification.comment });
         if (notification.booking != null)

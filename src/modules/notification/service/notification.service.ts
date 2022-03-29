@@ -13,6 +13,7 @@ import { DATABASE_CONNECTION } from 'src/modules/helpers/database/mongo.provider
 import { Db, ObjectId } from 'mongodb';
 import { Notification } from '../model/notification.interface';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
+import { NotificationTypes } from '../model/notification.enum';
 
 @Injectable()
 export class NotificationService extends BasicService<Notification> {
@@ -114,11 +115,108 @@ export class NotificationService extends BasicService<Notification> {
         });
     }
 
-    getNotification() {
-        const notificationCursor = this.dbService.aggregate([
+    async getNotifications(type?: NotificationTypes) {
+        const lookups = [
             {
-                $lookup: {},
+                $lookup: {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'users',
+                },
             },
-        ]);
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'doctorId',
+                    foreignField: '_id',
+                    as: 'doctors',
+                },
+            },
+        ];
+        const aggregateUnfiltered = [
+            type
+                ? {
+                      $match: {
+                          type,
+                      },
+                  }
+                : undefined,
+            {
+                $addFields: {
+                    commentId: {
+                        $ifNull: ['$commentId', null],
+                    },
+                    bookingId: {
+                        $ifNull: ['$bookingId', null],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'comment',
+                    let: {
+                        commentId: '$commentId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$$commentId', '$_id'],
+                                },
+                            },
+                        },
+                        ...lookups,
+                        {
+                            $addFields: {
+                                user: { $first: '$users' },
+                                doctor: { $first: '$doctors' },
+                            },
+                        },
+                    ],
+                    as: 'comments',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'booking',
+                    let: {
+                        bookingId: '$bookingId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$$bookingId', '$_id'],
+                                },
+                            },
+                        },
+                        ...lookups,
+                        {
+                            $addFields: {
+                                user: { $first: '$users' },
+                                doctor: { $first: '$doctors' },
+                            },
+                        },
+                    ],
+                    as: 'bookings',
+                },
+            },
+            {
+                $addFields: {
+                    booking: {
+                        $first: '$bookings',
+                    },
+                    comment: {
+                        $first: '$comment',
+                    },
+                },
+            },
+        ];
+        const aggregation = aggregateUnfiltered.filter(
+            (val) => val !== undefined,
+        );
+        const notificationCursor = await this.dbService.aggregate(aggregation);
+        return notificationCursor;
     }
 }

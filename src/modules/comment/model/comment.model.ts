@@ -1,5 +1,7 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { User } from 'src/modules/user/model/user.interface';
 import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
@@ -54,11 +56,15 @@ export class CommentGraph
     @Field(() => [CommentGraph])
     dependentComments: CommentGraph[];
 
+    @Field(() => DoctorGraph, { nullable: true })
+    doctor: DoctorGraph;
+
     constructor(
         comment: Partial<
             Comment & {
                 user: User;
                 dependentComments: Comment[];
+                doctor?: Doctor;
             }
         >,
     ) {
@@ -77,5 +83,7 @@ export class CommentGraph
             this.dependentComments = comment.dependentComments.map(
                 (val) => new CommentGraph({ ...val }),
             );
+        if (comment.doctor != null)
+            this.doctor = new DoctorGraph({ ...comment.doctor });
     }
 }
