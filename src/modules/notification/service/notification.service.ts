@@ -115,9 +115,70 @@ export class NotificationService extends BasicService<Notification> {
     }
 
     getNotification() {
+        const lookups = [
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'users',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'doctorId',
+                    foreignField: '_id',
+                    as: 'doctors',
+                },
+            },
+        ];
         const notificationCursor = this.dbService.aggregate([
             {
-                $lookup: {},
+                $addFields: {
+                    commentId: {
+                        $ifNull: ['$commentId', 'null'],
+                    },
+                    bookingId: {
+                        $ifNull: ['$bookingId', 'null'],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'comment',
+                    let: {
+                        commentId: '$commentId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$$commentId', '$_id'],
+                                },
+                            },
+                        },
+                        ...lookups,
+                    ],
+                },
+            },
+            {
+                $lookup: {
+                    from: 'booking',
+                    let: {
+                        bookingId: '$bookingId',
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ['$$bookingId', '$_id'],
+                                },
+                            },
+                        },
+                        ...lookups,
+                    ],
+                },
             },
         ]);
     }
