@@ -321,6 +321,15 @@ export class BookingResolver {
             update: { progress: BookingProgress.Canceled },
             method: '$set',
         });
+        await this.notificationService.create({
+            type:
+                payload.role === TokenRoles.Doctor
+                    ? NotificationTypes.CancelledBookingByDoctor
+                    : payload.role === TokenRoles.User
+                    ? NotificationTypes.CancelledBookingByUser
+                    : NotificationTypes.CancelledBookingByAdmin,
+            bookingId: booking._id,
+        });
         const bookingResponce = new BookingGraph({ ...booking });
         return bookingResponce;
     }
