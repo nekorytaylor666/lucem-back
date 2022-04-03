@@ -20,19 +20,19 @@ export class SearchGraph {
     specializations?: SpecializationGraph[];
 
     constructor(search: Partial<Search>) {
-        if (search.specializations)
+        if (search.specializations != null)
             this.specializations = search.specializations.map(
                 (val) => new SpecializationGraph({ ...val }),
             );
-        if (search.doctors)
+        if (search.doctors != null)
             this.doctors = search.doctors.map(
                 (val) => new DoctorGraph({ ...val }),
             );
-        if (search.services)
+        if (search.services != null)
             this.services = search.services.map(
                 (val) => new ServiceGraph({ ...val }),
             );
-        if (search.deseases)
+        if (search.deseases != null)
             this.deseases = search.deseases.map(
                 (val) => new DeseaseGraph({ ...val }),
             );

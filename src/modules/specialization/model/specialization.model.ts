@@ -40,21 +40,22 @@ export class SpecializationGraph
     services: ServiceGraph[];
 
     constructor(specialization: Partial<SpecializationAddictive>) {
-        if (specialization._id) this._id = specialization._id.toHexString();
-        if (specialization.name) this.name = specialization.name;
-        if (specialization.description)
+        if (specialization._id != null)
+            this._id = specialization._id.toHexString();
+        if (specialization.name != null) this.name = specialization.name;
+        if (specialization.description != null)
             this.description = specialization.description;
-        if (specialization.photoURL)
+        if (specialization.photoURL != null)
             this.photoURL = new PhotoURLGraph({ ...specialization.photoURL });
-        if (specialization.doctors)
+        if (specialization.doctors != null)
             this.doctors = specialization.doctors.map(
                 (val) => new DoctorGraph({ ...val }),
             );
-        if (specialization.services)
+        if (specialization.services != null)
             this.services = specialization.services.map(
                 (val) => new ServiceGraph({ ...val }),
             );
-        if (specialization.colorCodeGradient)
+        if (specialization.colorCodeGradient != null)
             this.colorCodeGradient = new ColorCodeGradientGraph({
                 ...specialization.colorCodeGradient,
             });

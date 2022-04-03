@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { DeseaseSearch } from 'src/modules/deseases/model/desease.shema';
 import { DeseaseService } from 'src/modules/deseases/service/desease.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { ExperienceAndEducation } from 'src/modules/doctor/model/utils/experience/experience.model';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { ServiceSearch } from 'src/modules/service/model/service.schema';
 import { ServiceService } from 'src/modules/service/service/service.service';
@@ -86,6 +87,12 @@ export class SearchService {
                 return {
                     ...val,
                     _id: new ObjectId(val._id),
+                    experiences: val.experiences.map((exp) => {
+                        return {
+                            ...exp,
+                            _id: new ObjectId(exp._id),
+                        };
+                    }),
                 };
             }),
             services: services.map((val) => {

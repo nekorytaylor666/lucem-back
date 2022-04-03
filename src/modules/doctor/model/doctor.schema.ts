@@ -8,7 +8,7 @@ export const doctorSchema = {
         { name: 'numberOfRatings', type: 'int32', optional: true },
         { name: 'sumOfRatings', type: 'int32', optional: true },
         { name: 'email', type: 'string' },
-        { name: 'acceptableAgeGroup', type: 'string' },
+        { name: 'acceptableAgeGroup', type: 'string', optional: true },
         { name: 'num', type: 'int32' },
     ],
     default_sorting_field: 'num',

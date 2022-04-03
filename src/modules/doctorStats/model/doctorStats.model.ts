@@ -32,8 +32,10 @@ export class DoctorSpecStatsGraph
             this.specialization = new SpecializationGraph({
                 ...stats.specialization,
             });
-        if (stats.doctor != null) this.doctor = new DoctorGraph({ ...stats.doctor });
-        if (stats.totalMoneyEarnt != null) this.totalMoneyEarnt = stats.totalMoneyEarnt;
+        if (stats.doctor != null)
+            this.doctor = new DoctorGraph({ ...stats.doctor });
+        if (stats.totalMoneyEarnt != null)
+            this.totalMoneyEarnt = stats.totalMoneyEarnt;
         if (stats.totalNumOfSessions != null)
             this.totalNumOfSessions = stats.totalNumOfSessions;
     }
