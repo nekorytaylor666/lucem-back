@@ -123,6 +123,7 @@ export class BookingService extends BasicService<Booking> {
             matchQuery: {
                 doctorId: doctorId,
                 startDate: { $gt: currentDate },
+                progress: BookingProgress.Upcoming,
             },
             lookups: this.basicLookups,
         }).toArray();
@@ -139,6 +140,7 @@ export class BookingService extends BasicService<Booking> {
         >({
             matchQuery: {
                 startDate: { $gt: currentDate },
+                progress: BookingProgress.Upcoming,
             },
             lookups: this.basicLookups,
         });
