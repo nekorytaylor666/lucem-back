@@ -60,6 +60,9 @@ export class SessionService extends BasicService<Session> {
                 userId: new ObjectId(userId),
             },
             lookups: this.basicLookups,
+            sort: {
+                startDate: -1,
+            },
         }).toArray();
         return session[0];
     }
