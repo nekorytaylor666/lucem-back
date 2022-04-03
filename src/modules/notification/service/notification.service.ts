@@ -99,7 +99,7 @@ export class NotificationService extends BasicService<Notification> {
             })}. По адресу "ул. Аманат 2, Нур-Султан 020000", кабинет ${
                 doctor.cabinet
             }. стоимость услуги ${service.price} тенге`,
-            location: '',
+            location: 'ул. Аманат 2, Нур-Султан 020000',
             organizer: {
                 name: 'Lucem',
                 email: this.senderMail,

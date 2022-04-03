@@ -20,7 +20,7 @@ import { AppointmentBlankService } from '../service/appointmentBlank.service';
 export class AppointmentBlankResolver {
     constructor(private appointmentBlankService: AppointmentBlankService) {}
 
-    @Mutation(() => [AppointmentBlankGraph])
+    @Mutation(() => AppointmentBlankGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async createSessionBlank(
@@ -33,30 +33,6 @@ export class AppointmentBlankResolver {
             doctorId: user._id,
             req,
         });
-        const complaintResponce =
-            appointmentBlank.complaint &&
-            new ComplaintGraph({
-                ...appointmentBlank.complaint,
-                doctor: user,
-            });
-        const diagnoseResponce =
-            appointmentBlank.diagnose &&
-            new DiagnoseGraph({
-                ...appointmentBlank.diagnose,
-                doctor: user,
-            });
-        const inspecionsResponce =
-            appointmentBlank.inspections &&
-            new InspectionsGraph({
-                ...appointmentBlank.inspections,
-                doctor: user,
-            });
-        const appointmentResult =
-            appointmentBlank.appointmentResult &&
-            new AppointmentResultsGraph({
-                ...appointmentBlank.appointmentResult,
-                doctor: user,
-            });
         const appointmentBlankResponce = new AppointmentBlankGraph({
             complaint: { ...appointmentBlank.complaint },
             diagnose: { ...appointmentBlank.diagnose },
