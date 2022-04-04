@@ -110,8 +110,8 @@ export class NotificationService extends BasicService<Notification> {
             calendar,
             sender: this.senderMail,
             reciever: user.email,
-            text: 'что то там',
-            subject: 'что то там',
+            text: `Вы записались на ${service.name}`,
+            subject: `Прием к врачу`,
         });
     }
 
