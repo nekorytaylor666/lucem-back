@@ -16,6 +16,7 @@ import { SpecializationService } from 'src/modules/specialization/service/specia
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { EditService } from '../model/editService.args';
 import { SpecializationAddictive } from 'src/modules/specialization/model/specialization.addictive';
+import { Service } from '../model/service.interface';
 
 @Resolver()
 export class ServiceResolver {
@@ -58,10 +59,15 @@ export class ServiceResolver {
     async getServiceById(
         @Args('serviceId', { type: () => String }) serviceId: string,
     ) {
-        const service = await this.serviceService.findById(
-            new ObjectId(serviceId),
-        );
-        const serviceResponce = new ServiceGraph({ ...service });
+        const service = await this.serviceService
+            .findWithAddictivesCursor<Service & ServiceAddictive>({
+                find: {
+                    _id: new ObjectId(serviceId),
+                },
+                lookups: this.serviceService.basicLookups,
+            })
+            .toArray();
+        const serviceResponce = new ServiceGraph({ ...service[0] });
         return serviceResponce;
     }
 
