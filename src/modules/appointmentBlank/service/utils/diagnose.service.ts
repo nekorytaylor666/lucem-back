@@ -47,10 +47,11 @@ export class DiagnoseService extends BasicService<Diagnose> {
         delete args['doctorId'];
         removeUndefinedFromObject(args);
         const diagnose = await this.updateOne({
-            find: { _id: sessionId, doctorId },
+            find: { sessionId: sessionId, doctorId },
             update: args,
             method: '$set',
         });
+        console.log(diagnose);
         return diagnose;
     }
 }
