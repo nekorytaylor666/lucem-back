@@ -45,6 +45,14 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         return documents;
     }
 
+    async findWithOptionsCursor(args: { fields: (keyof T)[]; values: any[] }) {
+        const { fields, values } = args;
+        const query: any = {};
+        fields.map((val, ind) => (query[val] = values[ind]));
+        const cursor = await this.dbService.find<T>(query as T);
+        return cursor;
+    }
+
     async updateOne(args: {
         find: Partial<T>;
         update: Partial<T>;

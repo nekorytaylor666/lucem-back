@@ -224,4 +224,25 @@ export class ServiceResolver {
         });
         return doctor;
     }
+
+    @Query(() => [ServiceGraph])
+    async getServicesBySpecializationId(
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+        @Args('page', { type: () => Int }) page: number,
+    ): Promise<ServiceGraph[]> {
+        const servicesCursor = await this.serviceService.findWithOptionsCursor({
+            fields: ['specializationIds'],
+            values: [{ $elemMatch: { $eq: new ObjectId(specializationId) } }],
+        });
+        const services = await paginate({
+            cursor: servicesCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const servicesResponce = services.map(
+            (val) => new ServiceGraph({ ...val }),
+        );
+        return servicesResponce;
+    }
 }
