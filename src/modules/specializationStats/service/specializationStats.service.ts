@@ -136,7 +136,6 @@ export class SpecializationStatsService {
                 },
             ])
             .toArray();
-        console.log(stats);
         return stats;
     }
 }

@@ -86,7 +86,20 @@ export class AppointmentBlankService {
         const inspections: Inspections = _inspections && {
             _id: new ObjectId(),
             doctorId,
-            inspections: _inspections,
+            descriptions:
+                _inspections.descriptions && _inspections.descriptions,
+            images:
+                _inspections.images &&
+                (await Promise.all(
+                    (
+                        await _inspections.images
+                    ).map(async (val) => {
+                        return await this.imageService.storeImages(
+                            (await val).createReadStream(),
+                            req,
+                        );
+                    }),
+                )),
             userId: session[0].user._id,
             sessionId: session[0]._id,
         };
