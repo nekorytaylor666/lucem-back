@@ -204,6 +204,45 @@ export class StatsService {
                     },
                 },
             },
+            {
+                $unwind: '$data',
+            },
+            {
+                $sort:
+                    period === AllowedPeriodsOfTime.Year
+                        ? {
+                              'data.year': 1,
+                              'data.month': 1,
+                          }
+                        : {
+                              'data.month': 1,
+                              'data.day': 1,
+                          },
+            },
+            {
+                $group: {
+                    _id: {
+                        startDate: '$startDate',
+                        endDate: '$endDate',
+                        totalIndividualPatients: '$totalIndividualPatients',
+                        totalMoneyEarnt: '$totalMoneyEarnt',
+                        totalSessionSum: '$totalSessionSum',
+                    },
+                    data: {
+                        $push: '$data',
+                    },
+                },
+            },
+            {
+                $project: {
+                    startDate: '$_id.startDate',
+                    endDate: '$_id.endDate',
+                    totalIndividualPatients: '$_id.totalIndividualPatients',
+                    totalMoneyEarnt: '$_id.totalMoneyEarnt',
+                    totalSessionSum: '$_id.totalSessionSum',
+                    data: '$data',
+                },
+            },
         ];
     }
 
