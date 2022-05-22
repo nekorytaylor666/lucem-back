@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
@@ -11,6 +11,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { TokenService } from 'src/modules/helpers/token/token.service';
+import { Specialization } from 'src/modules/specialization/model/specialization.interface';
 import { SpecializationService } from 'src/modules/specialization/service/specialization.service';
 import { CreateDoctor } from '../model/createDoctor.args';
 import { Doctor } from '../model/doctor.interface';
@@ -163,6 +164,35 @@ export class DoctorResolver {
             values: [{ $elemMatch: { $eq: null } }],
         });
         const doctorsResponce = doctors.map(
+            (val) => new DoctorGraph({ ...val }),
+        );
+        return doctorsResponce;
+    }
+
+    @Query(() => [DoctorGraph])
+    async getDoctorsBySpecializationId(
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+    ) {
+        const specialization = (
+            await this.specService
+                .findWithAddictivesCursor<
+                    Specialization & {
+                        doctors: Doctor[];
+                    }
+                >({
+                    find: {
+                        _id: new ObjectId(specializationId),
+                    },
+                    lookups: [
+                        this.specService.basicLookups.find(
+                            (val) => val.from === 'doctor',
+                        ),
+                    ],
+                })
+                .toArray()
+        )[0];
+        const doctorsResponce = specialization.doctors.map(
             (val) => new DoctorGraph({ ...val }),
         );
         return doctorsResponce;

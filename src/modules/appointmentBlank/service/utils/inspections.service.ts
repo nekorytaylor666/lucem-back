@@ -1,11 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { FileUpload } from 'graphql-upload';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Inspections } from '../../model/parts/inspections.model';
 
 @Injectable()
 export class InspectionsService extends BasicService<Inspections> {
-    constructor(@Inject('DATABASE_CONNECTION') private database: Db) {
+    constructor(
+        @Inject('DATABASE_CONNECTION') private database: Db,
+        private imageService: ImageUploadService,
+    ) {
         super();
         this.dbService = this.database.collection('inspections');
         this.basicLookups = [
@@ -34,15 +39,36 @@ export class InspectionsService extends BasicService<Inspections> {
     }
 
     async edit(args: {
-        inspections: string[];
+        descriptions: string[];
+        images: Promise<FileUpload[]>;
         doctorId: ObjectId;
         sessionId: ObjectId;
+        req: string;
     }) {
-        const { inspections, doctorId, sessionId } = args;
+        const {
+            descriptions,
+            images: _images,
+            doctorId,
+            sessionId,
+            req,
+        } = args;
+        const images =
+            _images &&
+            (await Promise.all(
+                (
+                    await _images
+                ).map(async (val) => {
+                    return await this.imageService.storeImages(
+                        (await val).createReadStream(),
+                        req,
+                    );
+                }),
+            ));
         const inspection = await this.updateOne({
             find: { doctorId, sessionId },
-            update: { inspections },
+            update: { descriptions, images },
             method: '$set',
+            ignoreUndefined: true,
         });
         return inspection;
     }

@@ -1,10 +1,12 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-errors';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
+    CurrentRequestURLGraph,
     CurrentTokenPayload,
     CurrentUserGraph,
     PreAuthGuard,
@@ -123,14 +125,19 @@ export class InspectionsResolver {
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async editInspections(
-        @Args('inspections', { type: () => [String] }) _inspections: string[],
+        @Args('descriptions', { type: () => [String] }) descriptions: string[],
+        @Args('images', { type: () => [GraphQLUpload] })
+        images: Promise<FileUpload[]>,
         @Args('sessionId', { type: () => String }) sessionId: string,
         @CurrentUserGraph() doctor: Doctor,
+        @CurrentRequestURLGraph() req: string,
     ) {
         const inspections = await this.inspectionsService.edit({
-            inspections: _inspections,
+            descriptions,
+            images,
             sessionId: new ObjectId(sessionId),
             doctorId: doctor._id,
+            req,
         });
         const inspectionResponce = new InspectionsGraph({ ...inspections });
         return inspectionResponce;

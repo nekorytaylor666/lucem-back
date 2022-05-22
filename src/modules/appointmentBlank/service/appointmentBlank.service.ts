@@ -159,7 +159,7 @@ export class AppointmentBlankService {
     }
 
     async edit(
-        args: EditAppointmentBlank & { doctorId: ObjectId },
+        args: EditAppointmentBlank & { doctorId: ObjectId; req: string },
     ): Promise<
         [
             inspections: Inspections,
@@ -175,14 +175,16 @@ export class AppointmentBlankService {
             diagnose: _diagnose,
             appointmentResults: _appointmentResults,
             complaints: _complaints,
+            req,
         } = args;
         const sessionId = new ObjectId(_sessionId);
         const inspections =
             _inspections &&
             (await this.inpectionsService.edit({
+                ..._inspections,
                 sessionId,
                 doctorId,
-                inspections: _inspections,
+                req,
             }));
         const diagnose =
             _diagnose &&

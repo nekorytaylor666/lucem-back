@@ -43,10 +43,12 @@ export class AppointmentBlankResolver {
     @UseGuards(PreAuthGuard)
     async editSessionBlank(
         @CurrentUserGraph() doctor: Doctor,
+        @CurrentRequestURLGraph() req: string,
         @Args() args: EditAppointmentBlank,
     ) {
         const appointmentBlank = await this.appointmentBlankService.edit({
             ...args,
+            req,
             doctorId: doctor._id,
         });
         const appointmentBlankResponce = new AppointmentBlankGraph({
