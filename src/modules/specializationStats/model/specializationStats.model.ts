@@ -16,13 +16,13 @@ export class SpecializationStatsGraph
     @Field(() => SpecializationGraph)
     specialization: SpecializationGraph;
 
-    @Field(() => Int)
+    @Field(() => Int, { defaultValue: 0 })
     individualSpecialistNum: number;
 
-    @Field(() => Int)
+    @Field(() => Int, { defaultValue: 0 })
     totalMoneyEarnt: number;
 
-    @Field(() => Int)
+    @Field(() => Int, { defaultValue: 0 })
     totalNumSessions: number;
 
     constructor(stats: Partial<SpecializationStats>) {
