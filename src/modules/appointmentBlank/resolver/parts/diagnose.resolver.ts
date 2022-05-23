@@ -11,13 +11,17 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { Session } from 'src/modules/session/model/session.interface';
+import { SessionService } from 'src/modules/session/service/session.service';
 import { User } from 'src/modules/user/model/user.interface';
 import { Diagnose, DiagnoseGraph } from '../../model/parts/diagnose.model';
 import { DiagnoseService } from '../../service/utils/diagnose.service';
 
 @Resolver()
 export class DiagnoseResolver {
-    constructor(private diagnoseService: DiagnoseService) {}
+    constructor(
+        private diagnoseService: DiagnoseService,
+        private sessionService: SessionService,
+    ) {}
 
     @Query(() => [DiagnoseGraph])
     @Roles('doctor', 'admin')
@@ -134,6 +138,19 @@ export class DiagnoseResolver {
         @Args('sessionId', { type: () => String }) sessionId: ObjectId,
         @CurrentUserGraph() doctor: { _id: ObjectId },
     ) {
+        const session = await this.sessionService.findOneWithOptions({
+            fields: ['data'],
+            values: [
+                {
+                    $elemMatch: {
+                        doctorId: {
+                            $eq: doctor._id,
+                        },
+                    },
+                },
+            ],
+        });
+        if (!session) throw new ApolloError('this is not your session');
         const diagnose = await this.diagnoseService.edit({
             preliminary,
             sessionId: new ObjectId(sessionId),

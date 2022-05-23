@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { ApolloError } from 'apollo-server-express';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -7,6 +8,7 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { SessionService } from 'src/modules/session/service/session.service';
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
@@ -14,7 +16,10 @@ import { AppointmentBlankService } from '../service/appointmentBlank.service';
 
 @Resolver()
 export class AppointmentBlankResolver {
-    constructor(private appointmentBlankService: AppointmentBlankService) {}
+    constructor(
+        private appointmentBlankService: AppointmentBlankService,
+        private sessionService: SessionService,
+    ) {}
 
     @Mutation(() => AppointmentBlankGraph)
     @Roles('doctor')
@@ -46,6 +51,19 @@ export class AppointmentBlankResolver {
         @CurrentRequestURLGraph() req: string,
         @Args() args: EditAppointmentBlank,
     ) {
+        const session = await this.sessionService.findOneWithOptions({
+            fields: ['data'],
+            values: [
+                {
+                    $elemMatch: {
+                        doctorId: {
+                            $eq: doctor._id,
+                        },
+                    },
+                },
+            ],
+        });
+        if (!session) throw new ApolloError('this is not your session');
         const appointmentBlank = await this.appointmentBlankService.edit({
             ...args,
             req,

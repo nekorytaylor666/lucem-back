@@ -19,10 +19,14 @@ import { AppointmenResultsService } from '../../service/utils/appointmentResult.
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Session } from 'src/modules/session/model/session.interface';
 import { User } from 'src/modules/user/model/user.interface';
+import { SessionService } from 'src/modules/session/service/session.service';
 
 @Resolver()
 export class AppointmenResultsResolver {
-    constructor(private appointmentResultsService: AppointmenResultsService) {}
+    constructor(
+        private appointmentResultsService: AppointmenResultsService,
+        private sessionService: SessionService,
+    ) {}
 
     @Query(() => [AppointmentResultsGraph])
     @Roles('doctor', 'admin')
@@ -166,6 +170,19 @@ export class AppointmenResultsResolver {
         sessionId: string,
         @CurrentUserGraph() doctor: Doctor,
     ) {
+        const session = await this.sessionService.findOneWithOptions({
+            fields: ['data'],
+            values: [
+                {
+                    $elemMatch: {
+                        doctorId: {
+                            $eq: doctor._id,
+                        },
+                    },
+                },
+            ],
+        });
+        if (!session) throw new ApolloError('this is not your session');
         const appointmentResults = await this.appointmentResultsService.edit({
             image,
             description,

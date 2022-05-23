@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { SessionData } from './utils/session.data';
 
 export interface Session {
     _id?: ObjectId;
@@ -6,8 +7,9 @@ export interface Session {
     startDate: Date;
     endDate?: Date;
     count: number;
-    serviceId: ObjectId;
-    doctorId: ObjectId;
+    // serviceId: ObjectId;
+    // doctorId: ObjectId;
     userId: ObjectId;
     isPayed?: true;
+    data: SessionData[];
 }

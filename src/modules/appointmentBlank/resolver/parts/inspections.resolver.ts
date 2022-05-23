@@ -13,6 +13,7 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { Session } from 'src/modules/session/model/session.interface';
+import { SessionService } from 'src/modules/session/service/session.service';
 import { User } from 'src/modules/user/model/user.interface';
 import {
     Inspections,
@@ -22,7 +23,10 @@ import { InspectionsService } from '../../service/utils/inspections.service';
 
 @Resolver()
 export class InspectionsResolver {
-    constructor(private inspectionsService: InspectionsService) {}
+    constructor(
+        private inspectionsService: InspectionsService,
+        private sessionService: SessionService,
+    ) {}
 
     @Query(() => [InspectionsGraph])
     @Roles('admin', 'doctor')
@@ -132,6 +136,19 @@ export class InspectionsResolver {
         @CurrentUserGraph() doctor: Doctor,
         @CurrentRequestURLGraph() req: string,
     ) {
+        const session = await this.sessionService.findOneWithOptions({
+            fields: ['data'],
+            values: [
+                {
+                    $elemMatch: {
+                        doctorId: {
+                            $eq: doctor._id,
+                        },
+                    },
+                },
+            ],
+        });
+        if (!session) throw new ApolloError('this is not your session');
         const inspections = await this.inspectionsService.edit({
             descriptions,
             images,

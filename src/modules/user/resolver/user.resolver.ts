@@ -32,7 +32,6 @@ export class UserResolver {
         @Args('phoneNumber', { type: () => String }) phoneNumber: string,
     ) {
         const code = Math.floor(1000 + Math.random() * 9000).toString();
-        console.log(code);
         const filteredPhoneNumber = phoneNumber.replace(/\D/g, '');
         await this.smsService.sendVerificationSMS({
             code,

@@ -60,7 +60,16 @@ export class AppointmentBlankService {
         const sessionId = new ObjectId(_sessionId);
         const session = await this.sessionService
             .findWithAddictivesCursor<SessionAddictive>({
-                find: { _id: new ObjectId(sessionId) },
+                matchQuery: {
+                    _id: new ObjectId(sessionId),
+                    data: {
+                        $elemMatch: {
+                            doctorId: {
+                                $eq: doctorId,
+                            },
+                        },
+                    },
+                },
                 lookups: this.sessionService.basicLookups,
             })
             .toArray();

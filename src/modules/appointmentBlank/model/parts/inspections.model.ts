@@ -1,4 +1,4 @@
-import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
@@ -17,7 +17,7 @@ export interface Inspections extends AppointmentBlank {
     images?: PhotoURL[];
 }
 
-@ArgsType()
+@InputType()
 export class CreateInspections {
     @Field(() => [GraphQLUpload], { nullable: true })
     images: Promise<FileUpload[]>;

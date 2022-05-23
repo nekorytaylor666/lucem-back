@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { Session, UseGuards } from '@nestjs/common';
 import {
     Args,
     GraphQLISODateTime,
@@ -8,6 +8,7 @@ import {
     Resolver,
 } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentTokenPayload,
@@ -184,5 +185,33 @@ export class SessionResolver {
             (val) => new SessionGraph({ ...val }),
         );
         return sessionsResponce;
+    }
+
+    @Mutation(() => SessionGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async addDoctorAndServiceToSession(
+        @Args('serviceId', { type: () => String }) _serviceId: string,
+        @Args('doctorId', { type: () => String }) _doctorId: string,
+        @Args('sessionId', { type: () => String }) _sessionId: string,
+        @CurrentUserGraph() doctor: Doctor,
+    ) {
+        const [serviceId, doctorId, sessionId] = [
+            new ObjectId(_serviceId),
+            new ObjectId(_doctorId),
+            new ObjectId(_sessionId),
+        ];
+        const session = await this.sessionService.updateOneWithOptions({
+            findField: ['data', '_id'],
+            findValue: [
+                { $elemMatch: { doctorId: { $eq: doctor._id } } },
+                sessionId,
+            ],
+            updateField: ['data'],
+            updateValue: [{ doctorId, serviceId }],
+            method: '$addToSet',
+        });
+        const sessionResponce = new SessionGraph({ ...session });
+        return sessionResponce;
     }
 }
