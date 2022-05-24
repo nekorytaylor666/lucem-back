@@ -15,6 +15,7 @@ import {
     AllowedLanguageTypes,
 } from 'src/modules/doctor/model/utils/language/language.enum';
 import * as moment from 'moment';
+import { ICD } from 'src/modules/ICD/model/ICD.schema';
 
 @Injectable()
 export class ScriptService {
@@ -46,6 +47,11 @@ export class ScriptService {
     private get serviceSearchCollection() {
         return this.client.collections('service').documents();
     }
+
+    private get ICDSearchCollection() {
+        return this.client.collections('ICD').documents();
+    }
+
     // SEPERATORS
     private seperateSpecs(args: { doctorSheet: excel.Worksheet; row: number }) {
         const { doctorSheet, row } = args;
@@ -345,6 +351,23 @@ export class ScriptService {
             };
             await this.serviceCollection.insertOne(service);
             await this.serviceSearchCollection.create(serviceSearch);
+        }
+    }
+
+    async addICDToSmartSearch(sheet: excel.Worksheet) {
+        for (let i = 3; i < 15314; i++) {
+            const [description, code] = [
+                sheet.getRow(i).getCell(1).value.toString(),
+                sheet.getRow(i).getCell(2).value.toString(),
+            ];
+            console.log(description);
+            console.log(code);
+            const ICD: ICD & { num: number } = {
+                description,
+                code,
+                num: 1,
+            };
+            await this.ICDSearchCollection.create(ICD);
         }
     }
 }

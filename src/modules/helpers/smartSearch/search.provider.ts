@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { deaseaseShema } from 'src/modules/deseases/model/desease.shema';
 import { doctorSchema } from 'src/modules/doctor/model/doctor.schema';
+import { ICDSchema } from 'src/modules/ICD/model/ICD.schema';
 import { serviceSchema } from 'src/modules/service/model/service.schema';
 import { specializationSchema } from 'src/modules/specialization/model/specialization.schema';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -25,12 +26,15 @@ export const smartSearchFactory = {
             // await client.collections(specializationSchema.name).delete();
             // await client.collections(deaseaseShema.name).delete();
             // await client.collections(serviceSchema.name).delete();
+            // await client.collections(ICDSchema.name).delete();
             try {
+                await client.collections(ICDSchema.name).retrieve();
                 await client.collections(specializationSchema.name).retrieve();
                 await client.collections(doctorSchema.name).retrieve();
                 await client.collections(deaseaseShema.name).retrieve();
                 await client.collections(serviceSchema.name).retrieve();
             } catch (e) {
+                await client.collections().create(ICDSchema);
                 await client.collections().create(specializationSchema);
                 await client.collections().create(doctorSchema);
                 await client.collections().create(deaseaseShema);

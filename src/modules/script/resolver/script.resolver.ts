@@ -66,4 +66,14 @@ export class ScriptResolver {
         this.scriptService.addServicesToDatabase(serviceWorkSheet);
         return 'shit';
     }
+
+    @Mutation(() => String)
+    async ICDScript() {
+        const pathToICDSheets = join(process.cwd(), 'mkbcodes.xls.xlsx');
+        const ICDWorkbook = new excel.Workbook();
+        const ICDWorkSheets = await ICDWorkbook.xlsx.readFile(pathToICDSheets);
+        const ICDWorkSheet = ICDWorkSheets.getWorksheet('Sheet1');
+        this.scriptService.addICDToSmartSearch(ICDWorkSheet);
+        return 'string';
+    }
 }

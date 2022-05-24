@@ -26,6 +26,7 @@ import { CommentModule } from './modules/comment/comment.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { SecretaryModule } from './modules/secretary/secretary.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ICDModule } from './modules/ICD/ICD.module';
 
 @Module({
     imports: [
@@ -77,6 +78,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         CommentModule,
         NotificationModule,
         SecretaryModule,
+        ICDModule,
     ],
     controllers: [AppController, ImageUploadController],
     providers: [AppService],
