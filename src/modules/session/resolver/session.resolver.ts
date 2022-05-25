@@ -1,4 +1,4 @@
-import { Session, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import {
     Args,
     GraphQLISODateTime,
@@ -8,6 +8,9 @@ import {
     Resolver,
 } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { AppointmentBlankService } from 'src/modules/appointmentBlank/service/appointmentBlank.service';
+import { BookingProgress } from 'src/modules/booking/model/booking.interface';
+import { BookingService } from 'src/modules/booking/service/booking.service';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -22,16 +25,63 @@ import { SessionService } from '../service/session.service';
 
 @Resolver()
 export class SessionResolver {
-    constructor(private sessionService: SessionService) {}
+    constructor(
+        private sessionService: SessionService,
+        private bookingService: BookingService,
+        private appointmentBlankService: AppointmentBlankService,
+    ) {}
 
     @Mutation(() => SessionGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async startSession(
-        @Args('bookingId', { type: () => String }) bookingId: string,
+        @Args('bookingId', { type: () => String, nullable: true })
+        bookingId: string,
+        @Args('appointmentBlankId', { type: () => String, nullable: true })
+        appointmentBlankId: string,
+        @CurrentUserGraph() doctor: Doctor,
     ) {
-        const session = await this.sessionService.create(bookingId);
+        const booking =
+            bookingId &&
+            (await this.bookingService.findOne({
+                _id: new ObjectId(bookingId),
+                doctorId: doctor._id,
+            }));
+        const appointmentBlank =
+            await this.appointmentBlankService.findOneWithOptions({
+                fields: ['owners', '_id'],
+                values: [
+                    {
+                        $elemMatch: {
+                            doctorId: { $eq: doctor._id },
+                        },
+                    },
+                    new ObjectId(appointmentBlankId),
+                ],
+            });
+        const session = booking
+            ? await this.sessionService.create({
+                  serviceId: booking.serviceId,
+                  doctorId: booking.doctorId,
+                  userId: booking.userId,
+                  bookingId: booking._id,
+              })
+            : await this.sessionService.create({
+                  userId: appointmentBlank.userId,
+                  doctorId: doctor._id,
+                  serviceId: appointmentBlank.owners.find(
+                      (val) =>
+                          doctor._id.toHexString() ===
+                          val.doctorId.toHexString(),
+                  ).serviceId,
+              });
         const sessionResponce = new SessionGraph({ ...session });
+        booking &&
+            (await this.bookingService.updateOne({
+                find: { _id: new ObjectId(bookingId) },
+                update: { progress: BookingProgress.Ongoing },
+                method: '$set',
+            }));
         return sessionResponce;
     }
 
@@ -42,6 +92,12 @@ export class SessionResolver {
         @Args('sessionId', { type: () => String }) sessionId: string,
     ) {
         const session = await this.sessionService.endSession(sessionId);
+        session.bookingId &&
+            (await this.bookingService.updateOne({
+                find: { _id: session.bookingId },
+                update: { progress: BookingProgress.Done },
+                method: '$set',
+            }));
         const sessionResponce = new SessionGraph({ ...session });
         return sessionResponce;
     }

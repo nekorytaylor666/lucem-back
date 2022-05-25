@@ -14,7 +14,8 @@ export interface AppointmentBlank {
     userId: ObjectId;
     owners: {
         doctorId: ObjectId;
-        sessionId: ObjectId;
+        sessionId?: ObjectId;
+        serviceId: ObjectId;
     }[];
     complaint?: Complaint;
     inspections?: Inspections[];

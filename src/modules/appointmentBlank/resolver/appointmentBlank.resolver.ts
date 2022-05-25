@@ -68,4 +68,30 @@ export class AppointmentBlankResolver {
         });
         return appointmentBlankResponce;
     }
+
+    @Query(() => AppointmentBlankGraph)
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async addDoctorToAppointmentBlank(
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args('appointmentBlankId', { type: () => String })
+        appointmentBlankId: string,
+        @CurrentUserGraph() doctor: Doctor,
+    ) {
+        const appointmentBlank =
+            await this.appointmentBlankService.updateOneWithOptions({
+                findField: ['_id', 'owners'],
+                findValue: [
+                    new ObjectId(appointmentBlankId),
+                    { $elemMatch: { doctorId: { $eq: doctor._id } } },
+                ],
+                updateField: ['owners'],
+                updateValue: [{ doctorId: new ObjectId(doctorId) }],
+                method: '$addToSet',
+            });
+        const appointmentBlankResponce = new AppointmentBlankGraph({
+            ...appointmentBlank,
+        });
+        return appointmentBlankResponce;
+    }
 }

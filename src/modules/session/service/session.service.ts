@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
-import { BookingProgress } from 'src/modules/booking/model/booking.interface';
-import { BookingService } from 'src/modules/booking/service/booking.service';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { SessionAddictive } from '../model/session.addictive';
 import { Session } from '../model/session.interface';
@@ -11,7 +9,6 @@ export class SessionService extends BasicService<Session> {
     constructor(
         @Inject('DATABASE_CONNECTION')
         private database: Db,
-        private bookingService: BookingService,
     ) {
         super();
         this.dbService = this.database.collection('session');
@@ -125,11 +122,6 @@ export class SessionService extends BasicService<Session> {
             update: { endDate: new Date() },
             method: '$set',
         });
-        await this.bookingService.updateOne({
-            find: { _id: session.bookingId },
-            update: { progress: BookingProgress.Done },
-            method: '$set',
-        });
         return session;
     }
 
@@ -146,21 +138,22 @@ export class SessionService extends BasicService<Session> {
         return sessionsCursor;
     }
 
-    async create(bookingId: string): Promise<Session> {
+    async create(args: {
+        serviceId: ObjectId;
+        doctorId: ObjectId;
+        userId: ObjectId;
+        bookingId?: ObjectId;
+    }): Promise<Session> {
+        const { serviceId, doctorId, userId, bookingId } = args;
         const currentDate = new Date();
-        const booking = await this.bookingService.findOne({
-            _id: new ObjectId(bookingId),
-            progress: BookingProgress.Upcoming,
-        });
         const previousSessions = await this.findWithOptions({
             fields: ['endDate', 'userId', 'doctorId'],
             values: [
                 { $exists: true },
-                booking.userId,
-                { $elemMatch: { doctorId: { $eq: booking.doctorId } } },
+                userId,
+                { $elemMatch: { doctorId: { $eq: doctorId } } },
             ],
         });
-        const { doctorId, userId, serviceId } = booking;
         const session: Session = {
             bookingId: new ObjectId(bookingId),
             startDate: currentDate,
@@ -176,11 +169,6 @@ export class SessionService extends BasicService<Session> {
             ignoreUndefined: true,
         });
         session._id = insertSession.insertedId;
-        await this.bookingService.updateOne({
-            find: { _id: new ObjectId(bookingId) },
-            update: { progress: BookingProgress.Ongoing },
-            method: '$set',
-        });
         return session;
     }
 

@@ -62,6 +62,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 {
                     doctorId: session.doctorId,
                     sessionId: session._id,
+                    serviceId: session.serviceId,
                 },
             ],
             userId: session.userId,
