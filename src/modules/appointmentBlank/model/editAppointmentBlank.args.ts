@@ -7,6 +7,9 @@ import { CreateInspections } from './parts/inspections.model';
 @ArgsType()
 export class EditAppointmentBlank {
     @Field()
+    appointmentBlankId: string;
+
+    @Field()
     sessionId: string;
 
     @Field(() => EditComplaintInput, { nullable: true })

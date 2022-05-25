@@ -7,7 +7,7 @@ import { CreateInspections } from './parts/inspections.model';
 @ArgsType()
 export class CreateAppointmentBlank {
     @Field(() => CreateComplaint, { nullable: true })
-    complaints: CreateComplaint;
+    complaint: CreateComplaint;
 
     @Field(() => CreateDiagnose, { nullable: true })
     diagnose: CreateDiagnose;

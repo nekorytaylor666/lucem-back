@@ -1,65 +1,43 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
-import { Doctor } from 'src/modules/doctor/model/doctor.interface';
-import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
 import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
-import { Session } from 'src/modules/session/model/session.interface';
-import { SessionGraph } from 'src/modules/session/model/session.model';
-import { User } from 'src/modules/user/model/user.interface';
-import { UserGraph } from 'src/modules/user/model/user.model';
-import { AppointmentBlank } from '../appointmentBlank.model';
 
-export interface Inspections extends AppointmentBlank {
+export interface Inspections {
     _id: ObjectId;
-    descriptions?: string[];
+    description?: string;
     images?: PhotoURL[];
 }
 
 @InputType()
-export class CreateInspections {
-    @Field(() => [GraphQLUpload], { nullable: true })
-    images: Promise<FileUpload[]>;
+export class InspectionsDataInput {
+    @Field({ nullable: true })
+    description?: string;
 
-    @Field(() => [String], { nullable: true })
-    descriptions: string[];
+    @Field(() => [GraphQLUpload], { nullable: true })
+    images?: Promise<FileUpload[]>;
+}
+
+@InputType()
+export class CreateInspections {
+    @Field(() => [InspectionsDataInput])
+    data: InspectionsDataInput[];
 }
 
 @ObjectType('Inspections')
 export class InspectionsGraph {
     @Field()
     _id: string;
+    @Field({ nullable: true })
+    description?: string;
+    @Field(() => [PhotoURLGraph])
+    images?: PhotoURLGraph[];
 
-    @Field(() => DoctorGraph, { nullable: true })
-    doctor: DoctorGraph;
-
-    @Field(() => [String], { nullable: true })
-    descriptions: string[];
-
-    @Field(() => UserGraph, { nullable: true })
-    user: UserGraph;
-
-    @Field(() => [PhotoURLGraph], { nullable: true })
-    images: PhotoURLGraph[];
-
-    @Field(() => SessionGraph, { nullable: true })
-    session: SessionGraph;
-
-    constructor(
-        inspections: Partial<Inspections> & {
-            doctor?: Doctor;
-            user?: User;
-            session?: Session;
-        },
-    ) {
+    constructor(inspections: Partial<Inspections>) {
         if (inspections._id != null) this._id = inspections._id.toHexString();
-        if (inspections.doctor != null)
-            this.doctor = new DoctorGraph({ ...inspections.doctor });
-        if (inspections.descriptions != null)
-            this.descriptions = inspections.descriptions;
-        if (inspections.user != null)
-            this.session = new SessionGraph({ ...inspections.session });
+        if (inspections.description != null)
+            this.description = inspections.description;
         if (inspections.images != null)
             this.images = inspections.images.map(
                 (val) => new PhotoURLGraph({ ...val }),

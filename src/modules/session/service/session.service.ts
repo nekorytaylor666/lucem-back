@@ -73,14 +73,7 @@ export class SessionService extends BasicService<Session> {
                 endDate: {
                     $exists: false,
                 },
-                // doctorId: new ObjectId(doctorId),
-                data: {
-                    $elemMatch: {
-                        doctorId: {
-                            $eq: new ObjectId(doctorId),
-                        },
-                    },
-                },
+                doctorId,
             },
             lookups: this.basicLookups,
             sort: { endDate: -1 },
@@ -103,14 +96,7 @@ export class SessionService extends BasicService<Session> {
                     startDate: {
                         $gte: firstDate,
                     },
-                    // doctorId,
-                    data: {
-                        $elemMatch: {
-                            doctorId: {
-                                $eq: new ObjectId(doctorId),
-                            },
-                        },
-                    },
+                    doctorId,
                 },
                 lookups: this.basicLookups,
                 sort: {
@@ -167,7 +153,7 @@ export class SessionService extends BasicService<Session> {
             progress: BookingProgress.Upcoming,
         });
         const previousSessions = await this.findWithOptions({
-            fields: ['endDate', 'userId', /*'doctorId'*/ 'data'],
+            fields: ['endDate', 'userId', 'doctorId'],
             values: [
                 { $exists: true },
                 booking.userId,
@@ -182,15 +168,9 @@ export class SessionService extends BasicService<Session> {
                 previousSessions.length !== 0
                     ? previousSessions.length + 1
                     : undefined,
-            // doctorId,
+            doctorId,
             userId,
-            // serviceId,
-            data: [
-                {
-                    doctorId,
-                    serviceId,
-                },
-            ],
+            serviceId,
         };
         const insertSession = await this.sessionCollection.insertOne(session, {
             ignoreUndefined: true,
@@ -215,14 +195,7 @@ export class SessionService extends BasicService<Session> {
                     $exists: false,
                 },
                 userId,
-                // doctorId,
-                data: {
-                    $elemMatch: {
-                        doctorId: {
-                            $eq: doctorId,
-                        },
-                    },
-                },
+                doctorId,
             },
             lookups: this.basicLookups,
             sort: { endDate: -1 },

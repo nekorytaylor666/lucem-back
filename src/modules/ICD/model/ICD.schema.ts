@@ -1,5 +1,3 @@
-import { ObjectType } from '@nestjs/graphql';
-
 export const ICDSchema = {
     name: 'ICD',
     fields: [

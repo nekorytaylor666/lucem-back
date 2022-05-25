@@ -1,5 +1,4 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { ObjectId } from 'bson';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
@@ -8,10 +7,8 @@ import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photo
 import { User } from 'src/modules/user/model/user.interface';
 import { UserGraph } from 'src/modules/user/model/user.model';
 import { Modify } from 'src/utils/modifyType';
-import { AppointmentBlank } from '../appointmentBlank.model';
 
-export interface AppointmentResults extends AppointmentBlank {
-    _id: ObjectId;
+export interface AppointmentResults {
     photoURL?: PhotoURL;
     description: string;
 }
@@ -36,9 +33,8 @@ export class EditAppointmentResultsInput {
 export class AppointmentResultsGraph
     implements
         Modify<
-            Omit<AppointmentResults, 'doctorId' | 'userId' | 'sessionId'>,
+            AppointmentResults,
             {
-                _id: string;
                 photoURL: PhotoURLGraph;
             }
         >
@@ -64,8 +60,6 @@ export class AppointmentResultsGraph
             user?: User;
         },
     ) {
-        if (appointmentResults._id)
-            this._id = appointmentResults._id.toHexString();
         if (appointmentResults.description)
             this.description = appointmentResults.description;
         if (appointmentResults.photoURL)

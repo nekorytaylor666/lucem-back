@@ -1,5 +1,6 @@
-import { createUnionType, Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
+import { UserGraph } from 'src/modules/user/model/user.model';
 import {
     AppointmentResults,
     AppointmentResultsGraph,
@@ -9,33 +10,39 @@ import { Diagnose, DiagnoseGraph } from './parts/diagnose.model';
 import { Inspections, InspectionsGraph } from './parts/inspections.model';
 
 export interface AppointmentBlank {
-    doctorId: ObjectId;
+    _id: ObjectId;
     userId: ObjectId;
-    sessionId: ObjectId;
+    owners: {
+        doctorId: ObjectId;
+        sessionId: ObjectId;
+    }[];
+    complaint?: Complaint;
+    inspections?: Inspections[];
+    diagnose?: Diagnose;
+    appointmentResults?: AppointmentResults;
 }
 
 @ObjectType()
 export class AppointmentBlankGraph {
+    @Field()
+    userId: string;
+
+    @Field(() => UserGraph, { nullable: true })
+    user: UserGraph;
+
     @Field(() => ComplaintGraph, { nullable: true })
     complaint: ComplaintGraph;
 
     @Field(() => DiagnoseGraph, { nullable: true })
     diagnose: DiagnoseGraph;
 
-    @Field(() => InspectionsGraph, { nullable: true })
-    inspection: InspectionsGraph;
+    @Field(() => [InspectionsGraph], { nullable: true })
+    inspections: InspectionsGraph[];
 
     @Field(() => AppointmentResultsGraph, { nullable: true })
     appointmentResults: AppointmentResultsGraph;
 
-    constructor(
-        args: Partial<{
-            complaint: Complaint;
-            diagnose: Diagnose;
-            inspection: Inspections;
-            appointmentResults: AppointmentResults;
-        }>,
-    ) {
+    constructor(args: Partial<AppointmentBlank>) {
         if (args.appointmentResults != null)
             this.appointmentResults = new AppointmentResultsGraph({
                 ...args.appointmentResults,
@@ -44,8 +51,10 @@ export class AppointmentBlankGraph {
             this.complaint = new ComplaintGraph({ ...args.complaint });
         if (args.diagnose != null)
             this.diagnose = new DiagnoseGraph({ ...args.diagnose });
-        if (args.inspection != null)
-            this.inspection = new InspectionsGraph({ ...args.inspection });
+        if (args.inspections != null)
+            this.inspections = args.inspections.map(
+                (val) => new InspectionsGraph({ ...val }),
+            );
     }
 }
 

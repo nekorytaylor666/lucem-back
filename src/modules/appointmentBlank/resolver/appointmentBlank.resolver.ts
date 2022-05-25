@@ -1,6 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
+import { ObjectId } from 'mongodb';
+
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -25,20 +27,21 @@ export class AppointmentBlankResolver {
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async createSessionBlank(
-        @CurrentUserGraph() user: Doctor,
+        @CurrentUserGraph() doctor: Doctor,
         @CurrentRequestURLGraph() req: string,
         @Args() args: CreateAppointmentBlank,
     ) {
+        const session = await this.sessionService.findOne({
+            doctorId: doctor._id,
+            _id: new ObjectId(args.sessionId),
+        });
         const appointmentBlank = await this.appointmentBlankService.create({
             ...args,
-            doctorId: user._id,
             req,
+            session,
         });
         const appointmentBlankResponce = new AppointmentBlankGraph({
-            complaint: { ...appointmentBlank.complaint },
-            diagnose: { ...appointmentBlank.diagnose },
-            inspection: { ...appointmentBlank.inspections },
-            appointmentResults: { ...appointmentBlank.appointmentResult },
+            ...appointmentBlank,
         });
         return appointmentBlankResponce;
     }
@@ -51,17 +54,8 @@ export class AppointmentBlankResolver {
         @CurrentRequestURLGraph() req: string,
         @Args() args: EditAppointmentBlank,
     ) {
-        const session = await this.sessionService.findOneWithOptions({
-            fields: ['data'],
-            values: [
-                {
-                    $elemMatch: {
-                        doctorId: {
-                            $eq: doctor._id,
-                        },
-                    },
-                },
-            ],
+        const session = await this.sessionService.findOne({
+            doctorId: doctor._id,
         });
         if (!session) throw new ApolloError('this is not your session');
         const appointmentBlank = await this.appointmentBlankService.edit({
@@ -70,10 +64,7 @@ export class AppointmentBlankResolver {
             doctorId: doctor._id,
         });
         const appointmentBlankResponce = new AppointmentBlankGraph({
-            inspection: { ...appointmentBlank[0] },
-            diagnose: { ...appointmentBlank[1] },
-            appointmentResults: { ...appointmentBlank[2] },
-            complaint: { ...appointmentBlank[3] },
+            ...appointmentBlank,
         });
         return appointmentBlankResponce;
     }
