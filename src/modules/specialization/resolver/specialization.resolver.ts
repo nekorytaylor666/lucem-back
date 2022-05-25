@@ -2,14 +2,17 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
     CurrentRequestURLGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { Service } from 'src/modules/service/model/service.interface';
 import { CreateSpecialization } from '../model/createSpecialization.args';
 import { EditSpecialization } from '../model/editSpecialization.args';
 import { SpecializationAddictive } from '../model/specialization.addictive';
+import { Specialization } from '../model/specialization.interface';
 import { SpecializationGraph } from '../model/specialization.model';
 import { SpecializationService } from '../service/specialization.service';
 
@@ -111,6 +114,30 @@ export class SpecializationResolver {
             specializationId,
             req,
         });
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
+        return specializationResponce;
+    }
+
+    @Query(() => SpecializationGraph)
+    async getSpecializationById(
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+    ) {
+        const specialization = (
+            await this.specializationService
+                .findWithAddictivesCursor<
+                    Specialization & {
+                        service: Service;
+                        doctor: Doctor;
+                    }
+                >({
+                    find: { _id: new ObjectId(specializationId) },
+                    lookups: this.specializationService.basicLookups,
+                })
+                .toArray()
+        )[0];
         const specializationResponce = new SpecializationGraph({
             ...specialization,
         });
