@@ -21,6 +21,7 @@ export interface AppointmentBlank {
     inspections?: Inspections[];
     diagnose?: Diagnose;
     appointmentResults?: AppointmentResults;
+    dateCreated: Date;
 }
 
 @ObjectType()

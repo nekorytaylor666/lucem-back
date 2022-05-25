@@ -19,6 +19,22 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         this.dbService = this.database.collection(
             this.appointmentBlankCollection,
         );
+        this.basicLookups = [
+            {
+                from: 'service',
+                localField: 'serviceId',
+                foreignField: '_id',
+                as: 'service',
+                isArray: false,
+            },
+            {
+                from: 'doctor',
+                localField: 'doctorId',
+                foreignField: '_id',
+                as: 'doctor',
+                isArray: false,
+            },
+        ];
     }
 
     async create(
@@ -66,6 +82,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 },
             ],
             userId: session.userId,
+            dateCreated: new Date(),
         };
         await this.insertOne(appointmentBlank);
         return appointmentBlank;

@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ApolloError } from 'apollo-server-express';
 import { ObjectId } from 'mongodb';
 
@@ -11,6 +11,7 @@ import {
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
 import { SessionService } from 'src/modules/session/service/session.service';
+import { paginate } from 'src/utils/paginate';
 import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
@@ -93,5 +94,39 @@ export class AppointmentBlankResolver {
             ...appointmentBlank,
         });
         return appointmentBlankResponce;
+    }
+
+    @Query(() => [AppointmentBlankGraph])
+    @Roles('doctor')
+    @UseGuards(PreAuthGuard)
+    async getAppointmentBlanksOfUser(
+        @Args('userId', { type: () => String }) userId: string,
+        @Args('page', { type: () => Int }) page: number,
+        @CurrentUserGraph() doctor: Doctor,
+    ) {
+        const appointmentBlanksCursor =
+            this.appointmentBlankService.findWithAddictivesCursor({
+                matchQuery: {
+                    userId: new ObjectId(userId),
+                    owners: {
+                        $elemMatch: {
+                            doctorId: {
+                                $eq: doctor._id,
+                            },
+                        },
+                    },
+                },
+                lookups: this.appointmentBlankService.basicLookups,
+                sort: { dateCreated: -1 },
+            });
+        const appointmentBlanks = await paginate({
+            cursor: appointmentBlanksCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const appointmentBlanksResponce = appointmentBlanks.map(
+            (val) => new AppointmentBlankGraph({ ...val }),
+        );
+        return appointmentBlanksResponce;
     }
 }
