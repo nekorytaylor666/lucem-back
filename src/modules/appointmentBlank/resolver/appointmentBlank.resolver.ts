@@ -10,9 +10,13 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { Service } from 'src/modules/service/model/service.interface';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { paginate } from 'src/utils/paginate';
-import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
+import {
+    AppointmentBlank,
+    AppointmentBlankGraph,
+} from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { AppointmentBlankService } from '../service/appointmentBlank.service';
@@ -105,7 +109,12 @@ export class AppointmentBlankResolver {
         @CurrentUserGraph() doctor: Doctor,
     ) {
         const appointmentBlanksCursor =
-            this.appointmentBlankService.findWithAddictivesCursor({
+            this.appointmentBlankService.findWithAddictivesCursor<
+                AppointmentBlank & {
+                    service: Service;
+                    doctor: Doctor;
+                }
+            >({
                 matchQuery: {
                     userId: new ObjectId(userId),
                     owners: {
