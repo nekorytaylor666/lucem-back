@@ -50,25 +50,27 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             req,
             session,
         } = args;
-        const inspections = await Promise.all(
-            _inspections.data.map(async (inspection) => {
-                return {
-                    _id: new ObjectId(),
-                    description: inspection.description,
-                    images: await Promise.all(
-                        (
-                            await inspection.images
-                        ).map(
-                            async (image) =>
-                                await this.imageService.storeImages(
-                                    (await image).createReadStream(),
-                                    req,
-                                ),
+        const inspections =
+            _inspections.data &&
+            (await Promise.all(
+                _inspections.data.map(async (inspection) => {
+                    return {
+                        _id: new ObjectId(),
+                        description: inspection.description,
+                        images: await Promise.all(
+                            (
+                                await inspection.images
+                            ).map(
+                                async (image) =>
+                                    await this.imageService.storeImages(
+                                        (await image).createReadStream(),
+                                        req,
+                                    ),
+                            ),
                         ),
-                    ),
-                };
-            }),
-        );
+                    };
+                }),
+            ));
         const appointmentBlank: AppointmentBlank = {
             _id: new ObjectId(),
             diagnose,

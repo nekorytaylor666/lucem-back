@@ -246,7 +246,7 @@ export class ServiceResolver {
         return servicesResponce;
     }
 
-    @Query(() => ServiceGraph)
+    @Query(() => ServiceGraph, { nullable: true })
     async getPrimaryServiceOfDoctor(
         @Args('doctorId', { type: () => String }) doctorId: string,
     ) {
