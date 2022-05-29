@@ -31,7 +31,7 @@ export class InspectionsGraph {
     _id: string;
     @Field({ nullable: true })
     description?: string;
-    @Field(() => [PhotoURLGraph])
+    @Field(() => [PhotoURLGraph], { nullable: true })
     images?: PhotoURLGraph[];
 
     constructor(inspections: Partial<Inspections>) {
