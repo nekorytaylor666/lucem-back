@@ -10,4 +10,5 @@ export interface Service {
     showServices?: ObjectId[];
     specializationIds: ObjectId[];
     durationInMinutes?: number;
+    isPrimary?: true;
 }

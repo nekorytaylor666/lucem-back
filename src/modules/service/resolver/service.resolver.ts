@@ -245,4 +245,16 @@ export class ServiceResolver {
         );
         return servicesResponce;
     }
+
+    @Query(() => ServiceGraph)
+    async getPrimaryServiceOfDoctor(
+        @Args('doctorId', { type: () => String }) doctorId: string,
+    ) {
+        const service = await this.serviceService.findOneWithOptions({
+            fields: ['doctorIds', 'isPrimary'],
+            values: [{ $elemMatch: { $eq: new ObjectId(doctorId) } }, true],
+        });
+        const serviceResponce = new ServiceGraph({ ...service });
+        return serviceResponce;
+    }
 }
