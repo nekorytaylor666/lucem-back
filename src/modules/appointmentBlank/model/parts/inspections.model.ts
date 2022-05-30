@@ -26,6 +26,9 @@ export class InspectionsDataInput {
 export class CreateInspections {
     @Field(() => [InspectionsDataInput])
     data: InspectionsDataInput[];
+
+    @Field()
+    doctorId: string;
 }
 
 @ObjectType('Inspections')

@@ -155,7 +155,14 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 { $elemMatch: { doctorId: { $eq: doctorId } } },
             ],
             updateField: ['appointmentResults', 'complaint', 'diagnose'],
-            updateValue: [appointmentResults, complaints, diagnose],
+            updateValue: [
+                {
+                    ...appointmentResults,
+                    doctorId: new ObjectId(appointmentResults.doctorId),
+                },
+                { ...complaints, doctorId: new ObjectId(complaints.doctorId) },
+                { ...diagnose, doctorId: new ObjectId(diagnose.doctorId) },
+            ],
             method: '$set',
             ignoreUndefined: true,
         });
