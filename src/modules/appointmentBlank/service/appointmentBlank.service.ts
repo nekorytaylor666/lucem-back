@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Db, ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
@@ -209,81 +210,95 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         return appointmentBlank;
     }
 
-    async getMultipleWithAddictives(
-        args: { doctorId: ObjectId; userId: ObjectId },
-        page: number,
-    ) {
+    async getMultipleWithAddictives(args: {
+        doctorId: ObjectId;
+        userId: ObjectId;
+    }) {
         const { doctorId, userId } = args;
-        const appointmentBlanks = await this.dbService
-            .find({
-                userId,
-                owners: { $elemMatch: { doctorId: { $eq: doctorId } } },
-            })
-            .skip(15 * (page - 1))
-            .limit(15 * (page + 1))
-            .toArray();
-        await Promise.all([
-            appointmentBlanks.forEach(async (appointmentBlank) => {
-                const [
-                    complaintDoctor,
-                    diagnoseDoctor,
-                    inspectionsDoctors,
-                    appointmentResultsDoctors,
-                ] = await Promise.all([
-                    appointmentBlank.complaint.doctorId &&
-                        (await this.doctorService.findOne({
-                            _id: appointmentBlank.complaint.doctorId,
-                        })),
-                    appointmentBlank.diagnose.doctorId &&
-                        (await this.doctorService.findOne({
-                            _id: appointmentBlank.diagnose.doctorId,
-                        })),
-                    await Promise.all(
-                        appointmentBlank.inspections &&
-                            appointmentBlank.inspections.map(async (val) => {
-                                return await this.doctorService.findOne({
-                                    _id: val.doctorId,
-                                });
-                            }),
-                    ),
-                    await Promise.all(
-                        appointmentBlank.appointmentResults &&
-                            appointmentBlank.appointmentResults.map(
-                                async (val) => {
-                                    return await this.doctorService.findOne({
-                                        _id: val.doctorId,
-                                    });
-                                },
-                            ),
-                    ),
-                ]);
-                appointmentBlank.complaint
-                    ? ((appointmentBlank.complaint as any).doctor =
-                          complaintDoctor)
-                    : undefined;
-                appointmentBlank.diagnose
-                    ? ((appointmentBlank.diagnose as any).doctor =
-                          diagnoseDoctor)
-                    : undefined;
-                appointmentBlank.inspections &&
-                    appointmentBlank.inspections.forEach((inspection) => {
-                        const doctor = inspectionsDoctors.find(
-                            (val) =>
-                                val._id.toHexString() ===
-                                inspection.doctorId.toHexString(),
-                        );
-                        (inspection as any).doctor = doctor;
-                    });
-                appointmentBlank.appointmentResults &&
-                    appointmentBlank.appointmentResults.forEach((appResult) => {
-                        const doctor = appointmentResultsDoctors.find(
-                            (val) =>
-                                val._id.toHexString() ===
-                                appResult.doctorId.toHexString(),
-                        );
-                        (appResult as any).doctor = doctor;
-                    });
-            }),
+        // const appointmentBlanks = await this.dbService
+        //     .find({
+        //         userId,
+        //         owners: { $elemMatch: { doctorId: { $eq: doctorId } } },
+        //     })
+        //     .skip(15 * (page - 1))
+        //     .limit(15 * (page + 1))
+        //     .toArray();
+        const appointmentBlanks = await this.dbService.aggregate<
+            AppointmentBlank & {
+                complaintDoctor?: Doctor;
+                inspectionsDoctors?: Doctor[];
+                diagnoseDoctor?: Doctor;
+                appointmentResultsDoctors?: Doctor[];
+            }
+        >([
+            {
+                $match: {
+                    userId,
+                    owners: {
+                        $elemMatch: {
+                            doctorId: {
+                                $eq: doctorId,
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $addFields: {
+                    complaint: {
+                        $ifNull: ['$complaint', 'null'],
+                    },
+                    inspections: {
+                        $ifNull: ['$inspections', 'null'],
+                    },
+                    diagnose: { $ifNull: ['$diagnose', 'null'] },
+                    appointmentResults: {
+                        $ifNull: ['$appointmentResults', 'null'],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'complaint.doctorId',
+                    foreignField: '_id',
+                    as: 'complaintDoctors',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'inspections.doctorId',
+                    foreignField: '_id',
+                    as: 'inspectionsDoctors',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'diagnose.doctorId',
+                    foreignField: '_id',
+                    as: 'diagnoseDoctors',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'appointmentResults.doctorId',
+                    foreignField: '_id',
+                    as: 'appointmentResultsDoctors',
+                },
+            },
+            {
+                $addFields: {
+                    diagnoseDoctor: {
+                        $first: '$diagnoseDoctors',
+                    },
+                    complaintDoctor: {
+                        $first: '$complaintDoctors',
+                    },
+                },
+            },
         ]);
         return appointmentBlanks;
     }

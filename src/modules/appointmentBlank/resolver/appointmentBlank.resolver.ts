@@ -109,14 +109,55 @@ export class AppointmentBlankResolver {
         @Args('page', { type: () => Int }) page: number,
         @CurrentUserGraph() doctor: Doctor,
     ) {
-        const appointmentBlanks =
-            await this.appointmentBlankService.getMultipleWithAddictives(
-                {
-                    userId: new ObjectId(userId),
-                    doctorId: doctor._id,
+        const appointmentBlanksCursor =
+            await this.appointmentBlankService.getMultipleWithAddictives({
+                userId: new ObjectId(userId),
+                doctorId: doctor._id,
+            });
+        const _appointmentBlanks = await paginate({
+            cursor: appointmentBlanksCursor,
+            page: 1,
+            elementsPerPage: 10,
+        });
+        const appointmentBlanks = _appointmentBlanks.map((val) => {
+            return {
+                ...val,
+                complaint: (val.complaint as any) != 'null' && {
+                    ...val.complaint,
+                    doctor: val.complaintDoctor,
                 },
-                page,
-            );
+                inspections:
+                    (val.inspections as any) != 'null'
+                        ? val.inspections.map((val1) => {
+                              return {
+                                  ...val1,
+                                  doctor: val.inspectionsDoctors.find(
+                                      (val2) =>
+                                          val2._id.toHexString() ===
+                                          val1.doctorId.toHexString(),
+                                  ),
+                              };
+                          })
+                        : undefined,
+                appointmentResults:
+                    (val.appointmentResults as any) != 'null'
+                        ? val.appointmentResults.map((val1) => {
+                              return {
+                                  ...val1,
+                                  doctor: val.appointmentResultsDoctors.find(
+                                      (val2) =>
+                                          val2._id.toHexString() ===
+                                          val1.doctorId.toHexString(),
+                                  ),
+                              };
+                          })
+                        : undefined,
+                diagnose: (val.diagnose as any) != 'null' && {
+                    ...val.diagnose,
+                    doctor: val.diagnoseDoctor,
+                },
+            };
+        });
         const appointmentBlanksResponce = appointmentBlanks.map(
             (val) => new AppointmentBlankGraph({ ...val }),
         );
