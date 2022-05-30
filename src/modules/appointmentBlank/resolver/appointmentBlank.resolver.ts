@@ -1,8 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ApolloError } from 'apollo-server-express';
 import { ObjectId } from 'mongodb';
-
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
 import {
@@ -10,13 +8,9 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
-import { Service } from 'src/modules/service/model/service.interface';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { paginate } from 'src/utils/paginate';
-import {
-    AppointmentBlank,
-    AppointmentBlankGraph,
-} from '../model/appointmentBlank.model';
+import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { AppointmentBlankService } from '../service/appointmentBlank.service';
@@ -71,7 +65,7 @@ export class AppointmentBlankResolver {
         return appointmentBlankResponce;
     }
 
-    @Query(() => AppointmentBlankGraph)
+    @Mutation(() => AppointmentBlankGraph)
     @Roles('doctor')
     @UseGuards(PreAuthGuard)
     async addDoctorToAppointmentBlank(
