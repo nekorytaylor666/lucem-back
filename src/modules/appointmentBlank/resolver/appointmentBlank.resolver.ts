@@ -44,6 +44,7 @@ export class AppointmentBlankResolver {
             ...args,
             req,
             session,
+            doctorId: doctor._id,
         });
         const appointmentBlankResponce = new AppointmentBlankGraph({
             ...appointmentBlank,

@@ -1,5 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
@@ -11,6 +12,7 @@ import { Modify } from 'src/utils/modifyType';
 export interface AppointmentResults {
     photoURL?: PhotoURL;
     description: string;
+    doctorId: ObjectId;
 }
 
 @InputType()
@@ -35,6 +37,7 @@ export class AppointmentResultsGraph
         Modify<
             AppointmentResults,
             {
+                doctorId: string;
                 photoURL: PhotoURLGraph;
             }
         >
@@ -54,6 +57,9 @@ export class AppointmentResultsGraph
     @Field(() => UserGraph, { nullable: true })
     user: UserGraph;
 
+    @Field()
+    doctorId: string;
+
     constructor(
         appointmentResults: Partial<AppointmentResults> & {
             doctor?: Doctor;
@@ -66,6 +72,8 @@ export class AppointmentResultsGraph
             this.photoURL = new PhotoURLGraph({
                 ...appointmentResults.photoURL,
             });
+        if (appointmentResults.doctorId != null)
+            this.doctorId = appointmentResults.doctorId.toHexString();
         if (appointmentResults.doctor)
             this.doctor = new DoctorGraph({ ...appointmentResults.doctor });
         if (appointmentResults.user)

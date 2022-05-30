@@ -20,7 +20,6 @@ export interface AppointmentBlank {
     _id: ObjectId;
     userId: ObjectId;
     owners: {
-        addedByDoctorId?: ObjectId;
         doctorId: ObjectId;
         sessionId?: ObjectId;
         serviceId: ObjectId;
@@ -28,7 +27,7 @@ export interface AppointmentBlank {
     complaint?: Complaint;
     inspections?: Inspections[];
     diagnose?: Diagnose;
-    appointmentResults?: AppointmentResults;
+    appointmentResults?: AppointmentResults[];
     dateCreated: Date;
 }
 
@@ -106,8 +105,8 @@ export class AppointmentBlankGraph {
     @Field(() => [InspectionsGraph], { nullable: true })
     inspections: InspectionsGraph[];
 
-    @Field(() => AppointmentResultsGraph, { nullable: true })
-    appointmentResults: AppointmentResultsGraph;
+    @Field(() => [AppointmentResultsGraph], { nullable: true })
+    appointmentResults: AppointmentResultsGraph[];
 
     @Field(() => [AppointmentBlankOwnersGraph])
     owners: AppointmentBlankOwnersGraph[];
@@ -118,8 +117,6 @@ export class AppointmentBlankGraph {
                 AppointmentBlank,
                 {
                     owners?: {
-                        addedByDoctorId?: ObjectId;
-                        addedByDoctor?: Doctor;
                         doctorId: ObjectId;
                         doctor?: Doctor;
                         sessionId?: ObjectId;
@@ -133,9 +130,12 @@ export class AppointmentBlankGraph {
     ) {
         if (args._id != null) this._id = args._id.toHexString();
         if (args.appointmentResults != null)
-            this.appointmentResults = new AppointmentResultsGraph({
-                ...args.appointmentResults,
-            });
+            this.appointmentResults = args.appointmentResults.map(
+                (val) =>
+                    new AppointmentResultsGraph({
+                        ...val,
+                    }),
+            );
         if (args.complaint != null)
             this.complaint = new ComplaintGraph({ ...args.complaint });
         if (args.diagnose != null)

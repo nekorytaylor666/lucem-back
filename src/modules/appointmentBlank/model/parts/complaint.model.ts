@@ -1,9 +1,14 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
+import { Doctor } from 'src/modules/doctor/model/doctor.interface';
+import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
+import { Modify } from 'src/utils/modifyType';
 
 export interface Complaint {
     complaint: string;
     sicknessTimeDuration: string;
     reason?: string;
+    doctorId: ObjectId;
 }
 
 @InputType()
@@ -31,7 +36,15 @@ export class EditComplaintInput {
 }
 
 @ObjectType('Complain')
-export class ComplaintGraph implements Complaint {
+export class ComplaintGraph
+    implements
+        Modify<
+            Complaint,
+            {
+                doctorId: string;
+            }
+        >
+{
     @Field()
     complaint: string;
 
@@ -41,10 +54,26 @@ export class ComplaintGraph implements Complaint {
     @Field()
     reason: string;
 
-    constructor(complaint: Partial<Complaint>) {
+    @Field()
+    doctorId: string;
+
+    @Field(() => DoctorGraph, { nullable: true })
+    doctor: DoctorGraph;
+
+    constructor(
+        complaint: Partial<
+            Complaint & {
+                doctor: Doctor;
+            }
+        >,
+    ) {
         if (complaint.complaint != null) this.complaint = complaint.complaint;
         if (complaint.reason != null) this.reason = complaint.reason;
         if (complaint.sicknessTimeDuration != null)
             this.sicknessTimeDuration = complaint.sicknessTimeDuration;
+        if (complaint.doctorId != null)
+            this.doctorId = complaint.doctorId.toHexString();
+        if (complaint.doctor != null)
+            this.doctor = new DoctorGraph({ ...complaint.doctor });
     }
 }
