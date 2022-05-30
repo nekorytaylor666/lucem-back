@@ -239,38 +239,50 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                             _id: appointmentBlank.diagnose.doctorId,
                         })),
                     await Promise.all(
-                        appointmentBlank.inspections.map(async (val) => {
-                            return await this.doctorService.findOne({
-                                _id: val.doctorId,
-                            });
-                        }),
+                        appointmentBlank.inspections &&
+                            appointmentBlank.inspections.map(async (val) => {
+                                return await this.doctorService.findOne({
+                                    _id: val.doctorId,
+                                });
+                            }),
                     ),
                     await Promise.all(
-                        appointmentBlank.appointmentResults.map(async (val) => {
-                            return await this.doctorService.findOne({
-                                _id: val.doctorId,
-                            });
-                        }),
+                        appointmentBlank.appointmentResults &&
+                            appointmentBlank.appointmentResults.map(
+                                async (val) => {
+                                    return await this.doctorService.findOne({
+                                        _id: val.doctorId,
+                                    });
+                                },
+                            ),
                     ),
                 ]);
-                (appointmentBlank.complaint as any).doctor = complaintDoctor;
-                (appointmentBlank.diagnose as any).doctor = diagnoseDoctor;
-                appointmentBlank.inspections.forEach((inspection) => {
-                    const doctor = inspectionsDoctors.find(
-                        (val) =>
-                            val._id.toHexString() ===
-                            inspection.doctorId.toHexString(),
-                    );
-                    (inspection as any).doctor = doctor;
-                });
-                appointmentBlank.appointmentResults.forEach((appResult) => {
-                    const doctor = appointmentResultsDoctors.find(
-                        (val) =>
-                            val._id.toHexString() ===
-                            appResult.doctorId.toHexString(),
-                    );
-                    (appResult as any).doctor = doctor;
-                });
+                appointmentBlank.complaint
+                    ? ((appointmentBlank.complaint as any).doctor =
+                          complaintDoctor)
+                    : undefined;
+                appointmentBlank.diagnose
+                    ? ((appointmentBlank.diagnose as any).doctor =
+                          diagnoseDoctor)
+                    : undefined;
+                appointmentBlank.inspections &&
+                    appointmentBlank.inspections.forEach((inspection) => {
+                        const doctor = inspectionsDoctors.find(
+                            (val) =>
+                                val._id.toHexString() ===
+                                inspection.doctorId.toHexString(),
+                        );
+                        (inspection as any).doctor = doctor;
+                    });
+                appointmentBlank.appointmentResults &&
+                    appointmentBlank.appointmentResults.forEach((appResult) => {
+                        const doctor = appointmentResultsDoctors.find(
+                            (val) =>
+                                val._id.toHexString() ===
+                                appResult.doctorId.toHexString(),
+                        );
+                        (appResult as any).doctor = doctor;
+                    });
             }),
         ]);
         return appointmentBlanks;
