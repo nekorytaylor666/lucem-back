@@ -157,7 +157,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     await this.updateOneWithOptions({
                         findField: ['_id', 'owners'],
                         findValue: [
-                            appointmentBlankId,
+                            new ObjectId(appointmentBlankId),
                             { $elemMatch: { doctorId: { $eq: doctorId } } },
                         ],
                         updateField: ['inspections'],
