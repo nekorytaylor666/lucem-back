@@ -159,12 +159,66 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         return appointmentBlank;
     }
 
+    async getAddictive(args: Partial<AppointmentBlank>) {
+        const appointmentBlank = await this.findOne(args);
+        const [
+            complaintDoctor,
+            diagnoseDoctor,
+            inspectionsDoctors,
+            appointmentResultsDoctors,
+        ] = await Promise.all([
+            appointmentBlank.complaint.doctorId &&
+                (await this.doctorService.findOne({
+                    _id: appointmentBlank.complaint.doctorId,
+                })),
+            appointmentBlank.diagnose.doctorId &&
+                (await this.doctorService.findOne({
+                    _id: appointmentBlank.diagnose.doctorId,
+                })),
+            await Promise.all(
+                appointmentBlank.inspections.map(async (val) => {
+                    return await this.doctorService.findOne({
+                        _id: val.doctorId,
+                    });
+                }),
+            ),
+            await Promise.all(
+                appointmentBlank.appointmentResults.map(async (val) => {
+                    return await this.doctorService.findOne({
+                        _id: val.doctorId,
+                    });
+                }),
+            ),
+        ]);
+        (appointmentBlank.complaint as any).doctor = complaintDoctor;
+        (appointmentBlank.diagnose as any).doctor = diagnoseDoctor;
+        appointmentBlank.inspections.forEach((inspection) => {
+            const doctor = inspectionsDoctors.find(
+                (val) =>
+                    val._id.toHexString() === inspection.doctorId.toHexString(),
+            );
+            (inspection as any).doctor = doctor;
+        });
+        appointmentBlank.appointmentResults.forEach((appResult) => {
+            const doctor = appointmentResultsDoctors.find(
+                (val) =>
+                    val._id.toHexString() === appResult.doctorId.toHexString(),
+            );
+            (appResult as any).doctor = doctor;
+        });
+        return appointmentBlank;
+    }
+
     async getMultipleWithAddictives(
-        args: Partial<AppointmentBlank>,
+        args: { doctorId: ObjectId; userId: ObjectId },
         page: number,
     ) {
+        const { doctorId, userId } = args;
         const appointmentBlanks = await this.dbService
-            .find(args)
+            .find({
+                userId,
+                owners: { $elemMatch: { doctorId: { $eq: doctorId } } },
+            })
             .skip(15 * (page - 1))
             .limit(15 * (page + 1))
             .toArray();

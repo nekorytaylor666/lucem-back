@@ -109,31 +109,14 @@ export class AppointmentBlankResolver {
         @Args('page', { type: () => Int }) page: number,
         @CurrentUserGraph() doctor: Doctor,
     ) {
-        const appointmentBlanksCursor =
-            this.appointmentBlankService.findWithAddictivesCursor<
-                AppointmentBlank & {
-                    service: Service;
-                    doctor: Doctor;
-                }
-            >({
-                matchQuery: {
+        const appointmentBlanks =
+            await this.appointmentBlankService.getMultipleWithAddictives(
+                {
                     userId: new ObjectId(userId),
-                    owners: {
-                        $elemMatch: {
-                            doctorId: {
-                                $eq: doctor._id,
-                            },
-                        },
-                    },
+                    doctorId: doctor._id,
                 },
-                lookups: this.appointmentBlankService.basicLookups,
-                sort: { dateCreated: -1 },
-            });
-        const appointmentBlanks = await paginate({
-            cursor: appointmentBlanksCursor,
-            page,
-            elementsPerPage: 10,
-        });
+                page,
+            );
         const appointmentBlanksResponce = appointmentBlanks.map(
             (val) => new AppointmentBlankGraph({ ...val }),
         );
