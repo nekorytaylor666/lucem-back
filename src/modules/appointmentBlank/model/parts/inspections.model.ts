@@ -26,8 +26,14 @@ export class InspectionsDataInput {
 export class CreateInspections {
     @Field(() => [InspectionsDataInput])
     data: InspectionsDataInput[];
+}
 
-    @Field()
+@InputType()
+export class EditInspections {
+    @Field(() => [InspectionsDataInput])
+    data: InspectionsDataInput[];
+
+    @Field({ nullable: true })
     doctorId: string;
 }
 
