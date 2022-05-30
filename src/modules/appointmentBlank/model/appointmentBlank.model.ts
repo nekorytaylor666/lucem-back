@@ -42,7 +42,7 @@ export class AppointmentBlankOwnersGraph {
     @Field(() => DoctorGraph, { nullable: true })
     doctor?: DoctorGraph;
 
-    @Field()
+    @Field({ nullable: true })
     doctorId: string;
 
     @Field(() => SessionGraph, { nullable: true })
