@@ -60,10 +60,6 @@ export class AppointmentBlankResolver {
         @CurrentRequestURLGraph() req: string,
         @Args() args: EditAppointmentBlank,
     ) {
-        const session = await this.sessionService.findOne({
-            doctorId: doctor._id,
-        });
-        if (!session) throw new ApolloError('this is not your session');
         const appointmentBlank = await this.appointmentBlankService.edit({
             ...args,
             req,

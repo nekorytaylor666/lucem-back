@@ -9,9 +9,6 @@ export class EditAppointmentBlank {
     @Field()
     appointmentBlankId: string;
 
-    @Field()
-    sessionId: string;
-
     @Field(() => EditComplaintInput, { nullable: true })
     complaints: EditComplaintInput;
 
