@@ -135,6 +135,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     return {
                         _id: new ObjectId(),
                         description: inspection.description,
+                        doctorId,
                         images:
                             inspection.images &&
                             (await Promise.all(
