@@ -120,17 +120,19 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     return {
                         _id: new ObjectId(),
                         description: inspection.description,
-                        images: await Promise.all(
-                            (
-                                await inspection.images
-                            ).map(
-                                async (image) =>
-                                    await this.imageService.storeImages(
-                                        (await image).createReadStream(),
-                                        req,
-                                    ),
-                            ),
-                        ),
+                        images:
+                            inspection.images &&
+                            (await Promise.all(
+                                (
+                                    await inspection.images
+                                ).map(
+                                    async (image) =>
+                                        await this.imageService.storeImages(
+                                            (await image).createReadStream(),
+                                            req,
+                                        ),
+                                ),
+                            )),
                     };
                 }),
             ));
