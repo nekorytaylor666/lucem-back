@@ -39,6 +39,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             req,
             session,
             doctorId,
+            appointmentResults,
         } = args;
         const inspections: Inspections[] =
             _inspections.data &&
@@ -66,6 +67,20 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             ));
         const appointmentBlank: AppointmentBlank = {
             _id: new ObjectId(),
+            appointmentResults: [
+                {
+                    ...appointmentResults,
+                    doctorId,
+                    photoURL:
+                        appointmentResults.photoURL &&
+                        (await this.imageService.storeImages(
+                            (
+                                await appointmentResults.photoURL
+                            ).createReadStream(),
+                            req,
+                        )),
+                },
+            ],
             diagnose: {
                 ...diagnose,
                 doctorId,
