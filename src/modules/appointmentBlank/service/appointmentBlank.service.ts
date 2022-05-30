@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Db, ObjectId } from 'mongodb';
+import { Db, Filter, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { Session } from 'src/modules/session/model/session.interface';
@@ -19,22 +19,6 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         this.dbService = this.database.collection(
             this.appointmentBlankCollection,
         );
-        this.basicLookups = [
-            {
-                from: 'service',
-                localField: 'serviceId',
-                foreignField: '_id',
-                as: 'service',
-                isArray: false,
-            },
-            {
-                from: 'doctor',
-                localField: 'doctorId',
-                foreignField: '_id',
-                as: 'doctor',
-                isArray: false,
-            },
-        ];
     }
 
     async create(
@@ -160,5 +144,79 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             ignoreUndefined: true,
         });
         return appointmentBlank;
+    }
+
+    async getWithAddictives(args: Filter<AppointmentBlank>) {
+        const appointmentBlank = await this.dbService
+            .aggregate([
+                {
+                    $match: args,
+                },
+                { $unwind: '$owners' },
+                {
+                    $lookup: {
+                        from: 'doctor',
+                        localField: 'doctorId',
+                        foreignField: '_id',
+                        as: 'doctors',
+                    },
+                },
+                {
+                    $ifNull: ['$addedByDoctorId', 'null'],
+                },
+                {
+                    $ifNull: ['$sessionId', 'null'],
+                },
+                {
+                    $lookup: {
+                        from: 'doctor',
+                        localField: 'doctorId',
+                        foreignField: '_id',
+                        as: 'doctors',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'doctor',
+                        localField: 'doctorId',
+                        foreignField: '_id',
+                        as: 'addedByDoctors',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'session',
+                        localField: 'sessionId',
+                        foreignField: '_id',
+                        as: 'sessions',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'service',
+                        localField: 'serviceId',
+                        foreignField: '_id',
+                        as: 'services',
+                    },
+                },
+                {
+                    $addFields: {
+                        doctor: {
+                            $first: '$doctor',
+                        },
+                        addedByDoctor: {
+                            $first: '$addedByDoctors',
+                        },
+                        session: {
+                            $first: '$session',
+                        },
+                        service: {
+                            $first: '$service',
+                        },
+                    },
+                },
+            ])
+            .toArray();
+        console.log(appointmentBlank);
     }
 }
