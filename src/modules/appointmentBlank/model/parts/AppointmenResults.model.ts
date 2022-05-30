@@ -68,6 +68,7 @@ export class AppointmentResultsGraph
             user?: User;
         },
     ) {
+        this._id = new ObjectId().toHexString();
         if (appointmentResults.description)
             this.description = appointmentResults.description;
         if (appointmentResults.photoURL)
