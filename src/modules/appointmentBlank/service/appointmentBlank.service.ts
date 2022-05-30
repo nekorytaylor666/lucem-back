@@ -152,17 +152,21 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 }),
             ));
         inspections &&
-            (await this.updateOneWithOptions({
-                findField: ['_id', 'owners'],
-                findValue: [
-                    appointmentBlankId,
-                    { $elemMatch: { doctorId: { $eq: doctorId } } },
-                ],
-                updateField: ['inspections'],
-                updateValue: [inspections],
-                method: '$addToSet',
-                ignoreUndefined: true,
-            }));
+            (await Promise.all(
+                inspections.map(async (inspection) => {
+                    await this.updateOneWithOptions({
+                        findField: ['_id', 'owners'],
+                        findValue: [
+                            appointmentBlankId,
+                            { $elemMatch: { doctorId: { $eq: doctorId } } },
+                        ],
+                        updateField: ['inspections'],
+                        updateValue: [inspection],
+                        method: '$addToSet',
+                        ignoreUndefined: true,
+                    });
+                }),
+            ));
         const appointmentBlank = await this.updateOneWithOptions({
             findField: ['_id', 'owners'],
             findValue: [
