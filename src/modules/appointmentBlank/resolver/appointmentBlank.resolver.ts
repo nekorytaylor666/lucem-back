@@ -109,42 +109,48 @@ export class AppointmentBlankResolver {
             page: 1,
             elementsPerPage: 10,
         });
-        const appointmentBlanks = _appointmentBlanks.map((val) => {
+        const appointmentBlanks = _appointmentBlanks.map((blank) => {
             return {
-                ...val,
-                complaint: (val.complaint as any) != 'null' && {
-                    ...val.complaint,
-                    doctor: val.complaintDoctor,
+                ...blank,
+                complaint: (blank.complaint as any) != 'null' && {
+                    ...blank.complaint,
+                    doctor: blank.complaintDoctor,
                 },
                 inspections:
-                    (val.inspections as any) != 'null'
-                        ? val.inspections.map((val1) => {
+                    (blank.inspections as any) != 'null'
+                        ? blank.inspections.map((inspection) => {
                               return {
-                                  ...val1,
-                                  doctor: val.inspectionsDoctors.find(
-                                      (val2) =>
-                                          val2._id.toHexString() ===
-                                          val1.doctorId.toHexString(),
-                                  ),
+                                  ...inspection,
+                                  doctor:
+                                      blank.inspectionsDoctors &&
+                                      inspection.doctorId
+                                          ? blank.inspectionsDoctors.find(
+                                                (doc) =>
+                                                    doc._id.toHexString() ===
+                                                    inspection.doctorId.toHexString(),
+                                            )
+                                          : undefined,
                               };
                           })
                         : undefined,
                 appointmentResults:
-                    (val.appointmentResults as any) != 'null'
-                        ? val.appointmentResults.map((val1) => {
+                    (blank.appointmentResults as any) != 'null'
+                        ? blank.appointmentResults.map((appRes) => {
                               return {
-                                  ...val1,
-                                  doctor: val.appointmentResultsDoctors.find(
-                                      (val2) =>
-                                          val2._id.toHexString() ===
-                                          val1.doctorId.toHexString(),
-                                  ),
+                                  ...appRes,
+                                  doctor:
+                                      blank.appointmentResultsDoctors &&
+                                      blank.appointmentResultsDoctors.find(
+                                          (doc) =>
+                                              doc._id.toHexString() ===
+                                              appRes.doctorId.toHexString(),
+                                      ),
                               };
                           })
                         : undefined,
-                diagnose: (val.diagnose as any) != 'null' && {
-                    ...val.diagnose,
-                    doctor: val.diagnoseDoctor,
+                diagnose: (blank.diagnose as any) != 'null' && {
+                    ...blank.diagnose,
+                    doctor: blank.diagnoseDoctor,
                 },
             };
         });
