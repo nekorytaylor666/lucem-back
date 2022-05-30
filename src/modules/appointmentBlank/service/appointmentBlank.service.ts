@@ -171,12 +171,21 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             ],
             updateField: ['appointmentResults', 'complaint', 'diagnose'],
             updateValue: [
-                {
-                    ...appointmentResults,
-                    doctorId: new ObjectId(appointmentResults.doctorId),
-                },
-                { ...complaints, doctorId: new ObjectId(complaints.doctorId) },
-                { ...diagnose, doctorId: new ObjectId(diagnose.doctorId) },
+                appointmentResults
+                    ? {
+                          ...appointmentResults,
+                          doctorId: new ObjectId(appointmentResults.doctorId),
+                      }
+                    : undefined,
+                complaints
+                    ? {
+                          ...complaints,
+                          doctorId: new ObjectId(complaints.doctorId),
+                      }
+                    : undefined,
+                diagnose
+                    ? { ...diagnose, doctorId: new ObjectId(diagnose.doctorId) }
+                    : undefined,
             ],
             method: '$set',
             ignoreUndefined: true,
