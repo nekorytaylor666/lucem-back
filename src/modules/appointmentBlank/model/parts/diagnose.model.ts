@@ -40,6 +40,9 @@ export class EditDiagnoseInput {
 
     @Field({ nullable: true })
     natureOfTheDesease?: string;
+
+    @Field({ nullable: true })
+    doctorId?: ObjectId;
 }
 
 @ObjectType('Diagnose')

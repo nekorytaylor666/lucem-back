@@ -32,6 +32,9 @@ export class CreateInspections {
 export class EditInspections {
     @Field(() => [InspectionsDataInput])
     data: InspectionsDataInput[];
+
+    @Field({ nullable: true })
+    doctorId: string;
 }
 
 @ObjectType('Inspections')

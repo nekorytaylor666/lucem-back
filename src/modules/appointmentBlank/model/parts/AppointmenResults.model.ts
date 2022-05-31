@@ -29,6 +29,8 @@ export class EditAppointmentResultsInput {
     description: string;
     @Field(() => GraphQLUpload, { nullable: true })
     photo: Promise<FileUpload>;
+    @Field({ nullable: true })
+    doctorId: string;
 }
 
 @ObjectType('AppointmentResults')
