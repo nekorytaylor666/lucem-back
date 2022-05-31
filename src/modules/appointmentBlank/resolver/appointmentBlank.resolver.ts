@@ -157,7 +157,6 @@ export class AppointmentBlankResolver {
         const appointmentBlanksResponce = appointmentBlanks.map(
             (val) => new AppointmentBlankGraph({ ...val }),
         );
-        console.log(appointmentBlanksResponce[0].inspections);
         return appointmentBlanksResponce;
     }
 }

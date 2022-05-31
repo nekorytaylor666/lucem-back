@@ -179,18 +179,16 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 appointmentResults
                     ? {
                           ...appointmentResults,
-                          doctorId: new ObjectId(appointmentResults.doctorId),
+                          doctorId,
                       }
                     : undefined,
                 complaints
                     ? {
                           ...complaints,
-                          doctorId: new ObjectId(complaints.doctorId),
+                          doctorId,
                       }
                     : undefined,
-                diagnose
-                    ? { ...diagnose, doctorId: new ObjectId(diagnose.doctorId) }
-                    : undefined,
+                diagnose ? { ...diagnose, doctorId } : undefined,
             ],
             method: '$set',
             ignoreUndefined: true,

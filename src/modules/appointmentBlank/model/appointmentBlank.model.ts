@@ -150,13 +150,3 @@ export class AppointmentBlankGraph {
             );
     }
 }
-
-// export const AppointmentBlankGraph = createUnionType({
-//     name: 'AppointmentBlank',
-//     types: () => [
-//         ComplaintGraph,
-//         DiagnoseGraph,
-//         InspectionsGraph,
-//         AppointmentResultsGraph,
-//     ],
-// });

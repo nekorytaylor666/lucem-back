@@ -33,9 +33,6 @@ export class EditComplaintInput {
 
     @Field({ nullable: true })
     reason: string;
-
-    @Field()
-    doctorId: string;
 }
 
 @ObjectType('Complain')
