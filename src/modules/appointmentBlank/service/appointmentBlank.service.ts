@@ -152,6 +152,22 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     };
                 }),
             ));
+        inspections &&
+            (await Promise.all(
+                inspections.map(async (val) => {
+                    await this.updateOneWithOptions({
+                        findField: ['_id', 'owners'],
+                        findValue: [
+                            new ObjectId(appointmentBlankId),
+                            { $elemMatch: { doctorId: { $eq: doctorId } } },
+                        ],
+                        updateField: ['inspections'],
+                        updateValue: [val],
+                        method: '$addToSet',
+                        ignoreUndefined: true,
+                    });
+                }),
+            ));
         const appointmentBlank = await this.updateOneWithOptions({
             findField: ['_id', 'owners'],
             findValue: [
@@ -173,7 +189,6 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                       }
                     : undefined,
                 diagnose ? { ...diagnose, doctorId } : undefined,
-                inspections && inspections,
             ],
             method: '$set',
             ignoreUndefined: true,

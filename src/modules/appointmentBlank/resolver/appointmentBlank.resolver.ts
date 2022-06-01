@@ -110,6 +110,7 @@ export class AppointmentBlankResolver {
             elementsPerPage: 10,
         });
         const appointmentBlanks = _appointmentBlanks.map((blank) => {
+            console.log(blank);
             return {
                 ...blank,
                 complaint: (blank.complaint as any) != 'null' && {
