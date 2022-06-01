@@ -117,7 +117,8 @@ export class AppointmentBlankResolver {
                     doctor: blank.complaintDoctor,
                 },
                 inspections:
-                    (blank.inspections as any) != 'null'
+                    (blank.inspections as any) != 'null' &&
+                    blank.inspections != null
                         ? blank.inspections.map((inspection) => {
                               return {
                                   ...inspection,
