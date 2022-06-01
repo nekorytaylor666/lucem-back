@@ -136,19 +136,19 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                         _id: new ObjectId(),
                         description: inspection.description,
                         doctorId,
-                        images:
-                            inspection.images &&
-                            (await Promise.all(
-                                (
-                                    await inspection.images
-                                ).map(
-                                    async (image) =>
-                                        await this.imageService.storeImages(
-                                            (await image).createReadStream(),
-                                            req,
-                                        ),
-                                ),
-                            )),
+                        images: inspection.images
+                            ? await Promise.all(
+                                  (
+                                      await inspection.images
+                                  ).map(
+                                      async (image) =>
+                                          await this.imageService.storeImages(
+                                              (await image).createReadStream(),
+                                              req,
+                                          ),
+                                  ),
+                              )
+                            : inspection.photoURL,
                     };
                 }),
             ));
@@ -163,7 +163,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                         ],
                         updateField: ['inspections'],
                         updateValue: [inspection],
-                        method: '$addToSet',
+                        method: '$set',
                         ignoreUndefined: true,
                     });
                 }),

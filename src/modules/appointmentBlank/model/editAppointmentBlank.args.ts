@@ -2,7 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { EditAppointmentResultsInput } from './parts/AppointmenResults.model';
 import { EditComplaintInput } from './parts/complaint.model';
 import { EditDiagnoseInput } from './parts/diagnose.model';
-import { CreateInspections } from './parts/inspections.model';
+import { CreateInspections, EditInspections } from './parts/inspections.model';
 
 @ArgsType()
 export class EditAppointmentBlank {
@@ -15,8 +15,8 @@ export class EditAppointmentBlank {
     @Field(() => EditAppointmentResultsInput, { nullable: true })
     appointmentResults: EditAppointmentResultsInput;
 
-    @Field(() => CreateInspections, { nullable: true })
-    inspections: CreateInspections;
+    @Field(() => EditInspections, { nullable: true })
+    inspections: EditInspections;
 
     @Field(() => EditDiagnoseInput, { nullable: true })
     diagnose: EditDiagnoseInput;

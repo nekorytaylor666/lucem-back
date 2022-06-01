@@ -4,7 +4,10 @@ import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
 import { PhotoURL } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.interface';
-import { PhotoURLGraph } from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
+import {
+    PhotoURLGraph,
+    PhotoURLInput,
+} from 'src/modules/helpers/uploadFiles/imageUpload/photoURL.model';
 
 export interface Inspections {
     _id: ObjectId;
@@ -23,6 +26,18 @@ export class InspectionsDataInput {
 }
 
 @InputType()
+export class EditInspectionsDataInput {
+    @Field({ nullable: true })
+    description?: string;
+
+    @Field(() => [GraphQLUpload], { nullable: true })
+    images?: Promise<FileUpload[]>;
+
+    @Field(() => [PhotoURLInput])
+    photoURL?: PhotoURLInput[];
+}
+
+@InputType()
 export class CreateInspections {
     @Field(() => [InspectionsDataInput])
     data: InspectionsDataInput[];
@@ -30,8 +45,8 @@ export class CreateInspections {
 
 @InputType()
 export class EditInspections {
-    @Field(() => [InspectionsDataInput])
-    data: InspectionsDataInput[];
+    @Field(() => [EditInspectionsDataInput])
+    data: EditInspectionsDataInput[];
 
     @Field({ nullable: true })
     doctorId: string;
