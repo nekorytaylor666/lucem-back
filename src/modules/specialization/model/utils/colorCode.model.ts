@@ -2,10 +2,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class ColorCodeGradientGraph {
-    @Field()
+    @Field({ nullable: true })
     start: string;
 
-    @Field()
+    @Field({ nullable: true })
     finish: string;
 
     constructor(colorCode: { start: string; finish: string }) {
