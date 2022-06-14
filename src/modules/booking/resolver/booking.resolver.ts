@@ -333,4 +333,39 @@ export class BookingResolver {
         const bookingResponce = new BookingGraph({ ...booking });
         return bookingResponce;
     }
+
+    @Query(() => [BookingGraph])
+    @Roles('secretary')
+    async getBookingsByDate(
+        @Args('firstDate', { type: () => GraphQLISODateTime }) firstDate: Date,
+        @Args('secondDate', { type: () => GraphQLISODateTime })
+        secondDate: Date,
+        @Args('page', { type: () => Int }) page: number,
+    ) {
+        const bookingsCursor = this.bookingService.findWithAddictivesCursor<
+            Booking & {
+                service: Service;
+                doctor: Doctor;
+                user: User;
+            }
+        >({
+            matchQuery: {
+                endDate: {
+                    $lte: secondDate,
+                    $gte: firstDate,
+                },
+            },
+            lookups: this.bookingService.basicLookups,
+            sort: { endDate: -1 },
+        });
+        const bookings = await paginate({
+            cursor: bookingsCursor,
+            page,
+            elementsPerPage: 10,
+        });
+        const bookingsResponce = bookings.map(
+            (val) => new BookingGraph({ ...val }),
+        );
+        return bookingsResponce;
+    }
 }
