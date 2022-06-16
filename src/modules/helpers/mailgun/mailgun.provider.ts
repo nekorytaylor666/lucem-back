@@ -33,7 +33,7 @@ export const mailGunProvider: FactoryProvider<MailGunClient> = {
                 configService.get('CLINIC_MAIL_PASSWORD'),
             ];
             const client = nodemailer.createTransport({
-                service: 'gmail',
+                service: 'Gmail',
                 auth: {
                     user: mail,
                     pass: password,

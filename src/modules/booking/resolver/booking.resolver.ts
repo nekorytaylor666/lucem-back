@@ -71,26 +71,28 @@ export class BookingResolver {
         const user = await this.userService.findOne({
             _id: createBooking.userId,
         });
-        await Promise.all([
-            this.notificationService.setMailNotification({
-                user,
-                service,
-                booking: createBooking,
-                dateToSend: createBooking.startDate,
-                currentDate: new Date(),
-                doctor,
-            }),
-            this.notificationService.calendarNotification({
-                user,
-                service,
-                booking: createBooking,
-                doctor,
-            }),
-            this.notificationService.create({
-                type: NotificationTypes.NewBooking,
-                bookingId: createBooking._id,
-            }),
-        ]);
+        try {
+            await Promise.all([
+                this.notificationService.setMailNotification({
+                    user,
+                    service,
+                    booking: createBooking,
+                    dateToSend: createBooking.startDate,
+                    currentDate: new Date(),
+                    doctor,
+                }),
+                this.notificationService.calendarNotification({
+                    user,
+                    service,
+                    booking: createBooking,
+                    doctor,
+                }),
+                this.notificationService.create({
+                    type: NotificationTypes.NewBooking,
+                    bookingId: createBooking._id,
+                }),
+            ]);
+        } catch (e) {}
         return bookingResponce;
     }
 

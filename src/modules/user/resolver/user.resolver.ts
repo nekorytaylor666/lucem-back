@@ -26,7 +26,7 @@ export class UserResolver {
         private smsService: SMSService,
         private tokenService: TokenService,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
-    ) { }
+    ) {}
 
     @Mutation(() => String)
     async sendVerSMS(
@@ -115,16 +115,16 @@ export class UserResolver {
         const user =
             payload.role === TokenRoles.User
                 ? await this.userService.edit({
-                    ...args,
-                    userId: _user._id.toHexString(),
-                })
+                      ...args,
+                      userId: _user._id.toHexString(),
+                  })
                 : payload.role === TokenRoles.Admin ||
-                    payload.role === TokenRoles.Doctor
-                    ? await this.userService.edit({
-                        peculiarities: args.peculiarities,
-                        userId: args.userId,
-                    })
-                    : undefined;
+                  payload.role === TokenRoles.Doctor
+                ? await this.userService.edit({
+                      peculiarities: args.peculiarities,
+                      userId: args.userId,
+                  })
+                : undefined;
         if (!user) throw new ApolloError("you don't have access rights");
         const userResponce = new UserGraph({ ...user });
         return userResponce;
