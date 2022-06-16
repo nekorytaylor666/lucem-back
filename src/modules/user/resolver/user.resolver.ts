@@ -17,6 +17,7 @@ import { TokenService } from 'src/modules/helpers/token/token.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { EditUser } from '../model/editUser.args';
 import { ApolloError } from 'apollo-server-express';
+import { Secretary } from 'src/modules/secretary/model/secretary.interface';
 
 @Resolver()
 export class UserResolver {
@@ -25,7 +26,7 @@ export class UserResolver {
         private smsService: SMSService,
         private tokenService: TokenService,
         @Inject(CACHE_MANAGER) private cacheService: Cache,
-    ) {}
+    ) { }
 
     @Mutation(() => String)
     async sendVerSMS(
@@ -59,12 +60,23 @@ export class UserResolver {
     }
 
     @Mutation(() => UserGraph)
-    @Roles('user')
+    @Roles('user', 'secretary')
     @UseGuards(PreAuthGuard)
     async registerUser(
         @Args() args: CreateUser,
-        @CurrentUserGraph() user: User,
+        @CurrentUserGraph() user: User | Secretary,
+        @CurrentTokenPayload() payload: Token,
     ) {
+        if (payload.role === TokenRoles.Secretary) {
+            const insertPhoneNumber = await this.userService.insertOne({
+                phoneNumber: args.phoneNumber.replace(/\D/g, ''),
+            } as any);
+            const createUser = await this.userService.createUser({
+                ...args,
+                _id: insertPhoneNumber.toHexString(),
+            });
+            return createUser;
+        }
         const createUser = await this.userService.createUser({
             ...args,
             _id: user._id.toHexString(),
@@ -103,16 +115,16 @@ export class UserResolver {
         const user =
             payload.role === TokenRoles.User
                 ? await this.userService.edit({
-                      ...args,
-                      userId: _user._id.toHexString(),
-                  })
+                    ...args,
+                    userId: _user._id.toHexString(),
+                })
                 : payload.role === TokenRoles.Admin ||
-                  payload.role === TokenRoles.Doctor
-                ? await this.userService.edit({
-                      peculiarities: args.peculiarities,
-                      userId: args.userId,
-                  })
-                : undefined;
+                    payload.role === TokenRoles.Doctor
+                    ? await this.userService.edit({
+                        peculiarities: args.peculiarities,
+                        userId: args.userId,
+                    })
+                    : undefined;
         if (!user) throw new ApolloError("you don't have access rights");
         const userResponce = new UserGraph({ ...user });
         return userResponce;
