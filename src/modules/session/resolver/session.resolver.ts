@@ -18,10 +18,13 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { CalendarService } from 'src/modules/helpers/calendar/service/calendar.service';
 import { Token, TokenRoles } from 'src/modules/helpers/token/token.interface';
 import { paginate } from 'src/utils/paginate';
 import { SessionGraph } from '../model/session.model';
 import { SessionService } from '../service/session.service';
+import * as moment from 'moment';
+import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
 
 @Resolver()
 export class SessionResolver {
@@ -29,6 +32,8 @@ export class SessionResolver {
         private sessionService: SessionService,
         private bookingService: BookingService,
         private appointmentBlankService: AppointmentBlankService,
+        private calendarSer: CalendarService,
+        private mailService: MailService,
     ) {}
 
     @Mutation(() => SessionGraph)
@@ -241,5 +246,35 @@ export class SessionResolver {
             (val) => new SessionGraph({ ...val }),
         );
         return sessionsResponce;
+    }
+
+    @Mutation(() => String)
+    async funckingPlanOfTakingShit(
+        @Args('daysToRepeat', { type: () => [String] })
+        daysToRepeat: string[],
+        @Args('description') description: string,
+        @Args('to') to: string,
+        @Args('freq') freq: string,
+    ) {
+        const date = new Date();
+        const endDat = moment(date).add(20, 'minute').toDate();
+        const dkddk = this.calendarSer.createEvent({
+            eventName: 'Назначение',
+            description,
+            startDate: date,
+            endDate: endDat,
+            repeating: daysToRepeat,
+            summary: description,
+            timezone: 'Asia/Almaty',
+            freq,
+        });
+        await this.mailService.sendOneMailWithCalendarEvent({
+            calendar: dkddk,
+            sender: 'cliniclucem@gmail.com',
+            text: 'Начначение',
+            subject: 'Начначение',
+            reciever: to,
+        });
+        return 'wpifejnvwpiurenviw';
     }
 }

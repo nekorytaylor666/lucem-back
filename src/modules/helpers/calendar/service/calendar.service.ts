@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import ical from 'ical-generator';
+import ical, {
+    ICalRepeatingOptions,
+    ICalEventRepeatingFreq,
+} from 'ical-generator';
 
 @Injectable()
 export class CalendarService {
@@ -16,6 +19,8 @@ export class CalendarService {
             email: string;
         };
         timezone: string;
+        repeating?: string[];
+        freq?: string;
     }) {
         const {
             startDate,
@@ -27,9 +32,11 @@ export class CalendarService {
             organizer,
             timezone,
             eventName,
+            repeating,
+            freq,
         } = args;
         const cal = ical({ name: eventName });
-        cal.createEvent({
+        const event = cal.createEvent({
             start: startDate,
             end: endDate,
             summary,
@@ -39,6 +46,11 @@ export class CalendarService {
             organizer,
             timezone,
         });
+        repeating &&
+            event.repeating({
+                freq,
+                byDay: repeating,
+            });
         return cal;
     }
 }
