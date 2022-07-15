@@ -10,6 +10,7 @@ export class CreateBooking
             {
                 serviceId?: string;
                 doctorId: string;
+                price?: number;
             }
         >
 {

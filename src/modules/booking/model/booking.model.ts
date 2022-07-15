@@ -39,6 +39,9 @@ export class BookingGraph
     @Field(() => BookingProgress)
     progress: BookingProgress;
 
+    @Field()
+    price: number;
+
     constructor(
         booking: Partial<
             Booking & {
@@ -57,5 +60,6 @@ export class BookingGraph
         if (booking.doctor)
             this.doctor = new DoctorGraph({ ...booking.doctor });
         if (booking.progress != null) this.progress = booking.progress;
+        if (booking.price != null) this.price = booking.price;
     }
 }

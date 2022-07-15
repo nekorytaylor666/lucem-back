@@ -20,4 +20,5 @@ export interface Booking {
     endDate: Date;
     doctorId: ObjectId;
     progress: BookingProgress;
+    price: number;
 }

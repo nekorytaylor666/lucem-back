@@ -28,6 +28,7 @@ export interface Doctor {
     workTimes?: WorkTime[];
     cabinet?: string;
     isDeleted?: true;
+    doctorPercentage?: number;
 }
 
 registerEnumType(AcceptableAgeGroup, {

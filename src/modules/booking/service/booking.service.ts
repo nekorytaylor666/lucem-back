@@ -102,6 +102,7 @@ export class BookingService extends BasicService<Booking> {
             endDate,
             progress: BookingProgress.Upcoming,
             doctorId: doctor._id,
+            price: service.price,
         };
         const insertBooking = await this.insertOne(booking);
         booking._id = insertBooking;

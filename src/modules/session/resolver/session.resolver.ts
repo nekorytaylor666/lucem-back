@@ -25,12 +25,14 @@ import { SessionGraph } from '../model/session.model';
 import { SessionService } from '../service/session.service';
 import * as moment from 'moment';
 import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
+import { ServiceService } from 'src/modules/service/service/service.service';
 
 @Resolver()
 export class SessionResolver {
     constructor(
         private sessionService: SessionService,
         private bookingService: BookingService,
+        private serviceService: ServiceService,
         private appointmentBlankService: AppointmentBlankService,
         private calendarSer: CalendarService,
         private mailService: MailService,
@@ -64,12 +66,31 @@ export class SessionResolver {
                     new ObjectId(appointmentBlankId),
                 ],
             });
+        let price;
+        if (booking != null) {
+            price = (
+                await this.serviceService.findOne({
+                    _id: appointmentBlank.owners.find(
+                        (val) =>
+                            doctor._id.toHexString() ===
+                            val.doctorId.toHexString(),
+                    ).serviceId,
+                })
+            ).price;
+            appointmentBlank.owners.find(
+                (val) =>
+                    doctor._id.toHexString() === val.doctorId.toHexString(),
+            ).serviceId;
+        } else {
+            price = booking.price;
+        }
         const session = booking
             ? await this.sessionService.create({
                   serviceId: booking.serviceId,
                   doctorId: booking.doctorId,
                   userId: booking.userId,
                   bookingId: booking._id,
+                  price,
               })
             : await this.sessionService.create({
                   userId: appointmentBlank.userId,
@@ -79,6 +100,7 @@ export class SessionResolver {
                           doctor._id.toHexString() ===
                           val.doctorId.toHexString(),
                   ).serviceId,
+                  price,
               });
         const sessionResponce = new SessionGraph({ ...session });
         booking &&

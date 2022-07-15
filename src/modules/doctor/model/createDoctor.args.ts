@@ -5,6 +5,7 @@ import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { ExperienceInput } from './utils/experience/experience.input';
 import { LanguageInput } from './utils/language/language.model';
 import { WorkTimeInput } from './utils/workTime/workTime.model';
+import { Min, Max } from 'class-validator';
 
 @ArgsType()
 export class CreateDoctor
@@ -59,4 +60,12 @@ export class CreateDoctor
 
     @Field(() => [String], { nullable: true })
     specializationIds: string[];
+
+    @Min(0)
+    @Max(100)
+    @Field({
+        nullable: true,
+        defaultValue: 50,
+    })
+    doctorPercentage?: number;
 }

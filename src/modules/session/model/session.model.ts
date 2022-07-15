@@ -47,6 +47,11 @@ export class SessionGraph
     @Field(() => ServiceGraph, { nullable: true })
     service: ServiceGraph;
 
+    @Field({
+        defaultValue: 0,
+    })
+    price: number;
+
     constructor(session: Partial<SessionAddictive>) {
         if (session._id) this._id = session._id.toHexString();
         if (session.booking)
@@ -67,5 +72,6 @@ export class SessionGraph
             this.service = new ServiceGraph({ ...session.service });
         if (session.doctor != null)
             this.doctor = new DoctorGraph({ ...session.doctor });
+        if (session.price != null) this.price = session.price;
     }
 }

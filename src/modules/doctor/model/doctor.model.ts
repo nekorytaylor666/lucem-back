@@ -11,6 +11,7 @@ import { WorkTimeGraph } from './utils/workTime/workTime.model';
 import { LanguageGraph } from './utils/language/language.model';
 import { BookingGraph } from 'src/modules/booking/model/booking.model';
 import { Booking } from 'src/modules/booking/model/booking.interface';
+import { Min, Max } from 'class-validator';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -79,6 +80,14 @@ export class DoctorGraph
     @Field(() => [BookingGraph], { nullable: true })
     upcomingBookings: BookingGraph[];
 
+    @Min(0)
+    @Max(100)
+    @Field({
+        // nullable: true,
+        defaultValue: 50,
+    })
+    doctorPercentage: number;
+
     constructor(
         doctor: Partial<
             Doctor & {
@@ -130,5 +139,7 @@ export class DoctorGraph
             this.upcomingBookings = doctor.upcomingBookings.map(
                 (val) => new BookingGraph({ ...val }),
             );
+        if (doctor.doctorPercentage != null)
+            this.doctorPercentage = doctor.doctorPercentage;
     }
 }
