@@ -6,6 +6,7 @@ import { PreAuthModule } from '../helpers/auth/auth.module';
 import { CalendarModule } from '../helpers/calendar/calendar.module';
 import { MongoModule } from '../helpers/database/mongo.module';
 import { MailGunModule } from '../helpers/mailgun/mailgun.module';
+import { ServiceModule } from '../service/service.module';
 import { SessionPaymentResolver } from './resolver/payment.resolver';
 import { SessionResolver } from './resolver/session.resolver';
 import { SessionService } from './service/session.service';
@@ -18,6 +19,7 @@ import { SessionService } from './service/session.service';
         forwardRef(() => AppointmentBlankModule),
         CalendarModule,
         MailGunModule,
+        ServiceModule,
     ],
     providers: [SessionService, SessionResolver, SessionPaymentResolver],
     exports: [SessionService],

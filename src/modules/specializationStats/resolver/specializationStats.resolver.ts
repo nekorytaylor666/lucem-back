@@ -40,7 +40,5 @@ export class SpecializationStatsResolver {
             secondDate,
         );
         return sessions.map((e) => new SessionGraph(e));
-
-        // sessions
     }
 }
