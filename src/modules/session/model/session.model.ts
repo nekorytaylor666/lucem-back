@@ -52,6 +52,9 @@ export class SessionGraph
     })
     price: number;
 
+    @Field({ defaultValue: 100 })
+    clinicPercnetage: number;
+
     constructor(session: Partial<SessionAddictive>) {
         if (session._id) this._id = session._id.toHexString();
         if (session.booking)

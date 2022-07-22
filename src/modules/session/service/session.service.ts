@@ -144,8 +144,16 @@ export class SessionService extends BasicService<Session> {
         userId: ObjectId;
         bookingId?: ObjectId;
         price: number;
+        clinicPercnetage: number;
     }): Promise<Session> {
-        const { serviceId, doctorId, userId, bookingId, price } = args;
+        const {
+            serviceId,
+            doctorId,
+            userId,
+            bookingId,
+            price,
+            clinicPercnetage,
+        } = args;
         const currentDate = new Date();
         const previousSessions = await this.findWithOptions({
             fields: ['endDate', 'userId', 'doctorId'],
@@ -166,6 +174,7 @@ export class SessionService extends BasicService<Session> {
             userId,
             serviceId,
             price,
+            clinicPercnetage,
         };
         const insertSession = await this.sessionCollection.insertOne(session, {
             ignoreUndefined: true,

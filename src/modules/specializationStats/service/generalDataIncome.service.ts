@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Args, GraphQLISODateTime } from '@nestjs/graphql';
 import { Db } from 'mongodb';
+import { Session } from 'src/modules/session/model/session.interface';
 
 @Injectable()
 export class GeneralDataIncomeService {
     constructor(@Inject('DATABASE_CONNECTION') private database: Db) {}
     private get sessionCollection() {
-        return this.database.collection('session');
+        return this.database.collection<Session>('session');
     }
     async getSessionGeneral(firstDate: Date, secondDate: Date) {
         const cursor = this.sessionCollection.aggregate([

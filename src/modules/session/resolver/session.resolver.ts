@@ -26,6 +26,7 @@ import { SessionService } from '../service/session.service';
 import * as moment from 'moment';
 import { MailService } from 'src/modules/helpers/mailgun/mailgun.service';
 import { ServiceService } from 'src/modules/service/service/service.service';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 
 @Resolver()
 export class SessionResolver {
@@ -33,6 +34,7 @@ export class SessionResolver {
         private sessionService: SessionService,
         private bookingService: BookingService,
         private serviceService: ServiceService,
+        private doctorService: DoctorService,
         private appointmentBlankService: AppointmentBlankService,
         private calendarSer: CalendarService,
         private mailService: MailService,
@@ -84,6 +86,7 @@ export class SessionResolver {
         } else {
             price = booking.price;
         }
+
         const session = booking
             ? await this.sessionService.create({
                   serviceId: booking.serviceId,
@@ -91,6 +94,7 @@ export class SessionResolver {
                   userId: booking.userId,
                   bookingId: booking._id,
                   price,
+                  clinicPercnetage: 100 - (doctor.doctorPercentage ?? 50),
               })
             : await this.sessionService.create({
                   userId: appointmentBlank.userId,
@@ -101,6 +105,7 @@ export class SessionResolver {
                           val.doctorId.toHexString(),
                   ).serviceId,
                   price,
+                  clinicPercnetage: 100 - (doctor.doctorPercentage ?? 50),
               });
         const sessionResponce = new SessionGraph({ ...session });
         booking &&

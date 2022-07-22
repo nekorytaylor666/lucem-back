@@ -10,5 +10,6 @@ export interface Session {
     doctorId: ObjectId;
     userId: ObjectId;
     price: number;
+    clinicPercnetage: number;
     isPayed?: true;
 }
