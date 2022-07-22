@@ -56,6 +56,8 @@ export class SessionGraph
     clinicPercnetage: number;
 
     constructor(session: Partial<SessionAddictive>) {
+        this.price = 0;
+        this.clinicPercnetage = 100;
         if (session._id) this._id = session._id.toHexString();
         if (session.booking)
             this.booking = new BookingGraph({
