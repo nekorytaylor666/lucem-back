@@ -31,7 +31,7 @@ export class SessionDataResolver {
         })
         endTime: Date,
     ) {
-        this.sessionService.findWithAddictivesCursor({
+        const _cusror = this.sessionService.findWithAddictivesCursor({
             matchQuery: {
                 endDate: {
                     $lte: endTime,
@@ -45,5 +45,8 @@ export class SessionDataResolver {
                 _id: 1,
             },
         });
+        const res = await _cusror.toArray();
+        _cusror.close();
+        return res;
     }
 }
