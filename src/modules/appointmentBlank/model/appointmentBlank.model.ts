@@ -85,6 +85,22 @@ export class AppointmentBlankOwnersGraph {
     }
 }
 
+export type AppointmentBlankArg = Partial<
+    Modify<
+        AppointmentBlank,
+        {
+            owners?: {
+                doctorId: ObjectId;
+                doctor?: Doctor;
+                sessionId?: ObjectId;
+                session?: Session;
+                serviceId: ObjectId;
+                service?: Service;
+            }[];
+        }
+    >
+>;
+
 @ObjectType()
 export class AppointmentBlankGraph {
     @Field()
@@ -111,23 +127,7 @@ export class AppointmentBlankGraph {
     @Field(() => [AppointmentBlankOwnersGraph])
     owners: AppointmentBlankOwnersGraph[];
 
-    constructor(
-        args: Partial<
-            Modify<
-                AppointmentBlank,
-                {
-                    owners?: {
-                        doctorId: ObjectId;
-                        doctor?: Doctor;
-                        sessionId?: ObjectId;
-                        session?: Session;
-                        serviceId: ObjectId;
-                        service?: Service;
-                    }[];
-                }
-            >
-        >,
-    ) {
+    constructor(args: AppointmentBlankArg) {
         if (args._id != null) this._id = args._id.toHexString();
         if (args.appointmentResults != null)
             this.appointmentResults = args.appointmentResults.map(

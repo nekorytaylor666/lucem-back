@@ -67,20 +67,22 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
             ));
         const appointmentBlank: AppointmentBlank = {
             _id: new ObjectId(),
-            appointmentResults: [
-                {
-                    ...appointmentResults,
-                    doctorId,
-                    photoURL:
-                        appointmentResults.photoURL &&
-                        (await this.imageService.storeImages(
-                            (
-                                await appointmentResults.photoURL
-                            ).createReadStream(),
-                            req,
-                        )),
-                },
-            ],
+            appointmentResults:
+                (appointmentResults && [
+                    {
+                        ...appointmentResults,
+                        doctorId,
+                        photoURL:
+                            appointmentResults.photoURL &&
+                            (await this.imageService.storeImages(
+                                (
+                                    await appointmentResults.photoURL
+                                ).createReadStream(),
+                                req,
+                            )),
+                    },
+                ]) ||
+                [],
             diagnose: {
                 ...diagnose,
                 doctorId,
@@ -265,6 +267,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                 inspectionsDoctors?: Doctor[];
                 diagnoseDoctor?: Doctor;
                 appointmentResultsDoctors?: Doctor[];
+                ownersDoctors: Doctor[];
             }
         >([
             {
@@ -333,6 +336,14 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     complaintDoctor: {
                         $first: '$complaintDoctors',
                     },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'doctor',
+                    localField: 'owners.doctorId',
+                    foreignField: '_id',
+                    as: 'ownersDoctors',
                 },
             },
         ]);

@@ -69,7 +69,7 @@ export class SessionResolver {
                 ],
             });
         let price;
-        if (booking != null) {
+        if (booking == null) {
             price = (
                 await this.serviceService.findOne({
                     _id: appointmentBlank.owners.find(

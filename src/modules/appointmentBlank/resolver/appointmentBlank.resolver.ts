@@ -10,7 +10,10 @@ import {
 } from 'src/modules/helpers/auth/auth.service';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { paginate } from 'src/utils/paginate';
-import { AppointmentBlankGraph } from '../model/appointmentBlank.model';
+import {
+    AppointmentBlankArg,
+    AppointmentBlankGraph,
+} from '../model/appointmentBlank.model';
 import { CreateAppointmentBlank } from '../model/createAppointmentBlank.args';
 import { EditAppointmentBlank } from '../model/editAppointmentBlank.args';
 import { AppointmentBlankService } from '../service/appointmentBlank.service';
@@ -109,53 +112,64 @@ export class AppointmentBlankResolver {
             page: 1,
             elementsPerPage: 10,
         });
-        const appointmentBlanks = _appointmentBlanks.map((blank) => {
-            console.log(blank);
-            return {
-                ...blank,
-                complaint: (blank.complaint as any) != 'null' && {
-                    ...blank.complaint,
-                    doctor: blank.complaintDoctor,
-                },
-                inspections:
-                    (blank.inspections as any) != 'null' &&
-                    blank.inspections != null
-                        ? blank.inspections.map((inspection) => {
-                              return {
-                                  ...inspection,
-                                  doctor:
-                                      blank.inspectionsDoctors &&
-                                      inspection.doctorId
-                                          ? blank.inspectionsDoctors.find(
-                                                (doc) =>
-                                                    doc._id.toHexString() ===
-                                                    inspection.doctorId.toHexString(),
-                                            )
-                                          : undefined,
-                              };
-                          })
-                        : undefined,
-                appointmentResults:
-                    (blank.appointmentResults as any) != 'null'
-                        ? blank.appointmentResults.map((appRes) => {
-                              return {
-                                  ...appRes,
-                                  doctor:
-                                      blank.appointmentResultsDoctors &&
-                                      blank.appointmentResultsDoctors.find(
-                                          (doc) =>
-                                              doc._id.toHexString() ===
-                                              appRes.doctorId.toHexString(),
-                                      ),
-                              };
-                          })
-                        : undefined,
-                diagnose: (blank.diagnose as any) != 'null' && {
-                    ...blank.diagnose,
-                    doctor: blank.diagnoseDoctor,
-                },
-            };
-        });
+        const appointmentBlanks: AppointmentBlankArg[] =
+            _appointmentBlanks.map<AppointmentBlankArg>((blank) => {
+                console.log(blank);
+                return {
+                    ...blank,
+                    complaint: (blank.complaint as any) != 'null' && {
+                        ...blank.complaint,
+                        doctor: blank.complaintDoctor,
+                    },
+                    inspections:
+                        (blank.inspections as any) != 'null' &&
+                        blank.inspections != null
+                            ? blank.inspections.map((inspection) => {
+                                  return {
+                                      ...inspection,
+                                      doctor:
+                                          blank.inspectionsDoctors &&
+                                          inspection.doctorId
+                                              ? blank.inspectionsDoctors.find(
+                                                    (doc) =>
+                                                        doc._id.toHexString() ===
+                                                        inspection.doctorId.toHexString(),
+                                                )
+                                              : undefined,
+                                  };
+                              })
+                            : undefined,
+                    appointmentResults:
+                        (blank.appointmentResults as any) != 'null'
+                            ? blank.appointmentResults.map((appRes) => {
+                                  return {
+                                      ...appRes,
+                                      doctor:
+                                          blank.appointmentResultsDoctors &&
+                                          blank.appointmentResultsDoctors.find(
+                                              (doc) =>
+                                                  doc._id.toHexString() ===
+                                                  appRes.doctorId.toHexString(),
+                                          ),
+                                  };
+                              })
+                            : undefined,
+                    diagnose: (blank.diagnose as any) != 'null' && {
+                        ...blank.diagnose,
+                        doctor: blank.diagnoseDoctor,
+                    },
+                    owners: blank.owners.map((val) => {
+                        return {
+                            ...val,
+                            doctor: blank.ownersDoctors.find(
+                                (doc) =>
+                                    val.doctorId.toHexString() ==
+                                    doc._id.toHexString(),
+                            ),
+                        };
+                    }),
+                };
+            });
         const appointmentBlanksResponce = appointmentBlanks.map(
             (val) => new AppointmentBlankGraph({ ...val }),
         );
