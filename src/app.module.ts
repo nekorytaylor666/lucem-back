@@ -27,6 +27,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { SecretaryModule } from './modules/secretary/secretary.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ICDModule } from './modules/ICD/ICD.module';
+import { AWSPhotoUploadModule } from './modules/uploadPhoto/awsSpace.module';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { ICDModule } from './modules/ICD/ICD.module';
         //         },
         //     }),
         // }),
+        AWSPhotoUploadModule,
         MongoModule,
         SmartSearchModule,
         GraphQLModule.forRoot({
