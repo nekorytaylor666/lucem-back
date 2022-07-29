@@ -30,9 +30,9 @@ import { ICDModule } from './modules/ICD/ICD.module';
 
 @Module({
     imports: [
-        MulterModule.register({
-            dest: './uploads',
-        }),
+        // MulterModule.register({
+        //     dest: './uploads',
+        // }),
         ConfigModule.forRoot({
             isGlobal: true,
         }),
