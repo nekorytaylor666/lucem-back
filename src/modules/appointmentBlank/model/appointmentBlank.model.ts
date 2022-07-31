@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { DoctorGraph } from 'src/modules/doctor/model/doctor.model';
@@ -127,8 +127,14 @@ export class AppointmentBlankGraph {
     @Field(() => [AppointmentBlankOwnersGraph])
     owners: AppointmentBlankOwnersGraph[];
 
+    @Field(() => GraphQLISODateTime)
+    createdAt: Date;
+
     constructor(args: AppointmentBlankArg) {
-        if (args._id != null) this._id = args._id.toHexString();
+        if (args._id != null) {
+            this._id = args._id.toHexString();
+            this.createdAt = args._id.getTimestamp();
+        }
         if (args.appointmentResults != null)
             this.appointmentResults = args.appointmentResults.map(
                 (val) =>
