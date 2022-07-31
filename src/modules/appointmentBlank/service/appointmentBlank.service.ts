@@ -154,29 +154,35 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                     };
                 }),
             ));
-        inspections &&
-            (await Promise.all(
-                inspections.map(async (val) => {
-                    await this.updateOneWithOptions({
-                        findField: ['_id', 'owners'],
-                        findValue: [
-                            new ObjectId(appointmentBlankId),
-                            { $elemMatch: { doctorId: { $eq: doctorId } } },
-                        ],
-                        updateField: ['inspections'],
-                        updateValue: [val],
-                        method: '$addToSet',
-                        ignoreUndefined: true,
-                    });
-                }),
-            ));
+        console.log(inspections);
+        // inspections &&
+        //     (await Promise.all(
+        //         inspections.map(async (val) => {
+        //             await this.updateOneWithOptions({
+        //                 findField: ['_id', 'owners'],
+        //                 findValue: [
+        //                     new ObjectId(appointmentBlankId),
+        //                     { $elemMatch: { doctorId: { $eq: doctorId } } },
+        //                 ],
+        //                 updateField: ['inspections'],
+        //                 updateValue: [val],
+        //                 method: '$addToSet',
+        //                 ignoreUndefined: true,
+        //             });
+        //         }),
+        //     ));
         const appointmentBlank = await this.updateOneWithOptions({
             findField: ['_id', 'owners'],
             findValue: [
                 new ObjectId(appointmentBlankId),
                 { $elemMatch: { doctorId: { $eq: doctorId } } },
             ],
-            updateField: ['appointmentResults', 'complaint', 'diagnose'],
+            updateField: [
+                'appointmentResults',
+                'complaint',
+                'diagnose',
+                'inspections',
+            ],
             updateValue: [
                 appointmentResults
                     ? {
@@ -191,6 +197,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
                       }
                     : undefined,
                 diagnose ? { ...diagnose, doctorId } : undefined,
+                inspections,
             ],
             method: '$set',
             ignoreUndefined: true,

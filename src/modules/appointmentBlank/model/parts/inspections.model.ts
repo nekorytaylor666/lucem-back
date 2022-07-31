@@ -31,7 +31,7 @@ export class EditInspectionsDataInput {
     description?: string;
 
     @Field(() => [GraphQLUpload], { nullable: true })
-    images?: Promise<FileUpload[]>;
+    images?: Promise<FileUpload>[];
 
     @Field(() => [PhotoURLInput])
     photoURL?: PhotoURLInput[];

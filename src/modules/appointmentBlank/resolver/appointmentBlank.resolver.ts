@@ -101,7 +101,7 @@ export class AppointmentBlankResolver {
         @Args('userId', { type: () => String }) userId: string,
         @Args('page', { type: () => Int }) page: number,
         @CurrentUserGraph() doctor: Doctor,
-    ) {
+    ): Promise<AppointmentBlankGraph[]> {
         const appointmentBlanksCursor =
             await this.appointmentBlankService.getMultipleWithAddictives({
                 userId: new ObjectId(userId),
