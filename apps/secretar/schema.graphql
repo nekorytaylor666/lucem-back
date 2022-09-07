@@ -1,0 +1,559 @@
+"""
+Direct the client to resolve this field locally, either from the cache or local resolvers.
+"""
+directive @client(
+  """
+  When true, the client will never use the cache for this value. See
+  https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+  """
+  always: Boolean
+) on FIELD | FRAGMENT_DEFINITION | INLINE_FRAGMENT
+
+"""
+Export this locally resolved field as a variable to be used in the remainder of this query. See
+https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
+"""
+directive @export(
+  """The variable name to export this field as."""
+  as: String!
+) on FIELD
+
+"""
+Specify a custom store key for this result. See
+https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
+"""
+directive @connection(
+  """Specify the store key."""
+  key: String!
+
+  """
+  An array of query argument names to include in the generated custom store key.
+  """
+  filter: [String!]
+) on FIELD
+
+enum AcceptableAgeGroup {
+  Adult
+  Both
+  Child
+}
+
+type Admin {
+  _id: String!
+  email: String!
+  fullName: String!
+  passwordHASH: String!
+  phoneNumber: String!
+  token: String
+}
+
+enum AllowedDoctorLanguageTypes {
+  Basic
+  First
+  Fluently
+}
+
+enum AllowedDoctorLanguages {
+  English
+  German
+  Kazakh
+  Russian
+  Turkish
+}
+
+enum AllowedExperienceAndEducationTypes {
+  Education
+  Experience
+}
+
+enum AllowedGraphTypes {
+  Money
+  people
+}
+
+enum AllowedPeriodsOfTime {
+  Month
+  Year
+}
+
+enum AllowedRHFactorTypes {
+  Negative
+  Positive
+}
+
+type AppointmentBlankGraph {
+  _id: String!
+  appointmentResults: [AppointmentResults!]
+  complaint: Complain
+  diagnose: Diagnose
+  inspections: [Inspections!]
+  owners: [AppointmentBlankOwnersGraph!]!
+  user: User
+  userId: String!
+}
+
+type AppointmentBlankOwnersGraph {
+  addedByDoctor: Doctor
+  addedByDoctorId: String
+  doctor: Doctor
+  doctorId: String
+  service: Service
+  serviceId: String!
+  session: Session
+  sessionId: String
+}
+
+type AppointmentResults {
+  _id: String!
+  description: String!
+  doctor: Doctor
+  doctorId: String!
+  photoURL: PhotoURL
+  user: User
+}
+
+type Booking {
+  _id: String!
+  doctor: Doctor
+  endDate: DateTime!
+  progress: BookingProgress!
+  service: Service
+  startDate: DateTime!
+  user: User!
+}
+
+enum BookingProgress {
+  Canceled
+  Done
+  Ongoing
+  Upcoming
+}
+
+type ColorCodeGradientGraph {
+  finish: String
+  start: String
+}
+
+input ColorCodeGradientInput {
+  finish: String!
+  start: String!
+}
+
+type Comment {
+  _id: String!
+  commentParentId: String!
+  dateCreated: DateTime!
+  dependentComments: [Comment!]!
+  doctor: Doctor
+  doctorId: String!
+  rating: Int!
+  text: String
+  user: User!
+  userId: String!
+}
+
+type Complain {
+  complaint: String!
+  doctor: Doctor
+  doctorId: String!
+  reason: String!
+  sicknessTimeDuration: String!
+}
+
+input CreateAppointmentResults {
+  description: String!
+  photoURL: Upload
+}
+
+input CreateComplaint {
+  complaint: String!
+  reason: String
+  sicknessTimeDuration: String!
+}
+
+input CreateDiagnose {
+  deseaseDBCode: String
+  diagnose: String!
+  natureOfTheDesease: String!
+  preliminary: Boolean!
+}
+
+input CreateInspections {
+  data: [InspectionsDataInput!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Desease {
+  _id: String!
+  doctors: [Doctor!]
+  name: String!
+}
+
+type Diagnose {
+  deseaseDBCode: String
+  diagnose: String!
+  doctor: Doctor
+  doctorId: String!
+  natureOfTheDesease: String!
+  preliminary: Boolean!
+}
+
+type Doctor {
+  _id: String!
+  acceptableAgeGroup: String
+  avatar: PhotoURL
+  cabinet: String
+  description: String
+  deseases: [Desease!]
+  email: String!
+  experiences: [ExperienceAndEducation!]
+  fullName: String!
+  isDeleted: Boolean
+  languages: [LanguageGraph!]!
+  numOfRatings: Int!
+  phoneNumber: String!
+  rating: Float
+  specializations: [Specialization!]
+  startingExperienceDate: DateTime!
+  upcomingBookings: [Booking!]
+  workTimes: [WorkTime!]
+}
+
+type DoctorSpecStatsGraph {
+  doctor: Doctor!
+  specialization: Specialization
+  totalMoneyEarnt: Int!
+  totalNumOfSessions: Int!
+}
+
+type DoctorTokenGraph {
+  doctor: Doctor!
+  token: String!
+}
+
+input EditAppointmentResultsInput {
+  description: String
+  doctorId: String
+  photo: Upload
+}
+
+input EditComplaintInput {
+  complaint: String
+  doctorId: String
+  reason: String
+  sicknessTimeDuration: String
+}
+
+input EditDiagnoseInput {
+  deseaseDBCode: String
+  diagnose: String
+  doctorId: String
+  natureOfTheDesease: String
+  preliminary: Boolean
+}
+
+input EditInspections {
+  data: [EditInspectionsDataInput!]!
+  doctorId: String
+}
+
+input EditInspectionsDataInput {
+  description: String
+  images: [Upload!]
+  photoURL: [PhotoURLInput!]!
+}
+
+type ExperienceAndEducation {
+  _id: String!
+  data: [ExperienceAndEducationData!]
+  name: AllowedExperienceAndEducationTypes!
+}
+
+type ExperienceAndEducationData {
+  institutionName: String!
+  specialty: String!
+  years: [Int!]!
+}
+
+input ExperienceDataInput {
+  institutionName: String!
+  specialty: String!
+  years: [Int!]!
+}
+
+input ExperienceInput {
+  data: [ExperienceDataInput!]!
+  name: AllowedExperienceAndEducationTypes!
+}
+
+type Forwards {
+  _id: String!
+  dateAdded: DateTime!
+  doctor: Doctor!
+  services: [Service!]!
+  user: User!
+}
+
+type ICD {
+  code: String!
+  description: String!
+}
+
+type Inspections {
+  _id: String!
+  description: String
+  doctor: Doctor
+  doctorId: String!
+  images: [PhotoURL!]
+}
+
+input InspectionsDataInput {
+  description: String
+  images: [Upload!]
+}
+
+type LanguageGraph {
+  language: AllowedDoctorLanguages!
+  type: AllowedDoctorLanguageTypes!
+}
+
+input LanguageInput {
+  language: AllowedDoctorLanguages!
+  type: AllowedDoctorLanguageTypes!
+}
+
+type Mutation {
+  ICDScript: String!
+  addAllToSearch: String!
+  addDoctorToAppointmentBlank(appointmentBlankId: String!, doctorId: String!): AppointmentBlankGraph!
+  attachDoctorToDesease(deseaseId: String!, doctorId: String!): Desease!
+  attachDoctorToSpecialization(doctorId: String!, specializationId: String!): Specialization!
+  attachServiceToDoctor(doctorId: String!, serviceId: String!): Service!
+  attachUnshownServiceToShownService(shownServiceId: String!, unShownServiceId: String!): Service!
+  cancelBooking(bookingId: String!): Booking!
+  changeStatusToPayedSessions(sessionIds: [String!]!): Boolean!
+  checkSMSVerificationCode(code: String!, phoneNumber: String!): User!
+  createBooking(doctorId: String!, endDate: DateTime, serviceId: String, startDate: DateTime!, userId: String): Booking!
+  createDesease(name: String!): Desease!
+  createForward(serviceIds: [String!]!, userId: String!): Forwards!
+  createService(description: String!, doctorIds: [String!], durationInMinutes: Int, isShown: Boolean, name: String!, price: Int!, specializationIds: [String!]): Service!
+  createSessionBlank(appointmentResults: CreateAppointmentResults, complaint: CreateComplaint, diagnose: CreateDiagnose, inspections: CreateInspections, sessionId: String!): AppointmentBlankGraph!
+  createSpecialization(colorCodeGradient: ColorCodeGradientInput, description: String!, image: Upload, name: String!): Specialization!
+  deleteDoctor(doctorId: String): Doctor!
+  deleteService(serviceId: String!): Boolean!
+  deleteServices(serviceIds: [String!]!): Boolean!
+  doctorScript: String!
+  editAdmin(email: String, fullName: String, newPassword: String, oldPassword: String, phoneNumber: String): Admin!
+  editDoctor(acceptableAgeGroup: AcceptableAgeGroup, avatar: Upload, cabinet: String, dateOfBirth: DateTime, description: String, doctorId: String, email: String, experiences: [ExperienceInput!], fullName: String, languages: [LanguageInput!], password: String, phoneNumber: String, specializationIds: [String!], startingExperienceDate: DateTime, workTimes: [WorkTimeInput!]): Doctor!
+  editDoctorWithFile(doctorId: String!, image: Upload!): Doctor!
+  editService(description: String, doctorIds: [String!], durationInMinutes: Int, isShown: Boolean, name: String, price: Float, serviceId: String!, specializationId: [String!]): Service!
+  editSessionBlank(appointmentBlankId: String!, appointmentResults: EditAppointmentResultsInput, complaints: EditComplaintInput, diagnose: EditDiagnoseInput, inspections: EditInspections): AppointmentBlankGraph!
+  editSpecializationWithFile(image: Upload!, specializationId: String!): Specialization!
+  editSpecializationWithoutFile(colorCode: String, description: String, name: String, specializationId: String!): Specialization!
+  editUser(dateOfBirth: DateTime, email: String, fullName: String, peculiarities: PeculiaritiesInput, userId: String): User!
+  endSession(sessionId: String!): Session!
+  leaveComment(commentParentId: String, doctorId: String!, rating: Int!, text: String): Comment!
+  registerAdmin(email: String!, fullName: String!, password: String!, phoneNumber: String!): Admin!
+  registerDoctor(acceptableAgeGroup: AcceptableAgeGroup!, avatar: Upload, cabinet: String!, dateOfBirth: DateTime!, description: String!, email: String!, experience: [ExperienceInput!], fullName: String!, languages: [LanguageInput!]!, password: String!, phoneNumber: String!, specializationIds: [String!], startingExperienceDate: DateTime!, workTimes: [WorkTimeInput!]): DoctorTokenGraph!
+  registerSecretary(email: String!, fullName: String!, password: String!, phoneNumber: String!): TokenSecretary!
+  registerUser(dateOfBirth: String!, email: String!, fullName: String!, peculiarities: PeculiaritiesInput, phoneNumber: String!): User!
+  sendVerSMS(phoneNumber: String!): String!
+  serviceScript: String!
+  specScript: String!
+  startSession(appointmentBlankId: String, bookingId: String): Session!
+}
+
+type Notification {
+  _id: String!
+  bookingId: String
+  commentId: String
+  data: NotificationDataUnion!
+  dateCreated: DateTime!
+  type: NotificationTypes!
+}
+
+union NotificationDataUnion = Booking | Comment
+
+enum NotificationTypes {
+  CancelledBookingByAdmin
+  CancelledBookingByDoctor
+  CancelledBookingByUser
+  NewBooking
+  NewComment
+}
+
+type Peculiarities {
+  RHFactor: AllowedRHFactorTypes
+  allergies: [String!]
+  bloodType: String
+}
+
+input PeculiaritiesInput {
+  RHFactor: AllowedRHFactorTypes
+  allergies: [String!]
+  bloodType: String
+}
+
+type PhotoURL {
+  m: String
+  thumbnail: String
+  xl: String
+}
+
+input PhotoURLInput {
+  m: String
+  thumbnail: String
+  xl: String
+}
+
+type Query {
+  attachAllDoctorsToServicesScript: String!
+  findSpecialization(specializationId: String!): Specialization!
+  getActiveSessionByUserId(userId: String!): Session
+  getAllDoctors: [Doctor!]!
+  getAppointmentBlanksOfUser(page: Int!, userId: String!): [AppointmentBlankGraph!]!
+  getBookingsByDate(firstDate: DateTime!, page: Int!, secondDate: DateTime!): [Booking!]!
+  getBookingsByDoctorIdAndDates(doctorId: String, firstDate: DateTime!, secondDate: DateTime!): [Booking!]!
+  getBookingsByProgressStatus(doctorId: String, page: Int!, progressStatus: BookingProgress!): [Booking!]!
+  getBookingsOfUser(page: Int!, userId: String!): [Booking!]!
+  getCommentsOfDoctor(doctorId: String!, page: Int!): [Comment!]!
+  getDesease(page: Int!): [Desease!]!
+  getDoctorByID(doctorId: String!): Doctor!
+  getDoctorsBySpecializationId(specializationId: String!): [Doctor!]!
+  getDoctorsSessionsOfUser(doctorId: String, page: Int!, userId: String!): [Session!]!
+  getGeneralStats(firstDate: DateTime!, period: AllowedPeriodsOfTime!, secondDate: DateTime!): StatsGraph!
+  getHistoryOfSessions(page: Int!): [Session!]!
+  getHistoryOfSessionsOfDoctor(doctorId: String, page: Int!): [Session!]!
+  getHistoryOfSessionsOfDoctorByPeriodsOfTime(doctorId: String, firstDate: DateTime!, secondDate: DateTime!): [Session!]!
+  getNotifications(page: Int!, type: NotificationTypes): [Notification!]!
+  getNumOfUnseenNotifications: Int!
+  getPrimaryServiceOfDoctor(doctorId: String!): Service
+  getServiceById(serviceId: String!): Service!
+  getServicesByDoctorId(doctorId: String!): [Service!]!
+  getServicesByDoctorIds(doctorId: [String!]!, page: Int!): [Service!]!
+  getServicesBySpecializationId(page: Int!, specializationId: String!): [Service!]!
+  getSessionsOfUser(page: Int!, userId: String): [Session!]!
+  getShit: [Doctor!]!
+  getShownForMainByDoctorIdServices(doctorId: String!): [Service!]!
+  getSpecStats(firstDate: DateTime!, period: AllowedPeriodsOfTime!, secondDate: DateTime!, specializationId: String!): StatsGraph!
+  getSpecializationById(specializationId: String!): Specialization!
+  getSpecializationStatsByPeriodOfTime(firstDate: DateTime!, secondDate: DateTime!): [SpecializationStatsGraph!]!
+  getSpecializations: [Specialization!]!
+  getStatsOfDoctorByPeriodsOfTime(doctorId: String, firstDate: DateTime!, secondDate: DateTime!): DoctorSpecStatsGraph!
+  getStatsOfDoctorsByPeriodOfTimeAndSpecialization(firstDate: DateTime!, secondDate: DateTime!, specializationId: String!): [DoctorSpecStatsGraph!]!
+  getUnpayedSessions(page: Int!): [Session!]!
+  getUnshownServicesForPatient: [Service!]!
+  getUpcomingBookings(page: Int!): [Booking!]!
+  getUpcomingBookingsOfDoctor(doctorId: String): [Booking!]!
+  getUpcomingBookingsOfUser(userId: String!): [Booking!]!
+  getUserByID(userId: String!): User!
+  getUsersForwards(page: Int!, userId: String!): [Forwards!]!
+  listUsers: [User!]!
+  loginAdmin(email: String, password: String!, phoneNumber: String): Admin!
+  loginAsSecretary(email: String!, password: String!): TokenSecretary!
+  loginDoctor(email: String!, password: String!): DoctorTokenGraph!
+  search(searchQuery: String!): SearchGraph!
+  searchICD(query: String!): [ICD!]!
+}
+
+type SearchGraph {
+  deseases: [Desease!]
+  doctors: [Doctor!]
+  services: [Service!]
+  specializations: [Specialization!]
+}
+
+type Secretary {
+  _id: String!
+  email: String!
+  fullName: String!
+  phoneNumber: String!
+}
+
+type Service {
+  _id: String!
+  description: String!
+  doctors: [Doctor!]
+  durationInMinutes: Int!
+  name: String!
+  price: Float!
+}
+
+type Session {
+  _id: String!
+  booking: Booking
+  count: Int!
+  doctor: Doctor
+  doctorId: String!
+  endDate: String!
+  service: Service
+  serviceId: String!
+  startDate: String!
+}
+
+type Specialization {
+  _id: String!
+  colorCodeGradient: ColorCodeGradientGraph
+  description: String!
+  doctors: [Doctor!]!
+  name: String!
+  photoURL: PhotoURL
+  services: [Service!]!
+}
+
+type SpecializationStatsGraph {
+  individualSpecialistNum: Int!
+  specialization: Specialization!
+  totalMoneyEarnt: Int!
+  totalNumSessions: Int!
+}
+
+type StatsGraph {
+  data: [StatsGraphicDatesGraph!]!
+  endDate: DateTime!
+  startDate: DateTime!
+  totalIndividualPatients: Int!
+  totalMoneyEarnt: Int!
+  totalSessionSum: Int!
+}
+
+type StatsGraphicDatesGraph {
+  day: Int
+  month: Int!
+  sum: Int!
+  type: AllowedGraphTypes!
+  year: Int
+}
+
+type TokenSecretary {
+  secretary: Secretary!
+  token: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type User {
+  _id: String!
+  dateOfBirth: DateTime!
+  email: String!
+  fullName: String!
+  peculiarities: Peculiarities
+  phoneNumber: String!
+  photoURL: PhotoURL
+  token: String
+}
+
+type WorkTime {
+  endTime: DateTime!
+  startTime: DateTime!
+}
+
+input WorkTimeInput {
+  endTime: DateTime!
+  startTime: DateTime!
+}

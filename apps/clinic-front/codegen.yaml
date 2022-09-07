@@ -1,0 +1,11 @@
+# codegen.yaml
+schema: http://94.247.128.224:5000/graphql/
+documents: ./src/**/**/graphql.ts
+generates:
+    ./__generated__/__types__.ts:
+        config:
+            onlyOperationTypes: true
+            preResolveTypes: true
+        plugins:
+            - typescript
+            - typescript-operations

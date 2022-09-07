@@ -1,0 +1,104 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "TT Firs Neue";
+}
+
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue Regular"), local("TTFirsNeue-Regular"),
+        url("../font/TTFirsNeue-Regular.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue DemiBold"), local("TTFirsNeue-DemiBold"),
+        url("../font/TTFirsNeue-DemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue Italic"), local("TTFirsNeue-Italic"),
+        url("../font/TTFirsNeue-Italic.woff2") format("woff2");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue Bold"), local("TTFirsNeue-Bold"),
+        url("../font/TTFirsNeue-Bold.woff2") format("woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue ExtraBold"), local("TTFirsNeue-ExtraBold"),
+        url("../font/TTFirsNeue-ExtraBold.woff2") format("woff2");
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("TT Firs Neue Medium"), local("TTFirsNeue-Medium"),
+        url("../font/TTFirsNeue-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+}
+
+.fc .fc-timegrid-slot {
+    height: 4rem !important;
+}
+
+.fc .fc-toolbar {
+    display: flex;
+    justify-content: flex-end !important;
+    gap: 0.5rem;
+}
+
+.fc-toolbar-title {
+    font-size: 1.5rem !important;
+    padding: 0 2rem;
+    line-height: auto;
+    border-radius: 4px;
+    background-color: #f7f7f7;
+    height: 100% !important;
+}
+
+.fc-button {
+    background-color: #f7f7f7 !important;
+    border: none !important;
+    color: black !important;
+}
+
+.btn {
+    @apply font-normal rounded normal-case;
+    height: auto;
+    min-height: auto;
+}
+
+.select {
+    @apply min-h-0 h-auto;
+}
+
+div.DraftEditor-root {
+    @apply textarea;
+    height: 150px;
+    width: 100%;
+    overflow-y: auto;
+}
+div.DraftEditor-editorContainer,
+div.public-DraftEditor-content {
+    height: 100%;
+}

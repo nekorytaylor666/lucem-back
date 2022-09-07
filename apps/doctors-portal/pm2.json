@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "doctor",
+            "script": "npm",
+            "args": "start -p 3002"
+        }
+    ]
+}

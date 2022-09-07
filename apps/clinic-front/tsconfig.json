@@ -1,0 +1,109 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@components": [
+        "src/components"
+      ],
+      "@public/*": [
+        "public/*"
+      ],
+      "@public": [
+        "public"
+      ],
+      "@definitions/*": [
+        "src/definitions/*"
+      ],
+      "@definitions": [
+        "src/definitions"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@interfaces": [
+        "src/interfaces"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@styles": [
+        "src/styles"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@services": [
+        "src/services"
+      ],
+      "@graphqlTypes/*": [
+        "__generated__/*"
+      ],
+      "@graphqlTypes": [
+        "__generated__"
+      ],
+      "@/client/*": [
+        "src/apollo/*"
+      ],
+      "@/client": [
+        "src/apollo"
+      ],
+      "@recoil/*": [
+        "src/recoil/*"
+      ],
+      "@recoil": [
+        "src/recoil"
+      ],
+      "@i18n": [
+        "./i18n"
+      ],
+      "@test/*": [
+        "test/*"
+      ],
+      "@test": [
+        "test"
+      ],
+      "@core/*": [
+        "core/*"
+      ]
+    },
+    "incremental": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/api/[...nextauth].js",
+    "pages/admin/config/navLinks.js",
+    "pages/api/auth/[...nextauth].js"
+  ],
+  "exclude": [
+    "node_modules",
+    "__generated__/globalTypes.ts",
+    "test/*",
+    "cypress/*"
+  ],
+  "typeRoots": [
+    "./node_modules/@types",
+    "./custom_typings"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "secretar",
+            "script": "npm",
+            "args": "run start"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+overwrite: true
+documents:
+  - "./**/*.graphql"
+  - "./**/*.ts"
+generates:
+  generated.ts:
+    schema: "https://api.lucem.kz/graphql"
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"

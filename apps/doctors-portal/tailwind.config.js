@@ -1,0 +1,106 @@
+const { colors } = require(`tailwindcss/defaultTheme`);
+
+module.exports = {
+    purge: [
+        "./pages/**/*.tsx",
+        "./pages/**/**/*.tsx",
+        "./src/**/*.tsx",
+        "./components/**/*.tsx",
+    ],
+    darkMode: false, // or 'media' or 'class'
+    theme: {
+        extend: {
+            fontFamily: {
+                display: "Corinthia",
+                serif: "Open Sans",
+                firs: "TT Firs Neue",
+            },
+            colors: {
+                "white-custom": "#FFFDFD",
+                "frozen-blue": "#E6ECF4",
+                "coral-red": "#EA6153",
+                "dark-grey": "#8D8D8D",
+                "light-grey": "#F7F7F7",
+                "salad-green": "#73B94B",
+                "deep-purple": "#d094ed",
+                "deep-blue": "#0655a2",
+                "light-green": "#d5e8c7",
+                "dark-green": "#2a928f",
+                "deep-yellow": "#f2bd56",
+                "pink-purple": "#8E18FF",
+                "link-purple": "#8E18FF",
+                "main-gray": "#F7F7F7",
+                "light-pink": "#F8F6FB",
+                "gradient-pink": "#EFDEFF",
+                "light-blue": "#DFEFFE",
+                "gradient-purple": "#BA2172",
+                "special-green": "#00BC5F",
+                "light-purple": "#E359F9",
+                "main-red": "#F6828C",
+                "main-purple": "#6900CE",
+                "main-green": "#00BC13",
+                "daily-green": "#3BE100",
+            },
+            container: {
+                center: true,
+                padding: {
+                    default: "1rem",
+                    md: "2rem",
+                },
+            },
+            spacing: {
+                sm: "8px",
+                md: "16px",
+                lg: "24px",
+                xl: "300px",
+                xxl: "500px",
+            },
+            minWidth: {
+                0: "0",
+                "1/4": "25%",
+                "1/2": "50%",
+                "3/4": "75%",
+                "2/6": "23%",
+                full: "100%",
+            },
+            maxWidth: {
+                "1/4": "25%",
+                "1/2": "50%",
+                "3/4": "75%",
+                "2/6": "23%",
+            },
+        },
+    },
+    variants: {
+        extend: {},
+    },
+    plugins: [require("daisyui")],
+    daisyui: {
+        themes: [
+            {
+                mytheme: {
+                    primary: "#8E18FF",
+                    "primary-focus": "#8E18FF",
+                    "primary-content": "#ffffff",
+                    secondary: "#F4E8FF",
+                    "secondary-focus": "#F4E8FF",
+                    "secondary-content": "#6900CE",
+                    accent: "#10CB15",
+                    "accent-focus": "#10CB15",
+                    "accent-content": "#ffffff",
+                    neutral: "#3d4451",
+                    "neutral-focus": "#2a2e37",
+                    "neutral-content": "#ffffff",
+                    "base-100": "#ffffff",
+                    "base-200": "#F7F7F7",
+                    "base-300": "#8D8D8D",
+                    "base-content": "#3A3939",
+                    info: "#2094f3",
+                    success: "#10CB15",
+                    warning: "#FF9900",
+                    error: "#F6828C",
+                },
+            },
+        ],
+    },
+};
