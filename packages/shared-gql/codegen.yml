@@ -4,7 +4,7 @@ documents:
   - "./**/*.ts"
 generates:
   generated.ts:
-    schema: "https://api.lucem.kz/graphql"
+    schema: "https://api.pulse.org.kg/graphql"
     plugins:
       - "typescript"
       - "typescript-operations"

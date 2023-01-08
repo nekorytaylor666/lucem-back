@@ -7,7 +7,7 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 
 const createApolloClient = new ApolloClient({
     ssrMode: typeof window === "undefined",
-    uri: "https://api.lucem.kz/graphql",
+    uri: "https://api.pulse.org.kg/graphql",
     cache: new InMemoryCache(),
 });
 

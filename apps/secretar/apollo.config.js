@@ -3,7 +3,7 @@ module.exports = {
         includes: [__dirname + "/src/api/**"],
         service: {
             name: "Lucem",
-            url: "https://api.lucem.kz/graphql",
+            url: "https://api.pulse.org.kg/graphql",
         },
     },
 };
