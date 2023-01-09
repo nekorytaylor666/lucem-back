@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { Doctor } from 'src/modules/doctor/model/doctor.interface';
 import { Roles } from 'src/modules/helpers/auth/auth.roles';
@@ -8,6 +9,7 @@ import {
     CurrentUserGraph,
     PreAuthGuard,
 } from 'src/modules/helpers/auth/auth.service';
+import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/imageUpload.service';
 import { SessionService } from 'src/modules/session/service/session.service';
 import { paginate } from 'src/utils/paginate';
 import {
@@ -23,6 +25,7 @@ export class AppointmentBlankResolver {
     constructor(
         private appointmentBlankService: AppointmentBlankService,
         private sessionService: SessionService,
+        private imageService: ImageUploadService,
     ) {}
 
     @Mutation(() => AppointmentBlankGraph)
@@ -175,4 +178,21 @@ export class AppointmentBlankResolver {
         );
         return appointmentBlanksResponce;
     }
+
+    // @Mutation(() => String)
+    // async wtfFastDeleteMe(
+    //     @Args('upload', {
+    //         type: () => GraphQLUpload,
+    //     })
+    //     upload: Promise<FileUpload>,
+    //     // @Field(() => [GraphQLUpload], { nullable: true })
+    //     // images?: Promise<FileUpload[]>;
+    // ): Promise<string> {
+    //     const photoUrl = await this.imageService.storeImages(
+    //         (await upload).createReadStream(),
+    //         '',
+    //     );
+    //     console.log(photoUrl);
+    //     return '';
+    // }
 }
