@@ -23,7 +23,7 @@ export class ServiceGraph
     @Field(() => [DoctorGraph], { nullable: true })
     doctors: DoctorGraph[];
 
-    @Field(() => Int)
+    @Field(() => Int, { nullable: true })
     durationInMinutes?: number;
 
     constructor(service: Partial<ServiceAddictive>) {

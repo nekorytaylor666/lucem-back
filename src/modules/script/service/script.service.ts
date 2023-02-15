@@ -300,7 +300,15 @@ export class ScriptService {
                     );
                 });
             console.log(doctor);
-            this.doctorCollection.insertOne(doctor);
+
+            const doctorSearch = {
+                _id: doctor._id,
+                fullName: doctor.fullName,
+                description: doctor.description,
+                specializations: specialiations,
+            };
+            // this.doctorCollection.insertOne(doctor);
+            this.doctorSearchCollection.create(doctorSearch);
         }
     }
 
@@ -349,7 +357,7 @@ export class ScriptService {
                 price: service.price,
                 description: service.description,
             };
-            await this.serviceCollection.insertOne(service);
+            // await this.serviceCollection.insertOne(service);
             await this.serviceSearchCollection.create(serviceSearch);
         }
     }
