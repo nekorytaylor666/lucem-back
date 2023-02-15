@@ -12,12 +12,15 @@ export class AWSPhotoUploadService {
     constructor(private config: ConfigService) {}
 
     public s3 = new S3({
-        endpoint: new Endpoint(this.config.get('DO_SPACES_ENDPOINT')),
+        // endpoint: new Endpoint(this.config.get('DO_SPACES_ENDPOINT')),
         credentials: new Credentials({
-            accessKeyId: this.config.get('DO_SPACES_KEY'),
-            secretAccessKey: this.config.get('DO_SPACES_SECRET'),
+            accessKeyId: this.config.get('ACCESS_KEY_ID'),
+            secretAccessKey: this.config.get('SECRET_ACCESS_KEY'),
         }),
     });
+    get bucketName(): string {
+        return this.config.get('AWS_BUCKET_NAME');
+    }
 
     async removeImage(
         Key: PhotoURL,
@@ -25,19 +28,19 @@ export class AWSPhotoUploadService {
         return Promise.all([
             this.s3
                 .deleteObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: Key.m,
                 })
                 .promise(),
             this.s3
                 .deleteObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: Key.xl,
                 })
                 .promise(),
             this.s3
                 .deleteObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: Key.thumbnail,
                 })
                 .promise(),
@@ -60,7 +63,7 @@ export class AWSPhotoUploadService {
         await Promise.all([
             this.s3
                 .putObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: _keyStr + '_thumbnail',
                     ACL: 'public-read',
                     Body: thumbnailBuffer,
@@ -68,7 +71,7 @@ export class AWSPhotoUploadService {
                 .promise(),
             this.s3
                 .putObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: _keyStr + '_M',
                     ACL: 'public-read',
                     Body: l_Buffer,
@@ -76,7 +79,7 @@ export class AWSPhotoUploadService {
                 .promise(),
             this.s3
                 .putObject({
-                    Bucket: this.config.get('DO_SPACES_NAME'),
+                    Bucket: this.bucketName,
                     Key: _keyStr + '_XL',
                     ACL: 'public-read',
                     Body: xl_Buffer,

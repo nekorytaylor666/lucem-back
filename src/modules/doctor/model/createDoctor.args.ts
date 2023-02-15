@@ -68,4 +68,7 @@ export class CreateDoctor
         defaultValue: 50,
     })
     doctorPercentage?: number;
+
+    @Field()
+    isMan: boolean;
 }

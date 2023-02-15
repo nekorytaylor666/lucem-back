@@ -11,4 +11,5 @@ export interface User {
     token?: string;
     photoURL?: PhotoURL;
     peculiarities?: Peculiarities;
+    passwordHASH: string;
 }

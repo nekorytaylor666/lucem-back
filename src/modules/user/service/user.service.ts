@@ -10,6 +10,7 @@ import { ImageUploadService } from 'src/modules/helpers/uploadFiles/imageUpload/
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { EditUser } from '../model/editUser.args';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService extends BasicService<User> {
@@ -61,6 +62,20 @@ export class UserService extends BasicService<User> {
         return user;
     }
 
+    async login(args: { email: string; password: string }) {
+        const { email, password } = args;
+        // find user by email
+        const user = await this.database.collection('user').findOne({ email });
+        // const user = await this.dbService.findOne({
+        //     fields: ['email'],
+        //     values: [email, { $exists: false }],
+        // });
+        console.log(user);
+        const checkPassword = await bcrypt.compare(password, user.passwordHASH);
+        if (!checkPassword) throw new ApolloError('password or email is wrong');
+        return user;
+    }
+
     async createUser(newUser: CreateUser & { _id: string }): Promise<User> {
         const {
             dateOfBirth: _dateOfBirth,
@@ -68,9 +83,11 @@ export class UserService extends BasicService<User> {
             phoneNumber: _phoneNumber,
             email,
             fullName,
+            password,
         } = newUser;
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
         const dateOfBirth = new Date(_dateOfBirth);
+        const passwordHASH = await bcrypt.hash(password, 12);
         const insertUser = await this.dbService.findOneAndUpdate(
             { _id: new ObjectId(_id), phoneNumber },
             {
@@ -79,6 +96,7 @@ export class UserService extends BasicService<User> {
                     fullName,
                     dateOfBirth,
                     phoneNumber,
+                    passwordHASH,
                 },
             },
             {
