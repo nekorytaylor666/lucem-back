@@ -54,6 +54,7 @@ import { AWSPhotoUploadModule } from './modules/uploadPhoto/awsSpace.module';
         SmartSearchModule,
         GraphQLModule.forRoot({
             debug: true,
+            introspection: true,
             playground: true,
             include: [],
             autoSchemaFile: true,
