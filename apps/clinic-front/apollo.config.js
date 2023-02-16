@@ -3,7 +3,7 @@ module.exports = {
         includes: [__dirname + "/graphql/**"],
         service: {
             name: "graphql",
-            url: "http://lucem-back-production.up.railway.app/graphql",
+            url: "https://lucem-back-production.up.railway.app/graphql",
         },
     },
 };
