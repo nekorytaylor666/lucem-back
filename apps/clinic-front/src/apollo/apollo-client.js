@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
     // IMPORTANT!: ApolloClint uri
-    uri: "https://api.pulse.org.kg/graphql",
+    uri: "http://lucem-back-production.up.railway.app/graphql",
     cache: new InMemoryCache(),
 });
 

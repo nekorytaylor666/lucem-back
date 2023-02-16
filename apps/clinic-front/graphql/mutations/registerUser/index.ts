@@ -6,12 +6,14 @@ export const REGISTER_USER = gql`
         $email: String!
         $fullName: String!
         $phoneNumber: String!
+        $password: String!
     ) {
         registerUser(
             dateOfBirth: $dateOfBirth
             email: $email
             fullName: $fullName
             phoneNumber: $phoneNumber
+            password: $password
         ) {
             _id
             token

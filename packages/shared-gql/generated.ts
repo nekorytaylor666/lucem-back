@@ -76,7 +76,6 @@ export type AppointmentBlankGraph = {
   diagnose?: Maybe<Diagnose>;
   inspections?: Maybe<Array<Inspections>>;
   owners: Array<AppointmentBlankOwnersGraph>;
-  treatmentPlan?: Maybe<TreatmentPlanGraph>;
   user?: Maybe<User>;
   userId: Scalars['String'];
 };
@@ -122,16 +121,6 @@ export enum BookingProgress {
   Upcoming = 'Upcoming'
 }
 
-export enum CalWeekdayGraph {
-  Fr = 'FR',
-  Mo = 'MO',
-  Sa = 'SA',
-  Su = 'SU',
-  Th = 'TH',
-  Tu = 'TU',
-  We = 'WE'
-}
-
 export type ColorCodeGradientGraph = {
   __typename?: 'ColorCodeGradientGraph';
   finish?: Maybe<Scalars['String']>;
@@ -139,11 +128,6 @@ export type ColorCodeGradientGraph = {
 };
 
 export type ColorCodeGradientInput = {
-  finish: Scalars['String'];
-  start: Scalars['String'];
-};
-
-export type ColorCodeGradientInputType = {
   finish: Scalars['String'];
   start: Scalars['String'];
 };
@@ -193,30 +177,6 @@ export type CreateInspections = {
   data: Array<InspectionsDataInput>;
 };
 
-export type CreateRepeatingOptionsGraph = {
-  byDay?: InputMaybe<Array<CalWeekdayGraph>>;
-  byMonth?: InputMaybe<Array<Scalars['Int']>>;
-  byMonthDay?: InputMaybe<Array<Scalars['Int']>>;
-  bySetPos?: InputMaybe<Scalars['Int']>;
-  count?: InputMaybe<Scalars['Int']>;
-  exclude?: InputMaybe<Array<Scalars['DateTime']>>;
-  freq: Scalars['String'];
-  interval?: InputMaybe<Scalars['Int']>;
-  startOfWeek?: InputMaybe<CalWeekdayGraph>;
-  until?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CreateTreatmentPlanGraph = {
-  medical?: InputMaybe<Array<CreateTreatmentPlanItemGraph>>;
-  proccess?: InputMaybe<Array<CreateTreatmentPlanItemGraph>>;
-  recomendation?: InputMaybe<Array<CreateTreatmentPlanItemGraph>>;
-};
-
-export type CreateTreatmentPlanItemGraph = {
-  repeatingOptions: CreateRepeatingOptionsGraph;
-  text: Scalars['String'];
-};
-
 export type Desease = {
   __typename?: 'Desease';
   _id: Scalars['String'];
@@ -247,7 +207,6 @@ export type Doctor = {
   experiences?: Maybe<Array<ExperienceAndEducation>>;
   fullName: Scalars['String'];
   isDeleted?: Maybe<Scalars['Boolean']>;
-  isMan: Scalars['Boolean'];
   languages: Array<LanguageGraph>;
   numOfRatings: Scalars['Int'];
   phoneNumber: Scalars['String'];
@@ -496,7 +455,6 @@ export type MutationCreateSessionBlankArgs = {
   diagnose?: InputMaybe<CreateDiagnose>;
   inspections?: InputMaybe<CreateInspections>;
   sessionId: Scalars['String'];
-  treatmentPlan?: InputMaybe<CreateTreatmentPlanGraph>;
 };
 
 
@@ -539,11 +497,9 @@ export type MutationEditDoctorArgs = {
   dateOfBirth?: InputMaybe<Scalars['DateTime']>;
   description?: InputMaybe<Scalars['String']>;
   doctorId?: InputMaybe<Scalars['String']>;
-  doctorPercentage?: InputMaybe<Scalars['Float']>;
   email?: InputMaybe<Scalars['String']>;
   experiences?: InputMaybe<Array<ExperienceInput>>;
   fullName?: InputMaybe<Scalars['String']>;
-  isMan?: InputMaybe<Scalars['Boolean']>;
   languages?: InputMaybe<Array<LanguageInput>>;
   password?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
@@ -588,7 +544,6 @@ export type MutationEditSpecializationWithFileArgs = {
 
 export type MutationEditSpecializationWithoutFileArgs = {
   colorCode?: InputMaybe<Scalars['String']>;
-  colorCodeGradient?: InputMaybe<ColorCodeGradientInputType>;
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   specializationId: Scalars['String'];
@@ -643,7 +598,7 @@ export type MutationRegisterDoctorArgs = {
   email: Scalars['String'];
   experience?: InputMaybe<Array<ExperienceInput>>;
   fullName: Scalars['String'];
-  isMan?: InputMaybe<Scalars['Boolean']>;
+  isMan: Scalars['Boolean'];
   languages: Array<LanguageInput>;
   password: Scalars['String'];
   phoneNumber: Scalars['String'];
@@ -665,6 +620,7 @@ export type MutationRegisterUserArgs = {
   dateOfBirth: Scalars['String'];
   email: Scalars['String'];
   fullName: Scalars['String'];
+  password: Scalars['String'];
   peculiarities?: InputMaybe<PeculiaritiesInput>;
   phoneNumber: Scalars['String'];
 };
@@ -775,6 +731,7 @@ export type Query = {
   loginAdmin: Admin;
   loginAsSecretary: TokenSecretary;
   loginDoctor: DoctorTokenGraph;
+  loginUser: User;
   search: SearchGraph;
   searchICD: Array<Icd>;
 };
@@ -791,7 +748,7 @@ export type QueryGetActiveSessionByUserIdArgs = {
 
 
 export type QueryGetAppointmentBlanksOfUserArgs = {
-  page?: InputMaybe<Scalars['Int']>;
+  page: Scalars['Int'];
   userId: Scalars['String'];
 };
 
@@ -1015,6 +972,12 @@ export type QueryLoginDoctorArgs = {
 };
 
 
+export type QueryLoginUserArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
 export type QuerySearchArgs = {
   searchQuery: Scalars['String'];
 };
@@ -1022,20 +985,6 @@ export type QuerySearchArgs = {
 
 export type QuerySearchIcdArgs = {
   query: Scalars['String'];
-};
-
-export type RepeatingOptionsGraph = {
-  __typename?: 'RepeatingOptionsGraph';
-  byDay?: Maybe<Array<CalWeekdayGraph>>;
-  byMonth?: Maybe<Array<Scalars['Int']>>;
-  byMonthDay?: Maybe<Array<Scalars['Int']>>;
-  bySetPos?: Maybe<Scalars['Int']>;
-  count?: Maybe<Scalars['Int']>;
-  exclude?: Maybe<Array<Scalars['DateTime']>>;
-  freq: Scalars['String'];
-  interval?: Maybe<Scalars['Int']>;
-  startOfWeek?: Maybe<CalWeekdayGraph>;
-  until?: Maybe<Scalars['DateTime']>;
 };
 
 export type SearchGraph = {
@@ -1059,7 +1008,7 @@ export type Service = {
   _id: Scalars['String'];
   description: Scalars['String'];
   doctors?: Maybe<Array<Doctor>>;
-  durationInMinutes?: Maybe<Scalars['Int']>;
+  durationInMinutes: Scalars['Int'];
   name: Scalars['String'];
   price: Scalars['Float'];
 };
@@ -1076,11 +1025,7 @@ export type Session = {
   price: Scalars['Float'];
   service?: Maybe<Service>;
   serviceId: Scalars['String'];
-  specializationIds?: Maybe<Array<Scalars['String']>>;
-  specializations?: Maybe<Array<Specialization>>;
   startDate: Scalars['String'];
-  user: User;
-  userId: Scalars['String'];
 };
 
 export type Specialization = {
@@ -1125,19 +1070,6 @@ export type TokenSecretary = {
   __typename?: 'TokenSecretary';
   secretary: Secretary;
   token: Scalars['String'];
-};
-
-export type TreatmentPlanGraph = {
-  __typename?: 'TreatmentPlanGraph';
-  medical: Array<TreatmentPlanItemGraph>;
-  proccess: Array<TreatmentPlanItemGraph>;
-  recomendation: Array<TreatmentPlanItemGraph>;
-};
-
-export type TreatmentPlanItemGraph = {
-  __typename?: 'TreatmentPlanItemGraph';
-  repeatingOptions: RepeatingOptionsGraph;
-  text: Scalars['String'];
 };
 
 export type User = {
@@ -1264,6 +1196,7 @@ export type RegisterDoctorMutationVariables = Exact<{
   acceptableAgeGroup: AcceptableAgeGroup;
   dateOfBirth: Scalars['DateTime'];
   avatar?: InputMaybe<Scalars['Upload']>;
+  isMan: Scalars['Boolean'];
   experience?: InputMaybe<Array<ExperienceInput> | ExperienceInput>;
   languages: Array<LanguageInput> | LanguageInput;
   password: Scalars['String'];
@@ -1282,6 +1215,7 @@ export type RegisterUserMutationVariables = Exact<{
   email: Scalars['String'];
   fullName: Scalars['String'];
   phoneNumber: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
@@ -1314,7 +1248,6 @@ export type UploadSessionBlankMutationVariables = Exact<{
   inspections: CreateInspections;
   sessionId: Scalars['String'];
   appointmentResults?: InputMaybe<CreateAppointmentResults>;
-  treatmentPlan?: InputMaybe<CreateTreatmentPlanGraph>;
 }>;
 
 
@@ -1459,6 +1392,14 @@ export type LoginAdminQueryVariables = Exact<{
 
 
 export type LoginAdminQuery = { __typename?: 'Query', loginAdmin: { __typename?: 'Admin', token?: string | null } };
+
+export type LoginUserQueryVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LoginUserQuery = { __typename?: 'Query', loginUser: { __typename?: 'User', token?: string | null } };
 
 export type MkbSearchQueryVariables = Exact<{
   search: Scalars['String'];
@@ -1852,13 +1793,14 @@ export type EditDoctorAvatarMutationHookResult = ReturnType<typeof useEditDoctor
 export type EditDoctorAvatarMutationResult = Apollo.MutationResult<EditDoctorAvatarMutation>;
 export type EditDoctorAvatarMutationOptions = Apollo.BaseMutationOptions<EditDoctorAvatarMutation, EditDoctorAvatarMutationVariables>;
 export const RegisterDoctorDocument = gql`
-    mutation RegisterDoctor($fullName: String!, $email: String!, $description: String!, $acceptableAgeGroup: AcceptableAgeGroup!, $dateOfBirth: DateTime!, $avatar: Upload, $experience: [ExperienceInput!], $languages: [LanguageInput!]!, $password: String!, $phoneNumber: String!, $startingExperienceDate: DateTime!, $workTimes: [WorkTimeInput!], $cabinet: String!, $specializationIds: [String!]) {
+    mutation RegisterDoctor($fullName: String!, $email: String!, $description: String!, $acceptableAgeGroup: AcceptableAgeGroup!, $dateOfBirth: DateTime!, $avatar: Upload, $isMan: Boolean!, $experience: [ExperienceInput!], $languages: [LanguageInput!]!, $password: String!, $phoneNumber: String!, $startingExperienceDate: DateTime!, $workTimes: [WorkTimeInput!], $cabinet: String!, $specializationIds: [String!]) {
   registerDoctor(
     acceptableAgeGroup: $acceptableAgeGroup
     avatar: $avatar
     dateOfBirth: $dateOfBirth
     description: $description
     email: $email
+    isMan: $isMan
     experience: $experience
     fullName: $fullName
     languages: $languages
@@ -1897,6 +1839,7 @@ export type RegisterDoctorMutationFn = Apollo.MutationFunction<RegisterDoctorMut
  *      acceptableAgeGroup: // value for 'acceptableAgeGroup'
  *      dateOfBirth: // value for 'dateOfBirth'
  *      avatar: // value for 'avatar'
+ *      isMan: // value for 'isMan'
  *      experience: // value for 'experience'
  *      languages: // value for 'languages'
  *      password: // value for 'password'
@@ -1916,12 +1859,13 @@ export type RegisterDoctorMutationHookResult = ReturnType<typeof useRegisterDoct
 export type RegisterDoctorMutationResult = Apollo.MutationResult<RegisterDoctorMutation>;
 export type RegisterDoctorMutationOptions = Apollo.BaseMutationOptions<RegisterDoctorMutation, RegisterDoctorMutationVariables>;
 export const RegisterUserDocument = gql`
-    mutation RegisterUser($dateOfBirth: String!, $email: String!, $fullName: String!, $phoneNumber: String!) {
+    mutation RegisterUser($dateOfBirth: String!, $email: String!, $fullName: String!, $phoneNumber: String!, $password: String!) {
   registerUser(
     dateOfBirth: $dateOfBirth
     email: $email
     fullName: $fullName
     phoneNumber: $phoneNumber
+    password: $password
   ) {
     _id
     token
@@ -1947,6 +1891,7 @@ export type RegisterUserMutationFn = Apollo.MutationFunction<RegisterUserMutatio
  *      email: // value for 'email'
  *      fullName: // value for 'fullName'
  *      phoneNumber: // value for 'phoneNumber'
+ *      password: // value for 'password'
  *   },
  * });
  */
@@ -2055,14 +2000,13 @@ export type EndSessionMutationHookResult = ReturnType<typeof useEndSessionMutati
 export type EndSessionMutationResult = Apollo.MutationResult<EndSessionMutation>;
 export type EndSessionMutationOptions = Apollo.BaseMutationOptions<EndSessionMutation, EndSessionMutationVariables>;
 export const UploadSessionBlankDocument = gql`
-    mutation UploadSessionBlank($complaint: CreateComplaint!, $diagnose: CreateDiagnose!, $inspections: CreateInspections!, $sessionId: String!, $appointmentResults: CreateAppointmentResults, $treatmentPlan: CreateTreatmentPlanGraph) {
+    mutation UploadSessionBlank($complaint: CreateComplaint!, $diagnose: CreateDiagnose!, $inspections: CreateInspections!, $sessionId: String!, $appointmentResults: CreateAppointmentResults) {
   createSessionBlank(
     complaint: $complaint
     diagnose: $diagnose
     inspections: $inspections
     sessionId: $sessionId
     appointmentResults: $appointmentResults
-    treatmentPlan: $treatmentPlan
   ) {
     __typename
   }
@@ -2088,7 +2032,6 @@ export type UploadSessionBlankMutationFn = Apollo.MutationFunction<UploadSession
  *      inspections: // value for 'inspections'
  *      sessionId: // value for 'sessionId'
  *      appointmentResults: // value for 'appointmentResults'
- *      treatmentPlan: // value for 'treatmentPlan'
  *   },
  * });
  */
@@ -3101,6 +3044,42 @@ export function useLoginAdminLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type LoginAdminQueryHookResult = ReturnType<typeof useLoginAdminQuery>;
 export type LoginAdminLazyQueryHookResult = ReturnType<typeof useLoginAdminLazyQuery>;
 export type LoginAdminQueryResult = Apollo.QueryResult<LoginAdminQuery, LoginAdminQueryVariables>;
+export const LoginUserDocument = gql`
+    query LoginUser($email: String!, $password: String!) {
+  loginUser(email: $email, password: $password) {
+    token
+  }
+}
+    `;
+
+/**
+ * __useLoginUserQuery__
+ *
+ * To run a query within a React component, call `useLoginUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoginUserQuery({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginUserQuery(baseOptions: Apollo.QueryHookOptions<LoginUserQuery, LoginUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LoginUserQuery, LoginUserQueryVariables>(LoginUserDocument, options);
+      }
+export function useLoginUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LoginUserQuery, LoginUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LoginUserQuery, LoginUserQueryVariables>(LoginUserDocument, options);
+        }
+export type LoginUserQueryHookResult = ReturnType<typeof useLoginUserQuery>;
+export type LoginUserLazyQueryHookResult = ReturnType<typeof useLoginUserLazyQuery>;
+export type LoginUserQueryResult = Apollo.QueryResult<LoginUserQuery, LoginUserQueryVariables>;
 export const MkbSearchDocument = gql`
     query MKBSearch($search: String!) {
   searchICD(query: $search) {

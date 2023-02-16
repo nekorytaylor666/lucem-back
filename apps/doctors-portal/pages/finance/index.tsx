@@ -73,7 +73,6 @@ const FinancePage = () => {
                 },
             },
         });
-
     const finishedBookings = useMemo(
         () =>
             bookingsRes?.getBookingsByDoctorIdAndDates
@@ -81,13 +80,13 @@ const FinancePage = () => {
                 .reverse(),
         [bookingsRes],
     );
-
     const sessions = sessionsRes?.getSessionPeriodTime;
     const stats = useMemo(() => {
         if (sessionsLoading && doctorLoading) return 0;
         const filteredSessions = sessions?.filter(
-            (el) => el.doctor._id !== doctorId,
+            (el) => el.doctor._id === doctorId,
         );
+        console.log(filteredSessions);
         return {
             revenue:
                 (_.sumBy(filteredSessions, "price") *

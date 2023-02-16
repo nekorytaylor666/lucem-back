@@ -78,6 +78,7 @@ const StatisticsPage = () => {
     return <div>Loading...</div>;
   }
   const sessions = data?.getSessionPeriodTime;
+  console.log("статистика здесь", sessions);
   return (
     <div className="space-y-5">
       <div className="flex justify-between">
@@ -85,8 +86,9 @@ const StatisticsPage = () => {
         <div className="flex space-x-2">
           <div className="flex p-1 rounded bg-white space-x-2">
             <label
-              className={`px-2 py-1 hover:bg-pink-purple rounded cursor-pointer hover:text-white ${values.period === "month" && "bg-pink-purple text-white"
-                }`}
+              className={`px-2 py-1 hover:bg-pink-purple rounded cursor-pointer hover:text-white ${
+                values.period === "month" && "bg-pink-purple text-white"
+              }`}
             >
               <p>Месяц</p>
               <input
@@ -98,8 +100,9 @@ const StatisticsPage = () => {
               />
             </label>
             <label
-              className={`px-2 py-1 hover:bg-pink-purple rounded cursor-pointer hover:text-white ${values.period === "year" && "bg-pink-purple text-white"
-                }`}
+              className={`px-2 py-1 hover:bg-pink-purple rounded cursor-pointer hover:text-white ${
+                values.period === "year" && "bg-pink-purple text-white"
+              }`}
             >
               <p>Года</p>
               <input

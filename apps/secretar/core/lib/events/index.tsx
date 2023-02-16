@@ -10,6 +10,7 @@ export class CalendarEvent {
     service: any;
 
     constructor(booking: Booking) {
+        console.log(booking.service);
         this.title = booking.service.name;
         this.start = new Date(booking.startDate);
         this.patient = booking.user;

@@ -64,7 +64,6 @@ export const UPLOAD_SESSION_BLANK = gql`
     $inspections: CreateInspections!
     $sessionId: String!
     $appointmentResults: CreateAppointmentResults
-    $treatmentPlan: CreateTreatmentPlanGraph
   ) {
     createSessionBlank(
       complaint: $complaint
@@ -72,7 +71,6 @@ export const UPLOAD_SESSION_BLANK = gql`
       inspections: $inspections
       sessionId: $sessionId
       appointmentResults: $appointmentResults
-      treatmentPlan: $treatmentPlan
     ) {
       __typename
     }

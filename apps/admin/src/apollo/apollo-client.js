@@ -2,9 +2,11 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 
 const client = new ApolloClient({
-    uri: "https://api.pulse.org.kg/graphql",
+    uri: "http://lucem-back-production.up.railway.app/graphql",
     cache: new InMemoryCache(),
-    link: createUploadLink({ uri: "https://api.pulse.org.kg/graphql" }),
+    link: createUploadLink({
+        uri: "http://lucem-back-production.up.railway.app/graphql",
+    }),
 });
 
 export default client;

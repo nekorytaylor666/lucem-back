@@ -8,6 +8,7 @@ export const REGISTER_DOCTOR_MUTATION = gql`
     $acceptableAgeGroup: AcceptableAgeGroup!
     $dateOfBirth: DateTime!
     $avatar: Upload
+    $isMan: Boolean!
     $experience: [ExperienceInput!]
     $languages: [LanguageInput!]!
     $password: String!
@@ -23,6 +24,7 @@ export const REGISTER_DOCTOR_MUTATION = gql`
       dateOfBirth: $dateOfBirth
       description: $description
       email: $email
+      isMan: $isMan
       experience: $experience
       fullName: $fullName
       languages: $languages

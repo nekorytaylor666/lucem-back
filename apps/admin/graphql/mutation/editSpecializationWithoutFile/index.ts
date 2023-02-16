@@ -5,8 +5,8 @@ export const EDIT_SPECIALIZATION_WITHOUT_FILE_MUTATION = gql`
         $colorCode: String!
         $description: String!
         $specializationId: String!
-        $name: String! 
-        $colorCodeGradient: ColorCodeGradientInputType!
+        $name: String!
+        $colorCodeGradient: ColorCodeGradientInput!
     ) {
         editSpecializationWithoutFile(
             colorCode: $colorCode

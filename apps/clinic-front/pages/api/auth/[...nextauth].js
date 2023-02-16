@@ -1,4 +1,5 @@
 import { CHECK_SMS_VERIFICATION } from "graphql/mutations/checkSMSVerification";
+import { LOGIN_USER } from "graphql/queries/loginUser";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import client from "src/apollo/apollo-client";
@@ -7,25 +8,47 @@ const providers = [
     CredentialsProvider({
         name: "Credentials",
         credentials: {
-            phoneNumber: {
-                label: "phoneNumber",
+            email: {
+                label: "email",
                 type: "text",
             },
-            code: { label: "code", type: "text" },
+            password: { label: "password", type: "text" },
         },
         async authorize(credentials) {
             // Add logic here to look up the user from the credentials supplied
-            const phoneNumber = credentials?.phoneNumber;
-            const code = credentials?.code;
+            // const phoneNumber = credentials?.phoneNumber;
+            // const code = credentials?.code;
+            // try {
+            //     const checkSmsRes = await client.mutate({
+            //         mutation: CHECK_SMS_VERIFICATION,
+            //         variables: {
+            //             phoneNumber,
+            //             code,
+            //         },
+            //     });
+            //     const user = checkSmsRes.data?.checkSMSVerificationCode;
+            //     if (user) {
+            //         return user;
+            //     } else {
+            //         return null;
+            //     }
+            // } catch (error) {
+            //     return null;
+            // }
+
+            const email = credentials?.email;
+            const password = credentials?.password;
+
             try {
-                const checkSmsRes = await client.mutate({
-                    mutation: CHECK_SMS_VERIFICATION,
+                const loginRes = await client.mutate({
+                    mutation: LOGIN_USER,
                     variables: {
-                        phoneNumber,
-                        code,
+                        email,
+                        password,
                     },
                 });
-                const user = checkSmsRes.data?.checkSMSVerificationCode;
+                const user = loginRes.data?.loginUser;
+                console.log(user);
                 if (user) {
                     return user;
                 } else {

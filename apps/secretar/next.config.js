@@ -36,7 +36,11 @@ const nextConfig = {
         backendUrl: "http://94.247.128.224:5000",
     },
     images: {
-        domains: ["lucem.fra1.cdn.digitaloceanspaces.com", "94.247.128.224"],
+        domains: [
+            "lucem.fra1.cdn.digitaloceanspaces.com",
+            "94.247.128.224",
+            "pulse-backup-kyrg.s3.eu-central-1.amazonaws.com",
+        ],
     },
     // webpack: (config) => {
     //     config.module.rules.push(

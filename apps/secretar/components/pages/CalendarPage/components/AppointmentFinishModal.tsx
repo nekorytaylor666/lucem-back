@@ -39,9 +39,9 @@ const AppointmentFinishModal = ({
         },
         skip: !eventData?.patient?._id,
     });
-
     const session = activeSession?.getActiveSessionByUserId;
     const toast = useToast();
+    console.log("session", session);
     const [endSession] = useEndSessionMutation({
         context: {
             // example of setting the headers with context per operation
@@ -82,10 +82,10 @@ const AppointmentFinishModal = ({
                                 <div className="flex items-center">
                                     <div className="flex flex-col items-start">
                                         <p className="font-medium text-xl">
-                                            {eventData.patient.fullName}
+                                            {eventData.patient?.fullName}
                                         </p>
-                                        <p>{eventData.patient.phoneNumber}</p>
-                                        <p>{session.booking.service.name}</p>
+                                        <p>{eventData.patient?.phoneNumber}</p>
+                                        <p>{session.booking?.service?.name}</p>
                                     </div>
                                 </div>
                             </div>

@@ -21,12 +21,12 @@ const SignInPage = () => {
     });
 
     const handleSendVerificationCode = async ({
-        phoneNumber,
+        email,
+        password,
     }: {
-        phoneNumber: string;
-    }) => {
-        sendVerSMS({ variables: { phoneNumber } });
-    };
+        email: string;
+        password: string;
+    }) => {};
     return (
         <div className="min-h-screen min-w-full bg-light-pink">
             <div className=" mx-auto py-8 h-screen flex justify-center items-center">
@@ -39,19 +39,24 @@ const SignInPage = () => {
                     <div className="mb-8"></div>
                     <Formik
                         initialValues={{
-                            phoneNumber: "",
-                            code: "",
+                            email: "",
+                            password: "",
                         }}
-                        onSubmit={async ({ phoneNumber, code }) => {
-                            if (smsCodeSent) {
-                                await signIn("credentials", {
-                                    code,
-                                    phoneNumber,
-                                    callbackUrl: `${window.location.origin}/dashboard/`,
-                                });
-                                return false;
-                            }
-                            return handleSendVerificationCode({ phoneNumber });
+                        onSubmit={async ({ email, password }) => {
+                            signIn("credentials", {
+                                email,
+                                password,
+                                callbackUrl: `${window.location.origin}/dashboard/`,
+                            });
+                            // if (smsCodeSent) {
+                            //     await signIn("credentials", {
+                            //         code,
+                            //         phoneNumber,
+                            //         callbackUrl: `${window.location.origin}/dashboard/`,
+                            //     });
+                            //     return false;
+                            // }
+                            // return handleSendVerificationCode({ phoneNumber });
                         }}
                     >
                         {({ handleSubmit, handleChange, values }) => (
@@ -66,40 +71,27 @@ const SignInPage = () => {
                                         Вход в Личный кабинет
                                     </h1>
                                     <label className="flex flex-col mb-4 w-full ">
-                                        <span className="text-lg">Телефон</span>
-                                        <InputMask
-                                            disabled={smsCodeSent}
-                                            mask="+7 (999) 999-99-99"
-                                            id="phoneNumber"
-                                            type="tel"
-                                            name="phoneNumber"
+                                        <span className="text-lg">Email</span>
+                                        <Field
+                                            type="text"
                                             className="input px-4 py-1 w-full"
-                                            placeholder="+7 ("
-                                            value={values.phoneNumber}
-                                            onChange={handleChange}
-                                        />
+                                            name="email"
+                                        ></Field>
                                     </label>
                                     <label className="flex flex-col mb-4  w-full">
-                                        {smsCodeSent && (
-                                            <>
-                                                <span className="text-lg">
-                                                    Код подтверждения
-                                                </span>
-                                                <Field
-                                                    type="text"
-                                                    className="input px-4 py-1 w-full"
-                                                    name="code"
-                                                ></Field>
-                                            </>
-                                        )}
+                                        <span className="text-lg">Пароль</span>
+                                        <Field
+                                            type="text"
+                                            className="input px-4 py-1 w-full"
+                                            name="password"
+                                        ></Field>
                                     </label>
                                     <LoginButton
                                         type="submit"
-                                        disabled={
-                                            smsCodeSent &&
-                                            values.code.length !== 4
+                                        className={
+                                            "w-full text-white text-lg transition-all ease-in-out duration-100" +
+                                            " hover:bg-purple-700 hover:shadow-lg"
                                         }
-                                        className={"w-full text-white text-lg"}
                                     >
                                         Войти
                                     </LoginButton>

@@ -99,7 +99,7 @@ const BookingsPatient = ({ token, userId }) => {
                 </div>
             </div>
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {!filteredBookings.length && <p>Нет броней</p>}
+                {!filteredBookings?.length && <p>Нет броней</p>}
                 {filteredBookings?.map((booking) => (
                     <UpcomingBookingCard
                         booking={booking}

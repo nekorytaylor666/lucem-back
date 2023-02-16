@@ -66,6 +66,7 @@ const CalendarPage: React.FC = () => {
             },
         });
 
+    console.log(bookingsRes?.getBookingsByDate);
     const { data, loading: patientLoading } =
         useQuery<GetDoctorSearch>(GET_DOCTORS_SEARCH);
     const bookings: Booking[] = bookingsRes?.getBookingsByDate;

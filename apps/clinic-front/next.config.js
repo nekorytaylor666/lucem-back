@@ -26,6 +26,7 @@ const nextConfig = {
             "tube-can.fra1.cdn.digitaloceanspaces.com",
             "lucem-clinic.fra1.digitaloceanspaces.com",
             "94.247.128.224",
+            "pulse-backup-kyrg.s3.eu-central-1.amazonaws.com",
         ],
     },
     webpack: (config) => {
