@@ -13,13 +13,18 @@ export const smartSearchFactory = {
         try {
             const client = new Typesense.Client({
                 nodes: [
+                    // {
+                    //     host: configService.get('SMARTSEARCH_HOST'),
+                    //     port: configService.get('SMARTSEARCH_PORT'),
+                    //     protocol: 'https',
+                    // },
                     {
-                        host: configService.get('SMARTSEARCH_HOST'),
-                        port: configService.get('SMARTSEARCH_PORT'),
+                        host: 'tdq34wmyk2ozxnlcp-1.a1.typesense.net',
+                        port: 443,
                         protocol: 'https',
                     },
                 ],
-                apiKey: configService.get('SMARTSEARCH_API_KEY'),
+                apiKey: 'AwRGKXmd5a3S3g1HnAkAJy6kJKSxQ5dT',
                 connectionTimeoutSeconds: 5,
             });
             // await client.collections(doctorSchema.name).delete();
@@ -34,14 +39,42 @@ export const smartSearchFactory = {
                 await client.collections(deaseaseShema.name).retrieve();
                 await client.collections(serviceSchema.name).retrieve();
             } catch (e) {
-                await client.collections().create(ICDSchema);
-                await client.collections().create(specializationSchema);
-                await client.collections().create(doctorSchema);
-                await client.collections().create(deaseaseShema);
-                await client.collections().create(serviceSchema);
+                console.log(e);
+                client
+                    .collections()
+                    .create(ICDSchema)
+                    .catch((e) => {
+                        console.log(e);
+                    });
+                client
+                    .collections()
+                    .create(specializationSchema)
+                    .catch((e) => {
+                        console.log(e);
+                    });
+                client
+                    .collections()
+                    .create(doctorSchema)
+                    .catch((e) => {
+                        console.log(e);
+                    });
+                client
+                    .collections()
+                    .create(deaseaseShema)
+                    .catch((e) => {
+                        console.log(e);
+                    });
+                client
+                    .collections()
+                    .create(serviceSchema)
+                    .catch((e) => {
+                        console.log(e);
+                    });
             }
             return client;
         } catch (e) {
+            console.log(e);
+
             throw `${e}`;
         }
     },

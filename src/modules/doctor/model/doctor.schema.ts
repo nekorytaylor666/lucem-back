@@ -10,7 +10,6 @@ export const doctorSchema = {
         { name: 'email', type: 'string' },
         { name: 'acceptableAgeGroup', type: 'string', optional: true },
         { name: 'num', type: 'int32' },
-        { name: 'specializations', type: '[]string', optional: true },
     ],
-    default_sorting_field: 'fullName',
+    default_sorting_field: 'num',
 };
