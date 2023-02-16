@@ -16,11 +16,11 @@ export const smartSearchFactory = {
                     {
                         host: configService.get('SMARTSEARCH_HOST'),
                         port: configService.get('SMARTSEARCH_PORT'),
-                        protocol: 'http',
+                        protocol: 'https',
                     },
                 ],
                 apiKey: configService.get('SMARTSEARCH_API_KEY'),
-                connectionTimeoutSeconds: 2,
+                connectionTimeoutSeconds: 5,
             });
             // await client.collections(doctorSchema.name).delete();
             // await client.collections(specializationSchema.name).delete();
