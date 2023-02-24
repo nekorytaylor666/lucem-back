@@ -92,7 +92,10 @@ const StaffPage = () => {
                             <a> Все</a>
                         </li>
                         {specializations?.map((spec) => (
-                            <li onClick={() => setCurrentSpec(spec)}>
+                            <li
+                                key={spec._id}
+                                onClick={() => setCurrentSpec(spec)}
+                            >
                                 <a>{spec.name}</a>
                             </li>
                         ))}
