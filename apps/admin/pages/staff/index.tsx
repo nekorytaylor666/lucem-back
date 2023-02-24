@@ -153,7 +153,7 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
     return (
         <div className="grid grid-cols-3 gap-4 bg-white p-5 rounded-2xl min-h-screen">
             {filteredDoctors?.map((doctor: any) => (
-                <DoctorCard doctor={doctor} />
+                <DoctorCard key={doctor._id} doctor={doctor} />
             ))}
         </div>
     );
