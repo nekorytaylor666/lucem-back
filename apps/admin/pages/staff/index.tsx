@@ -159,9 +159,15 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
     );
 };
 
+interface DoctorSpecializations {
+    name: string;
+    __typename: string;
+    _id: string;
+}
+
 interface Doctor {
-    fullname: string;
-    specializations: string[];
+    fullName: string;
+    specializations: DoctorSpecializations[];
     avatar: {
         m: string;
     };
