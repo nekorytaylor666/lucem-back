@@ -67,7 +67,7 @@ const StaffPage = () => {
                 </div>
                 <div className="col-start-6 col-end-9 bg-white rounded dropdown ">
                     <div
-                        tabindex="0"
+                        tabIndex="0"
                         className="flex items-center justify-between bg-white p-2 h-full rounded cursor-pointer"
                     >
                         {currentSpec?.name ?? "Специализация"}
