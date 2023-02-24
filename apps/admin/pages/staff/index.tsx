@@ -184,7 +184,7 @@ const DoctorCard = ({
                     <p className="text-special-green h-4">В клинике</p>
                     <p className="h-4">{fullName}</p>
                     <p className="text-gray-400 h-4">
-                        {specializations.map((spec) => `${spec.name}, `)}
+                        {specializations.map((spec) => spec.name).join(", ")}
                     </p>
                     <p className="text-gray-400 h-8">101 кабинет</p>
                     <div className="h-64">
