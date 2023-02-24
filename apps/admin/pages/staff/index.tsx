@@ -146,7 +146,7 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
         );
     }
 
-    var re = new RegExp(searchName + ".+$", "i");
+    const re = new RegExp(searchName + ".+$", "i");
     filteredDoctors = filteredDoctors?.filter(function (e, i, a) {
         return e.fullName.search(re) != -1;
     });
