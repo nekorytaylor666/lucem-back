@@ -139,7 +139,10 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
     if (loading) return <></>;
     if (error) return <></>;
     const doctors = data?.getAllDoctors;
+
+    // need to replace filtering with a query to the DB
     let filteredDoctors = doctors;
+
     if (specId) {
         filteredDoctors = doctors?.filter((doctor) =>
             doctor.specializations?.map((spec) => spec._id).includes(specId),
@@ -150,6 +153,7 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
     filteredDoctors = filteredDoctors?.filter(function (e, i, a) {
         return e.fullName.search(re) != -1;
     });
+
     return (
         <div className="grid grid-cols-3 gap-4 bg-white p-5 rounded-2xl min-h-screen">
             {filteredDoctors?.map((doctor: any) => (
