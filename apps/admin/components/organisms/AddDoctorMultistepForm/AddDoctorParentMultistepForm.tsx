@@ -31,6 +31,7 @@ import { ProfessionalInfo } from "./ProfessionalInfoStep";
 import { Qualification } from "./QualificationStep";
 import { setHours, setDay } from "date-fns";
 import { createWorkTimesFromStartEndTimes } from "./utils/createWorkTimes";
+import { GET_DOCTORS } from "graphql/query/getDoctors";
 
 const ParentMultistepForm = () => {
     const router = useRouter();
@@ -38,11 +39,16 @@ const ParentMultistepForm = () => {
     const [mutateFunction, { data, loading, error }] = useMutation<
         RegisterDoctor,
         RegisterDoctorVariables
-    >(REGISTER_DOCTOR_MUTATION, {
-        onCompleted: (data) => {
-            alert("Complete!");
+    >(
+        REGISTER_DOCTOR_MUTATION,
+
+        {
+            refetchQueries: [GET_DOCTORS],
+            onCompleted: (data) => {
+                alert("Complete!");
+            },
         },
-    });
+    );
 
     const formatExperienceData = (values: RegisterDoctorFormSchema) => {
         console.log("before format:", values);
