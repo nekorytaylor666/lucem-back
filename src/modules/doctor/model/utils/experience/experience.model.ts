@@ -40,7 +40,7 @@ export class ExperienceAndEducationGraph {
     @Field()
     _id: string;
 
-    @Field(() => AllowedExperienceAndEducationTypes)
+    @Field(() => AllowedExperienceAndEducationTypes, { nullable: true })
     name: AllowedExperienceAndEducationTypes;
 
     @Field(() => [ExperienceAndEducationDataGraph], { nullable: true })
