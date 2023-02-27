@@ -32,10 +32,12 @@ import { Qualification } from "./QualificationStep";
 import { setHours, setDay } from "date-fns";
 import { createWorkTimesFromStartEndTimes } from "./utils/createWorkTimes";
 import { GET_DOCTORS } from "graphql/query/getDoctors";
+import { useToast } from "@chakra-ui/react";
 
 const ParentMultistepForm = () => {
     const router = useRouter();
 
+    const toast = useToast();
     const [mutateFunction, { data, loading, error }] = useMutation<
         RegisterDoctor,
         RegisterDoctorVariables
@@ -88,57 +90,70 @@ const ParentMultistepForm = () => {
     };
 
     const onRegisterDoctorFormSubmit = (values: RegisterDoctorFormSchema) => {
-        const { experience, education, qualifications } =
-            formatExperienceData(values);
-        console.log("after format:", values);
-        mutateFunction({
-            variables: {
-                fullName:
-                    values.personalInfo.lastName +
-                    " " +
-                    values.personalInfo.firstName +
-                    " " +
-                    values.personalInfo.middleName,
-                isMan: values.personalInfo.gender === "male",
-                email: values.contactInfo.email,
-                acceptableAgeGroup: values.professionalInfo
-                    .acceptableAgeGroup as AcceptableAgeGroup,
-                dateOfBirth: values.personalInfo.birthDate,
-                description: "",
-                languages: [
-                    {
-                        language: AllowedDoctorLanguages.English,
-                        type: AllowedDoctorLanguageTypes.First,
-                    },
-                ],
-                doctorPercentage: Number(values.professionalInfo.specialistCut),
-                password: "1234",
-                phoneNumber: values.contactInfo.workPhone,
-                startingExperienceDate:
-                    values.professionalInfo.startingExperienceDate,
-                avatar: values.photoInfo.file ?? null,
-                experience: [
-                    {
-                        data: experience,
-                        name: AllowedExperienceAndEducationTypes.Experience,
-                    },
-                    {
-                        data: education,
-                        name: AllowedExperienceAndEducationTypes.Education,
-                    },
-                    {
-                        data: qualifications,
-                        name: AllowedExperienceAndEducationTypes.Education,
-                    },
-                ],
-                workTimes: createWorkTimesFromStartEndTimes("08:00", "17:00"),
-                cabinet: "105",
-                // specializationIds: values.professionalInfo.specializations.map(
-                //     (item) => item.id,
-                // ),
-            },
-            onCompleted: () => alert("Completed!"),
-        });
+        try {
+            const { experience, education, qualifications } =
+                formatExperienceData(values);
+            console.log("after format:", values);
+            mutateFunction({
+                variables: {
+                    fullName:
+                        values.personalInfo?.lastName +
+                        " " +
+                        values.personalInfo?.firstName +
+                        " " +
+                        values.personalInfo?.middleName,
+                    isMan: values.personalInfo?.gender === "male",
+                    email: values.contactInfo?.email,
+                    acceptableAgeGroup: values.professionalInfo
+                        ?.acceptableAgeGroup as AcceptableAgeGroup,
+                    dateOfBirth: values.personalInfo?.birthDate,
+                    description: "",
+                    languages: [
+                        {
+                            language: AllowedDoctorLanguages.English,
+                            type: AllowedDoctorLanguageTypes.First,
+                        },
+                    ],
+                    doctorPercentage: Number(
+                        values.professionalInfo?.specialistCut,
+                    ),
+                    password: "1234",
+                    phoneNumber: values.contactInfo?.workPhone,
+                    startingExperienceDate:
+                        values.professionalInfo?.startingExperienceDate,
+                    avatar: values.photoInfo?.file ?? null,
+                    experience: [
+                        {
+                            data: experience,
+                            name: AllowedExperienceAndEducationTypes?.Experience,
+                        },
+                        {
+                            data: education,
+                            name: AllowedExperienceAndEducationTypes?.Education,
+                        },
+                        {
+                            data: qualifications,
+                            name: AllowedExperienceAndEducationTypes?.Education,
+                        },
+                    ],
+                    workTimes: createWorkTimesFromStartEndTimes(
+                        "08:00",
+                        "17:00",
+                    ),
+                    cabinet: "105",
+                    // specializationIds: values.professionalInfo.specializations.map(
+                    //     (item) => item.id,
+                    // ),
+                },
+                onCompleted: () =>
+                    toast({ status: "success", title: "Created" }),
+            });
+        } catch (error) {
+            toast({
+                status: "error",
+                description: JSON.stringify(error, null, 2),
+            });
+        }
     };
 
     const [activeStep, setActiveStep] = useState(0);
