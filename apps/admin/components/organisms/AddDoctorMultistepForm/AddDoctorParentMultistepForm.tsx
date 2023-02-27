@@ -45,11 +45,11 @@ const ParentMultistepForm = () => {
     });
 
     const formatExperienceData = (values: RegisterDoctorFormSchema) => {
-        console.log(values);
+        console.log("before format:", values);
         const experience: ExperienceDataInput[] = values.jobExperienceInfo.map(
             (item) => {
                 return {
-                    institutionName: item.companyName,
+                    institutionName: item.institutionName,
                     specialty: item.specialty,
                     years: item.years.map((el) => parseInt(el)),
                 };
@@ -59,7 +59,7 @@ const ParentMultistepForm = () => {
         const education: ExperienceDataInput[] = values.educationInfo.map(
             (item) => {
                 return {
-                    institutionName: item.schoolName,
+                    institutionName: item.institutionName,
                     specialty: item.specialty,
                     years: item.years.map((el) => parseInt(el)),
                 };
@@ -69,7 +69,7 @@ const ParentMultistepForm = () => {
         const qualifications: ExperienceDataInput[] =
             values.qualificationInfo.map((item) => {
                 return {
-                    institutionName: item.courseName,
+                    institutionName: item.institutionName,
                     specialty: item.specialty,
                     years: item.years.map((el) => parseInt(el)),
                 };
@@ -84,7 +84,7 @@ const ParentMultistepForm = () => {
     const onRegisterDoctorFormSubmit = (values: RegisterDoctorFormSchema) => {
         const { experience, education, qualifications } =
             formatExperienceData(values);
-
+        console.log("after format:", values);
         mutateFunction({
             variables: {
                 fullName:
@@ -188,7 +188,7 @@ const ParentMultistepForm = () => {
         },
         {
             slug: "previous-jobs",
-            label: "6. Предыдущие места работы",
+            label: "6. Клиники и медицинские центры",
             component: (
                 <JobExperienceInfo onNext={handleNext} onPrev={handleBack} />
             ),
