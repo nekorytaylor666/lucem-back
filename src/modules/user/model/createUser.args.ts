@@ -28,4 +28,7 @@ export class CreateUser
 
     @Field(() => PeculiaritiesInput, { nullable: true })
     peculiarities?: PeculiaritiesInput;
+
+    @Field()
+    password: string;
 }

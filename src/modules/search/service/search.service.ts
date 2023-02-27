@@ -131,6 +131,7 @@ export class SearchService {
         specializations.map((val) => {
             this.searchSpecializationCollection.create({
                 ...val,
+
                 _id: val._id.toHexString(),
                 num: 1,
             });

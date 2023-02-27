@@ -221,6 +221,8 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
     }
 
     async list() {
+        // create list of all documents and make specialization a massive of strings instead of objects
+
         return this.dbService.find().toArray();
     }
 

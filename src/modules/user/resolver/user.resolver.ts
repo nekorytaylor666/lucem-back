@@ -60,28 +60,53 @@ export class UserResolver {
     }
 
     @Mutation(() => UserGraph)
-    @Roles('user', 'secretary')
-    @UseGuards(PreAuthGuard)
     async registerUser(
         @Args() args: CreateUser,
-        @CurrentUserGraph() user: User | Secretary,
         @CurrentTokenPayload() payload: Token,
     ) {
-        if (payload.role === TokenRoles.Secretary) {
-            const insertPhoneNumber = await this.userService.insertOne({
-                phoneNumber: args.phoneNumber.replace(/\D/g, ''),
-            } as any);
-            const createUser = await this.userService.createUser({
-                ...args,
-                _id: insertPhoneNumber.toHexString(),
+        // if user exists return user
+        const user = await this.userService.findOne({
+            phoneNumber: args.phoneNumber.replace(/\D/g, ''),
+        });
+        if (user) {
+            const token = this.tokenService.create({
+                user: {
+                    ...user,
+                    _id: user._id.toHexString(),
+                },
+                role: TokenRoles.User,
             });
-            return createUser;
+            const userWithToken = { ...user, token };
+            const userResponce = new UserGraph({ ...userWithToken });
+            return userResponce;
         }
+        const insertPhoneNumber = await this.userService.insertOne({
+            phoneNumber: args.phoneNumber.replace(/\D/g, ''),
+        } as any);
         const createUser = await this.userService.createUser({
             ...args,
-            _id: user._id.toHexString(),
+            _id: insertPhoneNumber.toHexString(),
         });
+
         const userResponce = new UserGraph({ ...createUser });
+        return userResponce;
+    }
+
+    @Query(() => UserGraph)
+    async loginUser(
+        @Args('email', { type: () => String }) email: string,
+        @Args('password', { type: () => String }) password: string,
+    ) {
+        const user = await this.userService.login({ email, password });
+        const token = this.tokenService.create({
+            user: {
+                ...user,
+                _id: user._id.toHexString(),
+            },
+            role: TokenRoles.User,
+        });
+        const userWithToken = { ...user, token };
+        const userResponce = new UserGraph({ ...userWithToken });
         return userResponce;
     }
 
