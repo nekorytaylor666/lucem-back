@@ -144,10 +144,6 @@ const UpcomingBookingCard = ({
                             {booking.doctor.fullName}
                         </p>
                     </div>
-                    <div>
-                        <p>Стаж 10 лет</p>
-                        <p>Врач первой категории</p>
-                    </div>
                 </div>
             </div>
         </div>

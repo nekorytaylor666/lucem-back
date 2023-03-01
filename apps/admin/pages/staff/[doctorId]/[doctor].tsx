@@ -7,7 +7,15 @@ import {
 import { useRouter } from "next/router";
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
-import { getDay, getHours, format, subDays, addDays, subYears } from "date-fns";
+import {
+    getDay,
+    getHours,
+    format,
+    subDays,
+    addDays,
+    subYears,
+    formatDistance,
+} from "date-fns";
 import ru from "date-fns/locale/ru";
 import { EDIT_DOCTOR_AVATAR } from "graphql/mutation/editDoctorAvatar";
 import {
@@ -178,7 +186,16 @@ const DoctorInfo = ({ doctor }: { doctor: GetDoctorByID_getDoctorByID }) => {
                         </div>
                         <div>
                             <p className="text-gray-400">Стаж работы</p>
-                            <p>4 года стажа</p>
+                            <p>
+                                {formatDistance(
+                                    new Date(doctor.startingExperienceDate),
+                                    new Date(),
+                                    {
+                                        locale: ru,
+                                    },
+                                )}{" "}
+                                стаж работы
+                            </p>
                         </div>
                         <div>
                             <p className="text-gray-400">Средняя оценка</p>
