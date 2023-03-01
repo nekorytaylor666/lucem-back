@@ -129,20 +129,20 @@ export class DoctorService extends BasicService<Doctor> {
             workTimes,
             cabinet,
         };
-        const insertDoctor = await this.dbService.findOneAndReplace(
-            {
-                email,
-            },
-            doctor,
-            { upsert: true, returnDocument: 'after' },
-        );
+        const insertDoctorResponse = await this.dbService.insertOne(doctor);
+        const insertDoctorId = insertDoctorResponse.insertedId;
+
+        const insertDoctor = await this.findOneWithOptions({
+            fields: ['_id'],
+            values: [insertDoctorId],
+        });
         const searchDoctor: Modify<Doctor, { _id: string; num: number }> = {
             ...doctor,
-            _id: insertDoctor.value._id.toHexString(),
+            _id: insertDoctor._id.toHexString(),
             num: 12,
         };
         await this.searchCollection.create(searchDoctor);
-        return insertDoctor.value;
+        return insertDoctor;
     }
 
     async login(args: { email: string; password: string }) {
@@ -188,6 +188,7 @@ export class DoctorService extends BasicService<Doctor> {
             email,
             password,
             description,
+            experiences,
             languages,
             startingExperienceDate,
             cabinet,
@@ -225,6 +226,7 @@ export class DoctorService extends BasicService<Doctor> {
             description,
             startingExperienceDate,
             cabinet,
+            experiences,
             acceptableAgeGroup,
             avatar: avatarURL && avatarURL,
         };
