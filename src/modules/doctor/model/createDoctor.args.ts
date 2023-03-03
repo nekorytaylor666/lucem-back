@@ -34,7 +34,7 @@ export class CreateDoctor
     @Field(() => GraphQLISODateTime)
     dateOfBirth: Date;
 
-    @Field(() => GraphQLISODateTime)
+    @Field(() => GraphQLISODateTime, { nullable: true })
     startingExperienceDate: Date;
 
     @Field()

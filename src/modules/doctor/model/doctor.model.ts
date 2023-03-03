@@ -41,7 +41,7 @@ export class DoctorGraph
     @Field(() => [DeseaseGraph], { nullable: true })
     deseases?: DeseaseGraph[];
 
-    @Field(() => GraphQLISODateTime)
+    @Field(() => GraphQLISODateTime, { nullable: true })
     startingExperienceDate: Date;
 
     @Field({ nullable: true, defaultValue: 10 })
