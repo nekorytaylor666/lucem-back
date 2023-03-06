@@ -194,7 +194,7 @@ interface IParams extends ParsedUrlQuery {
     id: string;
 }
 
-export const getStaticProps: GetStaticProps = async (context?) => {
+export const getServerSideProps: GetStaticProps = async (context?) => {
     const { id } = context.params as IParams;
     const allSpecializationsRes = await client.query({
         query: GET_SPECIALIZATION,
@@ -206,25 +206,24 @@ export const getStaticProps: GetStaticProps = async (context?) => {
     );
 
     return {
-        revalidate: 10,
         props: {
             specialization,
         }, // will be passed to the page component as props
     };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-    const { data } = await client.query({ query: GET_SPECIALIZATION });
-    const specializations: Specialization[] = data.getSpecializations;
-    const paths = specializations?.map((spec) => {
-        return { params: { id: spec._id, route: "both" } };
-    });
+// export const getStaticPaths: GetStaticPaths = async () => {
+//     const { data } = await client.query({ query: GET_SPECIALIZATION });
+//     const specializations: Specialization[] = data.getSpecializations;
+//     const paths = specializations?.map((spec) => {
+//         return { params: { id: spec._id, route: "both" } };
+//     });
 
-    // We'll pre-render only these paths at build time.
-    // { fallback: blocking } will server-render pages
-    // on-demand if the path doesn't exist.
-    return {
-        paths,
-        fallback: false,
-    };
-};
+//     // We'll pre-render only these paths at build time.
+//     // { fallback: blocking } will server-render pages
+//     // on-demand if the path doesn't exist.
+//     return {
+//         paths,
+//         fallback: false,
+//     };
+// };
