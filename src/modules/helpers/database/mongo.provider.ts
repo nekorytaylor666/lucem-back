@@ -8,17 +8,6 @@ export const mongodDbFactory: FactoryProvider<Promise<Db>> = {
     provide: 'DATABASE_CONNECTION',
     useFactory: async (configService: ConfigService): Promise<Db> => {
         try {
-            // const client = await MongoClient.connect(
-            //     configService.get('MONGO_URL'),
-            //     {
-            //         keepAlive: true,
-            //         noDelay: true,
-            //         sslCA:
-            //             process.env.NODE_ENV === 'production'
-            //                 ? join(process.cwd(), 'ca-certificate.crt')
-            //                 : null,
-            //     },
-            // );
             const client = await MongoClient.connect(
                 configService.get('MONGO_URL'),
             );
