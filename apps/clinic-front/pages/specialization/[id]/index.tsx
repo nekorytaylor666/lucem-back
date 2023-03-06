@@ -12,7 +12,7 @@ import Layout from "components/template/Layout";
 import AppointmentModal from "components/atoms/AppointmentModal";
 import DoctorsList from "../../../components/organisms/doctorsList";
 import client from "src/apollo/apollo-client";
-import { GET_SPECIALIZATION } from "graphql/queries";
+import { GET_SPECIALIZATION, GET_SPECIALIZATION_BY_ID } from "graphql/queries";
 import Footer from "components/Footer";
 // import { filterSpecializations } from "src/helper";
 import { ParsedUrlQuery } from "querystring";
@@ -44,26 +44,12 @@ const SpecializationPage: React.FC<SpecializationPageProps> = ({
     };
 
     const doctors = specialization?.doctors;
-    const filteredDoctors = useMemo(() => {
-        const acceptableAgeGroup =
-            ageGroupsConfig[(age as keyof typeof ageGroupsConfig) ?? "both"];
-        const adultDoctors = doctors.filter(
-            (el) =>
-                (acceptableAgeGroup.adult &&
-                    el.acceptableAgeGroup == "adult") ||
-                el.acceptableAgeGroup == "both",
-        );
-        const childDoctors = doctors.filter(
-            (el) =>
-                acceptableAgeGroup.child && el.acceptableAgeGroup == "child",
-        );
-        return [...adultDoctors, ...childDoctors];
-    }, [age, doctors]);
+
     const routes: TabRoute[] = [
         {
             slug: "doctors",
             label: "Врачи",
-            component: <DoctorsList doctors={filteredDoctors} />,
+            component: <DoctorsList doctors={doctors} />,
         },
     ];
     // if (loading) return <></>;
@@ -165,7 +151,7 @@ const SpecializationPage: React.FC<SpecializationPageProps> = ({
                     </SpecialiazationBackgroundDecoration>
                 </div>
                 <Layout>
-                    <DoctorsList doctors={filteredDoctors} />
+                    <DoctorsList doctors={doctors} />
                 </Layout>
             </div>
             <Footer />
@@ -197,14 +183,14 @@ interface IParams extends ParsedUrlQuery {
 export const getServerSideProps: GetStaticProps = async (context?) => {
     const { id } = context.params as IParams;
     const allSpecializationsRes = await client.query({
-        query: GET_SPECIALIZATION,
+        query: GET_SPECIALIZATION_BY_ID,
+        variables: {
+            id,
+        },
     });
-    const allSpecializations = allSpecializationsRes?.data?.getSpecializations;
 
-    const specialization = allSpecializations.find(
-        (spec: Specialization) => spec._id === id,
-    );
-
+    const specialization = allSpecializationsRes.data.getSpecializationById;
+    console.log(specialization.doctors);
     return {
         props: {
             specialization,
