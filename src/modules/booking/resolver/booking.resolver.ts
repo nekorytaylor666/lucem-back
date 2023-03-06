@@ -44,8 +44,7 @@ export class BookingResolver {
     @UseGuards(PreAuthGuard)
     async createBooking(
         @Args() args: CreateBooking,
-        @CurrentUserGraph()
-        _user: User,
+        @CurrentUserGraph() _user: User,
         @CurrentTokenPayload() payload: Token,
     ) {
         const doctor = await this.doctorService.findOne({
