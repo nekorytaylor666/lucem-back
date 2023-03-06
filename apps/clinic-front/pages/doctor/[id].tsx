@@ -322,8 +322,8 @@ const DoctorExperience = ({
                                 insitutionName={institutionName}
                                 icon={experience.icon}
                                 label={specialty}
-                                startYear={start.toString()}
-                                finishYear={end.toString()}
+                                startYear={start?.toString()}
+                                finishYear={end?.toString()}
                             ></ExperienceItem>
                         ),
                     )}
@@ -477,6 +477,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
             price,
         },
         revalidate: 10,
+        notFound: !doctor,
     };
 };
 
