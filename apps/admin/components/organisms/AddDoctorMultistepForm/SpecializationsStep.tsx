@@ -15,7 +15,11 @@ import {
     EditDoctorMutationVariables,
     MutationAttachDoctorToSpecializationArgs,
 } from "../../../../../packages/shared-gql";
-import { ATTACH_DOCTOR_TO_SPECIALIZATION } from "../../../graphql/mutation/attachDoctorToSpecialization";
+import {
+    ATTACH_DOCTOR_TO_SPECIALIZATION,
+    DETACH_DOCTOR_FROM_SPECIALIZATION,
+} from "../../../graphql/mutation/attachDoctorToSpecialization";
+import { GET_DOCTOR_BY_ID } from "graphql/query";
 
 export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
     const [
@@ -25,6 +29,17 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
         onCompleted: (data) => {
             alert("Специализация добавлена!");
         },
+        refetchQueries: [GET_DOCTOR_BY_ID],
+    });
+
+    const [
+        dettachDoctorToSpecializationFunction,
+        { data: dettachDoctorToSpecializationData, loading: loadingDetach },
+    ] = useMutation(DETACH_DOCTOR_FROM_SPECIALIZATION, {
+        onCompleted: (data) => {
+            alert("Специализация удалена!");
+        },
+        refetchQueries: [GET_DOCTOR_BY_ID],
     });
 
     const { data } = useQuery<GetSpecializations>(GET_SPECIALIZATIONS);
@@ -55,8 +70,17 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
                             alignItems: "center",
                         }}
                     >
-                        <p style={{fontWeight: 700,}}>{item.name}</p>
+                        <p style={{ fontWeight: 700 }}>{item.name}</p>
                         <button
+                            type="button"
+                            onClick={() => {
+                                dettachDoctorToSpecializationFunction({
+                                    variables: {
+                                        doctorId: doctorData._id,
+                                        specializationId: item._id,
+                                    },
+                                });
+                            }}
                             style={{
                                 fontSize: 12,
                             }}
@@ -96,7 +120,8 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
                                 attachDoctorToSpecializationFunction({
                                     variables: {
                                         doctorId: doctorData._id,
-                                        specializationId: selectedSpecificationId,
+                                        specializationId:
+                                            selectedSpecificationId,
                                     },
                                     onCompleted: () => location.reload(),
                                 });
