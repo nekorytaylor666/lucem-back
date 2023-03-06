@@ -27,6 +27,7 @@ export const GET_DOCTOR_BY_ID = gql`
                 language
                 type
             }
+            startingExperienceDate
             numOfRatings
             phoneNumber
             rating

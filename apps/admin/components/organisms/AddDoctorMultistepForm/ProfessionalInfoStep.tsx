@@ -11,7 +11,11 @@ import { FC } from "react";
 import { RegisterDoctorFormSchema } from "./formConfig/initialValues";
 import { FormStepProps } from "./types";
 
-export const ProfessionalInfo: FC<FormStepProps> = ({ editDoctor, onNext, onPrev }) => {
+export const ProfessionalInfo: FC<FormStepProps> = ({
+    editDoctor,
+    onNext,
+    onPrev,
+}) => {
     return (
         <div className="space-y-3">
             <p>Профессиональная информация</p>
@@ -124,7 +128,7 @@ const SpecializationsFieldArray = (props: FieldArrayRenderProps) => {
     const { data } = useQuery<GetSpecializations>(GET_SPECIALIZATIONS);
     const specializations = data?.getSpecializations ?? [];
     const onAdd = () => {
-        push({ id: "" });
+        push({ id: specializations[0]._id });
     };
 
     return (

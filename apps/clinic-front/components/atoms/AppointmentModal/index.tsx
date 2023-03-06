@@ -182,7 +182,7 @@ const AppointmentModal = () => {
                     animate={{ y: [0, -20, 0], opacity: 1 }}
                     transition={{ type: "spring", duration: 0.5 }}
                 >
-                    <StyledModalContainer className="py-8 px-6 bg-gray-100 rounded-2xl w-full lg:w-5/12 space-y-4 overflow-y-scroll h-screen lg:h-auto">
+                    <div className="py-8 px-6 bg-gray-100 rounded-2xl w-full lg:w-5/12 space-y-4 overflow-y-scroll max-h-screen lg:h-auto">
                         <div className="flex justify-between">
                             <div>
                                 <p className="text-3xl font-bold">
@@ -233,10 +233,6 @@ const AppointmentModal = () => {
                                     </p>
                                     <p className="text-xl font-bold">
                                         {doctor?.fullName}
-                                    </p>
-                                    <p>
-                                        Врач высшей категории | Кандидат
-                                        медицинских наук
                                     </p>
                                 </div>
                             </div>
@@ -424,7 +420,7 @@ const AppointmentModal = () => {
                                 </div>
                             )} */}
                         </form>
-                    </StyledModalContainer>
+                    </div>
                 </motion.div>
             </Background>
         </>
@@ -445,6 +441,7 @@ const Background = styled.div`
 const StyledModalContainer = styled.div`
     position: absolute;
     z-index: auto;
+    max-hegiht: 100%;
 `;
 
 export default AppointmentModal;

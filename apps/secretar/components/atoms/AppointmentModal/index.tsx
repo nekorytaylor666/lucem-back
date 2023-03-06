@@ -256,10 +256,6 @@ const AppointmentModal = () => {
                                     <p className="text-xl font-bold">
                                         {doctor?.fullName}
                                     </p>
-                                    <p>
-                                        Стаж 33 года | Врач высшей категории |
-                                        Кандидат медицинских наук
-                                    </p>
                                 </div>
                             </div>
                         </div>

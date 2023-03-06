@@ -42,21 +42,21 @@ const DesktopNavbar: React.FC<NavbarProps> = ({ light }) => {
                 </div>
             </Link>
             <div className="text-lg space-x-4 pt-4">
-                <Link href="/disease">
+                {/* <Link href="/disease">
+                    <span className="font-medium hover:text-pink-purple cursor-pointer hover:bg-gradient-pink py-2 px-6 rounded-full transition-all ease-in-out">
+                        Врачи
+                    </span>
+                </Link> */}
+                <Link href="/specializations">
                     <span className="font-medium hover:text-pink-purple cursor-pointer hover:bg-gradient-pink py-2 px-6 rounded-full transition-all ease-in-out">
                         Врачи
                     </span>
                 </Link>
-                <Link href="/specializations">
-                    <span className="font-medium hover:text-pink-purple cursor-pointer hover:bg-gradient-pink py-2 px-6 rounded-full transition-all ease-in-out">
-                        Услуги
-                    </span>
-                </Link>
-                <Link href="/about">
+                {/* <Link href="/about">
                     <span className="font-medium hover:text-pink-purple cursor-pointer hover:bg-gradient-pink py-2 px-6 rounded-full transition-all ease-in-out">
                         О клинике
                     </span>
-                </Link>
+                </Link> */}
             </div>
             <div className="flex items-end flex-col space-y-1 pt-4 ">
                 {isAuth ? (
