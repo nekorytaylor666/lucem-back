@@ -22,8 +22,8 @@ export const mongodDbFactory: FactoryProvider<Promise<Db>> = {
             const client = await MongoClient.connect(
                 configService.get('MONGO_URL'),
             );
-            const database = client.db(configService.get('MONGO_DB_NAME'));
-            return database;
+
+            return client.db(configService.get('MONGO_DB_NAME'));
         } catch (e) {
             throw e;
         }
