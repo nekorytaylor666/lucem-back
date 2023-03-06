@@ -113,22 +113,22 @@ const MobileNavbar: React.FC<NavbarProps> = ({ light }) => {
                     <UserIcon></UserIcon>
                 </Link>
             </div>
-            <div className="grid grid-cols-3 w-full gap-2 mt-4">
-                <Link href="/disease">
+            <div className="grid grid-cols-1 w-full gap-2 mt-4">
+                {/* <Link href="/disease">
                     <NavButton className="w-full py-2 font-medium flex justify-center items-center">
                         Врачи
                     </NavButton>
-                </Link>
+                </Link> */}
                 <Link href="/specializations">
                     <NavButton className="w-full font-medium flex justify-center items-center">
                         Услуги
                     </NavButton>
                 </Link>
-                <Link href="/about">
+                {/* <Link href="/about">
                     <NavButton className="w-full font-medium flex justify-center items-center">
                         О нас
                     </NavButton>
-                </Link>
+                </Link> */}
             </div>
         </div>
     );
