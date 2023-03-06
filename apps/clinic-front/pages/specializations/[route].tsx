@@ -78,14 +78,7 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = ({
     );
 };
 
-export async function getStaticPaths() {
-    return {
-        paths: [{ params: { route: "adult" } }, { params: { route: "child" } }],
-        fallback: false,
-    };
-}
-
-export async function getStaticProps() {
+export async function getServersideProps() {
     const { data } = await client.query({ query: GET_SPECIALIZATION });
     const specializations = data.getSpecializations;
     return {
@@ -94,4 +87,5 @@ export async function getStaticProps() {
         }, // will be passed to the page component as props
     };
 }
+
 export default SpecializationsPage;
