@@ -141,9 +141,10 @@ const ParentMultistepForm = () => {
                         "17:00",
                     ),
                     cabinet: "105",
-                    // specializationIds: values.professionalInfo.specializations.map(
-                    //     (item) => item.id,
-                    // ),
+                    specializationIds:
+                        values.professionalInfo.specializations.map(
+                            (item) => item.id,
+                        ),
                 },
                 onCompleted: () =>
                     toast({ status: "success", title: "Created" }),

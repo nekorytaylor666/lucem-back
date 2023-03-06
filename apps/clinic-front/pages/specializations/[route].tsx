@@ -10,31 +10,25 @@ import Footer from "components/Footer";
 import client from "@/client/apollo-client";
 import { GET_SPECIALIZATION } from "graphql/queries";
 import { Specialization } from "custom_typings/specialization";
+import { useQuery } from "@apollo/client";
 
 interface SpecializationsPageProps {
     specializations: Specialization[];
 }
-const SpecializationsPage: React.FC<SpecializationsPageProps> = ({
-    specializations,
-}) => {
-    const routes: TabRoute[] = [
-        {
-            slug: "adult",
-            label: "Услуги для взрослых",
-            component: (
-                <SpecializationPageGrid specializations={specializations} />
-            ),
-        },
-        {
-            slug: "child",
-            label: "Услуги для детей",
-            component: (
-                <SpecializationPageGrid specializations={specializations} />
-            ),
-        },
-    ];
+const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
+    const { data, loading } = useQuery(GET_SPECIALIZATION);
 
-    const TabBody = useTabRouting({ routes });
+    if (loading) {
+        return (
+            <div className="h-full w-full flex justify-center items-center">
+                <div className="lds-ripple">
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        );
+    }
+    const specializations = data.getSpecializations;
     return (
         <Layout>
             <div className="bg-white">
@@ -53,7 +47,6 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = ({
                                     Более 20 специализаций первоклассных врачей.
                                 </p>
                             </div>
-                            <TabsHead routes={routes}></TabsHead>
                         </div>
                         <div className="container lg:hidden p-6">
                             <div className="grid mx-auto grid-cols-1 mb-4">
@@ -67,31 +60,16 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = ({
                                     Более 20 специализаций первоклассных врачей.
                                 </p>
                             </div>
-                            <TabsHead routes={routes}></TabsHead>
                         </div>
                     </div>
                 </div>
-                <div>{TabBody}</div>
+                <div>
+                    <SpecializationPageGrid specializations={specializations} />
+                </div>
             </div>
             <Footer />
         </Layout>
     );
 };
 
-export async function getStaticPaths() {
-    return {
-        paths: [{ params: { route: "adult" } }, { params: { route: "child" } }],
-        fallback: false,
-    };
-}
-
-export async function getStaticProps() {
-    const { data } = await client.query({ query: GET_SPECIALIZATION });
-    const specializations = data.getSpecializations;
-    return {
-        props: {
-            specializations,
-        }, // will be passed to the page component as props
-    };
-}
 export default SpecializationsPage;
