@@ -57,6 +57,26 @@ export class SpecializationResolver {
         return specializationResponce;
     }
 
+    @Mutation(() => SpecializationGraph)
+    async dettachDoctorFromSpecialization(
+        @Args('doctorId', { type: () => String }) doctorId: string,
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+    ) {
+        const specialization =
+            await this.specializationService.updateOneWithOptions({
+                findField: ['_id'],
+                findValue: [new ObjectId(specializationId)],
+                updateField: ['doctorIds'],
+                updateValue: [new ObjectId(doctorId)],
+                method: '$pull',
+            });
+        const specializationResponce = new SpecializationGraph({
+            ...specialization,
+        });
+        return specializationResponce;
+    }
+
     @Query(() => SpecializationGraph)
     async findSpecialization(
         @Args('specializationId', { type: () => String })
