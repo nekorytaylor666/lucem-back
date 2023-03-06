@@ -29,6 +29,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ICDModule } from './modules/ICD/ICD.module';
 import { AWSPhotoUploadModule } from './modules/uploadPhoto/awsSpace.module';
 
+const ENV = process.env.NODE_ENV;
+
 @Module({
     imports: [
         // MulterModule.register({
@@ -36,6 +38,7 @@ import { AWSPhotoUploadModule } from './modules/uploadPhoto/awsSpace.module';
         // }),
         ConfigModule.forRoot({
             isGlobal: true,
+            envFilePath: !ENV ? '.env' : `.env.${ENV}`,
         }),
         // MailerModule.forRootAsync({
         //     useFactory: () => ({
