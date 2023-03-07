@@ -37,7 +37,8 @@ interface AppointmentTimetableProps {
 const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
     doctor,
 }) => {
-    if (doctor == undefined || doctor == null) return <></>;
+    if (!doctor) return <></>;
+
     const [appointmentData, { setAppointmentDoctor, setTime, setShow }] =
         useAppointment();
 
