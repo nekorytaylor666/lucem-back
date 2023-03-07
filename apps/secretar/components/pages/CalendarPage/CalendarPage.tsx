@@ -96,7 +96,7 @@ const CalendarPage: React.FC = () => {
             setEvents(
                 convertBookingToEvents(
                     bookings.filter((b) => {
-                        return b.doctor._id === curDoctorId;
+                        return b.doctor?._id === curDoctorId;
                     }),
                 ),
             );
@@ -253,11 +253,12 @@ const convertBookingToEvents = (bookings: Booking[]) => {
 
 const renderEventContent = (eventInfo: EventContentArg) => {
     const { event } = eventInfo;
-    const { type, patient, service } = event.extendedProps as {
+    const { type, patient, service, booking } = event.extendedProps as {
         type: BookingProgress;
         patient: PatientEntity;
         service: any;
     };
+    console.log("props:", event.extendedProps);
     const eventTemplate = getTemplate(type) ?? null;
     return (
         eventTemplate && (
@@ -265,9 +266,14 @@ const renderEventContent = (eventInfo: EventContentArg) => {
                 {...eventTemplate.eventContainer}
                 className="w-full h-full p-2 rounded flex flex-col justify-start    "
             >
-                <div className="flex items-center justify-start mb-2">
-                    <p className="text-sm truncate text-current  ">
+                <div className="flex items-start justify-start mb-2 flex-col gap-1">
+                    <p className="text-sm truncate text-current  flex flex-col ">
+                        <span>Пациент:</span>
                         {patient?.fullName}
+                    </p>
+                    <p className="text-sm truncate text-current font-medium  flex flex-col">
+                        <span>Доктор:</span>
+                        {booking?.doctor?.fullName}
                     </p>
                 </div>
                 <EventSubtitle service={service} type={type} />
@@ -283,6 +289,7 @@ interface EventSubtitleProps {
 
 const EventSubtitle: React.FC<EventSubtitleProps> = ({ type, service }) => {
     const subtitle = getTemplate(type)?.subtitle;
+    console.log("service:", service);
     return (
         <div className="flex items-center justify-start">
             {subtitle?.icon && (
