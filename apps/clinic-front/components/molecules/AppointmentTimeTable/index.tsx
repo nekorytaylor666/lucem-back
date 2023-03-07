@@ -161,7 +161,6 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                             <TimeContainer
                                 key={i}
                                 setTime={() => {
-                                    console.log(val, workWeekSchedule);
                                     setTime({
                                         start: val?.time.start,
                                         end: val?.time.end,

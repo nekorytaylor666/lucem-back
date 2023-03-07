@@ -38,7 +38,6 @@ const DoctorPage: React.FC<DoctorPageProps> = ({
     doctor,
     price,
 }: DoctorPageProps) => {
-    console.log(price);
     return (
         <Layout>
             <AppointmentModal />
