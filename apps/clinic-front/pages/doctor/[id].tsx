@@ -286,6 +286,7 @@ const converExperienceToDisplayArray = (
     const experienceTypeToLabel = {
         [AllowedExperienceAndEducationTypes.Experience]: "Опыт работы",
         [AllowedExperienceAndEducationTypes.Education]: "Образование",
+        [AllowedExperienceAndEducationTypes.Courses]: "Курсы и семинары",
     };
 
     const doctorExperience = doctor?.experiences?.map((experience) => {
