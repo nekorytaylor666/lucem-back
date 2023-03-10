@@ -330,21 +330,15 @@ const DoctorExperience = ({
                     <h3 className="font-bold text-3xl tracking-wide">
                         {experience.type}
                     </h3>
-                    {experience.data.map(
-                        ({
-                            institutionName,
-                            specialty,
-                            years: [start, end],
-                        }) => (
-                            <ExperienceItem
-                                insitutionName={institutionName}
-                                icon={experience.icon}
-                                label={specialty}
-                                startYear={start?.toString()}
-                                finishYear={end?.toString()}
-                            ></ExperienceItem>
-                        ),
-                    )}
+                    {experience.data.map((value) => (
+                        <ExperienceItem
+                            insitutionName={value?.institutionName}
+                            icon={experience.icon}
+                            label={value?.specialty}
+                            startYear={value?.years[0]?.toString()}
+                            finishYear={value?.years[1]?.toString()}
+                        ></ExperienceItem>
+                    ))}
                 </div>
             ))}
         </div>
