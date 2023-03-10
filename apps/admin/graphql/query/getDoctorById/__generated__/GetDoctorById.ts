@@ -29,7 +29,7 @@ export interface GetDoctorByID_getDoctorByID_experiences_data {
 export interface GetDoctorByID_getDoctorByID_experiences {
   __typename: "ExperienceAndEducation";
   data: GetDoctorByID_getDoctorByID_experiences_data[] | null;
-  name: AllowedExperienceAndEducationTypes;
+  name: AllowedExperienceAndEducationTypes | null;
 }
 
 export interface GetDoctorByID_getDoctorByID_languages {
@@ -62,6 +62,7 @@ export interface GetDoctorByID_getDoctorByID {
   experiences: GetDoctorByID_getDoctorByID_experiences[] | null;
   fullName: string;
   languages: GetDoctorByID_getDoctorByID_languages[];
+  startingExperienceDate: any | null;
   numOfRatings: number;
   phoneNumber: string;
   rating: number | null;

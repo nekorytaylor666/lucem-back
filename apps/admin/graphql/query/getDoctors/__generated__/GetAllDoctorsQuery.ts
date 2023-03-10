@@ -15,6 +15,7 @@ export interface GetAllDoctorsQuery_getAllDoctors_avatar {
 export interface GetAllDoctorsQuery_getAllDoctors_specializations {
   __typename: "Specialization";
   name: string;
+  _id: string;
 }
 
 export interface GetAllDoctorsQuery_getAllDoctors {

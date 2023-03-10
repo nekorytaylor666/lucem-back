@@ -42,3 +42,9 @@ export const GET_DOCTOR_BY_ID = gql`
         }
     }
 `;
+
+export const DELETE_DOCTOR = gql`
+    mutation DeleteDoctor($id: String!) {
+        deleteDoctor(doctorId: $id)
+    }
+`;

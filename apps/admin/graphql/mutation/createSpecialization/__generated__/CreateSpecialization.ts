@@ -13,7 +13,6 @@ export interface CreateSpecialization_createSpecialization {
   __typename: "Specialization";
   _id: string;
   name: string;
-  description: string;
 }
 
 export interface CreateSpecialization {

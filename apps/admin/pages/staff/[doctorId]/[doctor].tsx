@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_DOCTOR_BY_ID } from "graphql/query";
+import { DELETE_DOCTOR, GET_DOCTOR_BY_ID } from "graphql/query";
 import {
     GetDoctorByID,
     GetDoctorByID_getDoctorByID,
@@ -33,6 +33,8 @@ import {
 import { ElevatedContainer } from "components/atoms/ElevatedContainer";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/client";
+import { Button } from "@chakra-ui/react";
+import { GET_DOCTORS } from "graphql/query/getDoctors";
 const DoctorPage = () => {
     const router = useRouter();
     const doctorId = router.query.doctorId;
@@ -80,6 +82,12 @@ const DoctorInfo = ({ doctor }: { doctor: GetDoctorByID_getDoctorByID }) => {
     }
     const { data, loading } = useQuery<GetDoctorByID>(GET_DOCTOR_BY_ID, {
         variables: { id: doctorId },
+    });
+
+    const [deleteDoctor, { loading: isDeleting }] = useMutation(DELETE_DOCTOR, {
+        variables: {
+            id: doctorId,
+        },
     });
     const { data: bookingsRes, loading: bookingsLoading } = useQuery(
         GET_BOOKINGS_OF_DOCTOR,
@@ -273,6 +281,24 @@ const DoctorInfo = ({ doctor }: { doctor: GetDoctorByID_getDoctorByID }) => {
                             </div>
                         </div>
                     </ScheduleCard>
+                    <Button
+                        isLoading={isDeleting}
+                        colorScheme={"red"}
+                        onClick={() =>
+                            deleteDoctor({
+                                variables: {
+                                    id: doctorId,
+                                },
+                                refetchQueries: [GET_DOCTORS],
+                                onCompleted(data) {
+                                    router.push("/staff");
+                                    alert("Доктор удален");
+                                },
+                            })
+                        }
+                    >
+                        Удалить доктора
+                    </Button>
                 </div>
             </div>
             <ReviewsContainer></ReviewsContainer>

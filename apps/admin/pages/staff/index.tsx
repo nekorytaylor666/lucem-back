@@ -189,7 +189,9 @@ const DoctorCard = ({
                             src={avatarUrl}
                             alt="Доктор"
                             className="self-end h-full"
-                            onError={() => setAvatarUrl("/icons/medical-lady-2.svg")}
+                            onError={() =>
+                                setAvatarUrl("/icons/medical-lady-2.svg")
+                            }
                         />
                     </div>
                 </div>

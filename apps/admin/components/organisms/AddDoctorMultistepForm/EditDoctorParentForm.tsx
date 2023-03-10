@@ -118,7 +118,7 @@ const EditDoctorParentMultistepForm = ({ doctorId }: { doctorId: string }) => {
                         data: values.educationInfo,
                     },
                     {
-                        name: AllowedExperienceAndEducationTypes.Experience,
+                        name: AllowedExperienceAndEducationTypes.Courses,
                         data: values.qualificationInfo,
                     },
                     {
