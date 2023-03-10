@@ -55,6 +55,7 @@ export interface GetDoctorByID_getDoctorByID {
   numOfRatings: number;
   phoneNumber: string;
   rating: number | null;
+  startingExperienceDate: any | null;
   workTimes: GetDoctorByID_getDoctorByID_workTimes[] | null;
   upcomingBookings: GetDoctorByID_getDoctorByID_upcomingBookings[] | null;
   experiences: GetDoctorByID_getDoctorByID_experiences[] | null;
