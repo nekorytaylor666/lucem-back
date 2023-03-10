@@ -119,6 +119,17 @@ export class SpecializationResolver {
         return specializationResponce;
     }
 
+    // delete specialization by id
+    @Mutation(() => Boolean)
+    async deleteSpecialization(
+        @Args('specializationId', { type: () => String })
+        specializationId: string,
+    ): Promise<boolean> {
+        return await this.specializationService.deleteOne({
+            _id: new ObjectId(specializationId),
+        });
+    }
+
     @Mutation(() => SpecializationGraph)
     @Roles('none')
     @UseGuards(PreAuthGuard)

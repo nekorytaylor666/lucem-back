@@ -228,7 +228,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
 
     async deleteOne(find: Filter<T>): Promise<boolean> {
         const doctor = await this.dbService.deleteOne(find);
-        return doctor.acknowledged;
+        return Boolean(doctor.deletedCount);
     }
 
     async deleteManyWithOptions(args: {

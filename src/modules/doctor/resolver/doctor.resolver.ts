@@ -136,25 +136,15 @@ export class DoctorResolver {
         return doctorResponce;
     }
 
-    @Mutation(() => DoctorGraph)
-    @Roles('doctor', 'admin')
-    @UseGuards(PreAuthGuard)
-    async deleteDoctor(
-        @Args('doctorId', { nullable: true }) doctorId: string,
-        @CurrentTokenPayload() payload: Token,
-        @CurrentUserGraph() user: { _id: ObjectId },
-    ) {
-        const findQuery: Partial<Doctor> =
-            payload.role === TokenRoles.Doctor
-                ? { _id: user._id }
-                : { _id: new ObjectId(doctorId) };
-        const doctor = await this.doctorService.updateOne({
-            find: findQuery,
-            update: { isDeleted: true },
-            method: '$set',
-        });
-        const doctorResponce = new DoctorGraph({ ...doctor });
-        return doctorResponce;
+    @Mutation(() => Boolean)
+    async deleteDoctor(@Args('doctorId', { nullable: true }) doctorId: string) {
+        try {
+            return await this.doctorService.deleteOne({
+                _id: new ObjectId(doctorId),
+            });
+        } catch (error) {
+            return false;
+        }
     }
 
     @Query(() => [DoctorGraph])
