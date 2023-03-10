@@ -289,6 +289,8 @@ const converExperienceToDisplayArray = (
         [AllowedExperienceAndEducationTypes.Courses]: "Курсы и семинары",
     };
 
+    // take only first occurence of each experience type
+
     const doctorExperience = doctor?.experiences?.map((experience) => {
         return {
             type: experienceTypeToLabel[experience.name],
@@ -296,6 +298,8 @@ const converExperienceToDisplayArray = (
             icon: experienceTypeToIcon[experience.name],
         };
     });
+
+    //
     return doctorExperience ?? [];
 };
 

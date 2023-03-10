@@ -129,17 +129,20 @@ export const mapDoctorDataToEditDoctorFormValues = (
 
     console.log("doctor", doctor);
 
-    const educationInfo = doctor.experiences.find(
-        (exp) => exp.name === AllowedExperienceAndEducationTypes.Education,
-    ).data;
+    const educationInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Education,
+        )?.data ?? [];
 
-    const qualificationInfo = doctor.experiences.find(
-        (exp) => exp.name === AllowedExperienceAndEducationTypes.Courses,
-    ).data;
+    const qualificationInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Courses,
+        )?.data ?? [];
 
-    const jobExperienceInfo = doctor.experiences.find(
-        (exp) => exp.name === AllowedExperienceAndEducationTypes.Experience,
-    ).data;
+    const jobExperienceInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Experience,
+        )?.data ?? [];
 
     console.log(
         "experiences",
