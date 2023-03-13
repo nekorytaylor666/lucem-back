@@ -81,6 +81,7 @@ export class DoctorResolver {
         const doctor = await this.doctorService.findByIdWithAddictives(
             new ObjectId(doctorId),
         );
+        console.log(doctor);
         const doctorResponce = new DoctorGraph({ ...doctor });
         return doctorResponce;
     }

@@ -141,5 +141,8 @@ export class DoctorGraph
             );
         if (doctor.doctorPercentage != null)
             this.doctorPercentage = doctor.doctorPercentage;
+
+        if (doctor.startingExperienceDate != null)
+            this.startingExperienceDate = doctor.startingExperienceDate;
     }
 }

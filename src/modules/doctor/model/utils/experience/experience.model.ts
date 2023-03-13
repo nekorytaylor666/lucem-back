@@ -6,7 +6,7 @@ export interface ExperienceAndEducation {
     _id: ObjectId;
     name: AllowedExperienceAndEducationTypes;
     data: {
-        years: [number, number];
+        years?: [number, number];
         institutionName: string;
         specialty: string;
     }[];
