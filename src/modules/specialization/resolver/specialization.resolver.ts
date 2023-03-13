@@ -99,6 +99,8 @@ export class SpecializationResolver {
                 lookups: this.specializationService.basicLookups,
             })
             .toArray();
+
+        console.log(specialization[0].doctors[0]);
         const specializationResponce = specialization.map(
             (val) => new SpecializationGraph({ ...val }),
         );

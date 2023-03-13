@@ -9,6 +9,7 @@ import { parseTime } from 'src/utils/parseTime';
 import { Booking, BookingProgress } from '../model/booking.interface';
 import { CreateBooking } from '../model/createBooking.args';
 import * as moment from 'moment';
+import { isWithinInterval, parseISO } from 'date-fns';
 
 @Injectable()
 export class BookingService extends BasicService<Booking> {
@@ -82,10 +83,17 @@ export class BookingService extends BasicService<Booking> {
                   .add(service.durationInMinutes, 'minutes')
                   .toDate()
             : _endDate;
+
         const checkIfWorkTimeExists = doctor.workTimes.find(
             (val) =>
-                val.startTime <= parseTime(startDate) &&
-                val.endTime >= parseTime(endDate),
+                isWithinInterval(new Date(startDate), {
+                    start: val.startTime,
+                    end: val.endTime,
+                }) &&
+                isWithinInterval(endDate, {
+                    start: val.startTime,
+                    end: val.endTime,
+                }),
         );
         if (!checkIfWorkTimeExists)
             throw new ApolloError("he doesn't work during this time");

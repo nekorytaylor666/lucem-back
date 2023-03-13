@@ -29,6 +29,7 @@ export class ExperienceAndEducationDataGraph {
         specialty: string;
     }) {
         if (args.years != null) this.years = args.years;
+        if (args.years == null) this.years = [0, 0];
         if (args.institutionName != null)
             this.institutionName = args.institutionName;
         if (args.specialty != null) this.specialty = args.specialty;
