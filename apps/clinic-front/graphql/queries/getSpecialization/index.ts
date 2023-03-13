@@ -61,7 +61,7 @@ export const GET_SPECIALIZATION_BY_ID = gql`
                 numOfRatings
                 phoneNumber
                 rating
-
+                startingExperienceDate
                 avatar {
                     xl
                 }

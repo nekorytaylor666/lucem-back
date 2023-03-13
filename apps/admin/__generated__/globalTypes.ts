@@ -8,9 +8,9 @@
 //==============================================================
 
 export enum AcceptableAgeGroup {
-  Adult = "ADULT",
-  Both = "BOTH",
-  Child = "CHILD",
+  Adult = "Adult",
+  Both = "Both",
+  Child = "Child",
 }
 
 export enum AllowedDoctorLanguageTypes {
@@ -28,6 +28,7 @@ export enum AllowedDoctorLanguages {
 }
 
 export enum AllowedExperienceAndEducationTypes {
+  Courses = "Courses",
   Education = "Education",
   Experience = "Experience",
 }
@@ -48,7 +49,6 @@ export interface ColorCodeGradientInput {
 }
 
 export interface ExperienceDataInput {
-  __typename: string;
   institutionName: string;
   specialty: string;
   years: number[];

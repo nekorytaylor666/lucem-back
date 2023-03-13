@@ -133,7 +133,7 @@ const ParentMultistepForm = () => {
                         },
                         {
                             data: qualifications,
-                            name: AllowedExperienceAndEducationTypes?.Education,
+                            name: AllowedExperienceAndEducationTypes?.Courses,
                         },
                     ],
                     workTimes: createWorkTimesFromStartEndTimes(

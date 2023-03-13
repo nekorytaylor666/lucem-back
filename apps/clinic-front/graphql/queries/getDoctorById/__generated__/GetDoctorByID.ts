@@ -3,26 +3,29 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { AllowedExperienceAndEducationTypes, AllowedDoctorLanguages, AllowedDoctorLanguageTypes } from "./../../../../__generated__/globalTypes";
+import { AllowedExperienceAndEducationTypes } from "./../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: GetDoctorByID
 // ====================================================
 
-export interface GetDoctorByID_getDoctorByID_avatar {
-  __typename: "PhotoURL";
-  m: string | null;
+export interface GetDoctorByID_getDoctorByID_workTimes {
+  __typename: "WorkTime";
+  endTime: any;
+  startTime: any;
 }
 
-export interface GetDoctorByID_getDoctorByID_deseases {
-  __typename: "Desease";
+export interface GetDoctorByID_getDoctorByID_upcomingBookings {
+  __typename: "Booking";
   _id: string;
+  startDate: any;
+  endDate: any;
 }
 
 export interface GetDoctorByID_getDoctorByID_experiences_data {
   __typename: "ExperienceAndEducationData";
-  institutionName: string;
   years: number[];
+  institutionName: string;
   specialty: string;
 }
 
@@ -32,42 +35,32 @@ export interface GetDoctorByID_getDoctorByID_experiences {
   name: AllowedExperienceAndEducationTypes | null;
 }
 
-export interface GetDoctorByID_getDoctorByID_languages {
-  __typename: "LanguageGraph";
-  language: AllowedDoctorLanguages;
-  type: AllowedDoctorLanguageTypes;
+export interface GetDoctorByID_getDoctorByID_avatar {
+  __typename: "PhotoURL";
+  xl: string | null;
 }
 
 export interface GetDoctorByID_getDoctorByID_specializations {
   __typename: "Specialization";
-  _id: string;
   name: string;
-}
-
-export interface GetDoctorByID_getDoctorByID_workTimes {
-  __typename: "WorkTime";
-  endTime: any;
-  startTime: any;
 }
 
 export interface GetDoctorByID_getDoctorByID {
   __typename: "Doctor";
   _id: string;
-  acceptableAgeGroup: string | null;
-  avatar: GetDoctorByID_getDoctorByID_avatar | null;
-  cabinet: string | null;
-  description: string | null;
-  deseases: GetDoctorByID_getDoctorByID_deseases[] | null;
-  email: string;
-  experiences: GetDoctorByID_getDoctorByID_experiences[] | null;
   fullName: string;
-  languages: GetDoctorByID_getDoctorByID_languages[];
-  startingExperienceDate: any | null;
+  acceptableAgeGroup: string | null;
+  description: string | null;
+  email: string;
   numOfRatings: number;
   phoneNumber: string;
   rating: number | null;
-  specializations: GetDoctorByID_getDoctorByID_specializations[] | null;
+  startingExperienceDate: any | null;
   workTimes: GetDoctorByID_getDoctorByID_workTimes[] | null;
+  upcomingBookings: GetDoctorByID_getDoctorByID_upcomingBookings[] | null;
+  experiences: GetDoctorByID_getDoctorByID_experiences[] | null;
+  avatar: GetDoctorByID_getDoctorByID_avatar | null;
+  specializations: GetDoctorByID_getDoctorByID_specializations[] | null;
 }
 
 export interface GetDoctorByID {
@@ -75,5 +68,5 @@ export interface GetDoctorByID {
 }
 
 export interface GetDoctorByIDVariables {
-  id: string;
+  doctorId: string;
 }

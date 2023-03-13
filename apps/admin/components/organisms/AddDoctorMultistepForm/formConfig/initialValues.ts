@@ -16,7 +16,7 @@ export const registerDoctorInitialValues = {
         email: "",
     },
     professionalInfo: {
-        specializations: [{ id: "" }],
+        specializations: [],
         acceptableAgeGroup: "Both",
         yearsOfExperiance: "",
         specialistCut: "50",
@@ -129,9 +129,31 @@ export const mapDoctorDataToEditDoctorFormValues = (
 
     console.log("doctor", doctor);
 
+    const educationInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Education,
+        )?.data ?? [];
+
+    const qualificationInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Courses,
+        )?.data ?? [];
+
+    const jobExperienceInfo =
+        doctor.experiences.find(
+            (exp) => exp.name === AllowedExperienceAndEducationTypes.Experience,
+        )?.data ?? [];
+
+    console.log(
+        "experiences",
+        educationInfo,
+        qualificationInfo,
+        jobExperienceInfo,
+        doctor.experiences,
+    );
     return {
-        educationInfo: doctor.experiences[0].data ?? [],
-        jobExperienceInfo: doctor.experiences[2].data ?? [],
+        educationInfo,
+        jobExperienceInfo,
         languagesInfo: doctor.languages,
         photoInfo: doctor.avatar,
         professionalInfo: {
@@ -141,7 +163,8 @@ export const mapDoctorDataToEditDoctorFormValues = (
             specializations: [{ id: "" }],
             yearsOfExperiance: "5",
         },
-        qualificationInfo: doctor.experiences[1].data ?? [],
+
+        qualificationInfo,
         personalInfo: {
             firstName: doctor.fullName.split(" ")[0],
             lastName: doctor.fullName.split(" ")[1],

@@ -8,6 +8,7 @@
 //==============================================================
 
 export enum AllowedExperienceAndEducationTypes {
+  Courses = "Courses",
   Education = "Education",
   Experience = "Experience",
 }
