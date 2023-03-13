@@ -151,6 +151,9 @@ export const mapDoctorDataToEditDoctorFormValues = (
         jobExperienceInfo,
         doctor.experiences,
     );
+    function capitalizeFirstLetter(string: string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     console.log(doctor.startingExperienceDate);
     return {
         educationInfo,
@@ -158,7 +161,7 @@ export const mapDoctorDataToEditDoctorFormValues = (
         languagesInfo: doctor.languages,
         photoInfo: doctor.avatar,
         professionalInfo: {
-            acceptableAgeGroup: String(doctor.acceptableAgeGroup) as string,
+            acceptableAgeGroup: doctor.acceptableAgeGroup,
             clinicCut: (100 - doctor.doctorPercentage).toString(),
             specialistCut: doctor.doctorPercentage ?? 50,
             specializations: [],

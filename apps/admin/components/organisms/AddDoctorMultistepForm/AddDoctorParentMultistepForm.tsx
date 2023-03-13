@@ -88,12 +88,15 @@ const ParentMultistepForm = () => {
             qualifications,
         };
     };
-
+    function capitalizeFirstLetter(string: string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     const onRegisterDoctorFormSubmit = (values: RegisterDoctorFormSchema) => {
         try {
             const { experience, education, qualifications } =
                 formatExperienceData(values);
             console.log("after format:", values);
+
             mutateFunction({
                 variables: {
                     fullName:
@@ -104,8 +107,10 @@ const ParentMultistepForm = () => {
                         values.personalInfo?.middleName,
                     isMan: values.personalInfo?.gender === "male",
                     email: values.contactInfo?.email,
-                    acceptableAgeGroup: values.professionalInfo
-                        ?.acceptableAgeGroup as AcceptableAgeGroup,
+                    acceptableAgeGroup: capitalizeFirstLetter(
+                        values.professionalInfo
+                            ?.acceptableAgeGroup as AcceptableAgeGroup,
+                    ),
                     dateOfBirth: values.personalInfo?.birthDate,
                     description: "",
                     languages: [
