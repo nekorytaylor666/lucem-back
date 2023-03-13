@@ -12,6 +12,8 @@ import { GET_SERVICE_BY_ID } from "graphql/queries/getServiceById";
 import { useQuery } from "@apollo/client";
 import { formatDistanceStrict } from "date-fns";
 import { ru } from "date-fns/locale";
+import { GET_DOCTOR_BY_ID } from "graphql/queries";
+import { GetDoctorByID } from "@graphqlTypes/GetDoctorByID";
 const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
     const { data: serviceRes, loading: serviceLoading } = useQuery(
         GET_SERVICE_BY_ID,
@@ -21,6 +23,12 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
             },
         },
     );
+
+    const { data, loading } = useQuery<GetDoctorByID>(GET_DOCTOR_BY_ID, {
+        variables: { doctorId: doctor._id },
+    });
+
+    const doctorData = data?.getDoctorByID;
 
     return (
         <>
@@ -80,9 +88,18 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                 </Link>
 
                 <div className="py-8 pr-8 space-y-2">
-                    <AppointmentTimetable
-                        doctor={doctor}
-                    ></AppointmentTimetable>
+                    {loading ? (
+                        <div className="h-full w-full flex justify-center items-center">
+                            <div className="lds-ripple">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    ) : (
+                        <AppointmentTimetable
+                            doctor={doctorData}
+                        ></AppointmentTimetable>
+                    )}
                 </div>
             </div>
             <div className="rounded-2xl grid lg:hidden grid-cols-1  p-4 bg-white shadow-lg my-5 hover:shadow-lg hover:scale-110 transition-all ease-in-out">

@@ -11,7 +11,7 @@ const createApolloClient = new ApolloClient({
     ssrMode: typeof window === "undefined",
     cache: new InMemoryCache(),
     link: createUploadLink({
-        uri: "https://lucem-back-production.up.railway.app/graphql",
+        uri: "http://localhost:3000/graphql",
     }),
     // link: createUploadLink({ uri: "http://650e-2-133-111-193.ngrok.io/graphql" }),
     // link: createUploadLink({ url: "http://650e-2-133-111-193.ngrok.io/graphql" })

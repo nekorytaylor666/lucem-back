@@ -21,6 +21,7 @@ import { ParsedUrlQuery } from "querystring";
 import { Specialization } from "custom_typings/specialization";
 import { useRouter } from "next/router";
 import { isMobile } from "react-device-detect";
+import { useQuery } from "@apollo/client";
 
 interface SpecRoute extends Specialization {
     accentColor?: string;
@@ -36,23 +37,18 @@ const SpecializationPage: React.FC<SpecializationPageProps> = ({
     if (specialization == null) return <></>;
 
     const router = useRouter();
-    const { age } = router.query;
-    const ageGroupsConfig = {
-        child: { adult: false, child: true },
-        adult: { adult: true, child: false },
-        both: { adult: true, child: true },
-    };
+    const { id } = router.query;
 
-    const doctors = specialization?.doctors;
-
-    const routes: TabRoute[] = [
-        {
-            slug: "doctors",
-            label: "Врачи",
-            component: <DoctorsList doctors={doctors} />,
+    const { data, loading } = useQuery(GET_SPECIALIZATION_BY_ID, {
+        variables: {
+            id,
         },
-    ];
-    // if (loading) return <></>;
+    });
+
+    const doctors = data?.getSpecializationById?.doctors;
+
+    console.log(doctors);
+    if (loading) return <></>;
     // if (error) return <>{error?.message}</>;
     return (
         <Layout>

@@ -65,6 +65,11 @@ export const GET_SPECIALIZATION_BY_ID = gql`
                 avatar {
                     xl
                 }
+                upcomingBookings {
+                    _id
+                    startDate
+                    endDate
+                }
                 specializations {
                     name
                 }

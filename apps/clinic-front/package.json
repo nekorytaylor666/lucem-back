@@ -17,7 +17,7 @@
         "cypress:open": "cypress open",
         "cypress:run": "cypress run --config video=false",
         "cypress:test": "start-server-and-test start http://localhost:3000 cypress:run",
-        "schema:download": "npx apollo service:download --endpoint=https://lucem-back-production.up.railway.app/graphql graphql-schema.json",
+        "schema:download": "npx apollo service:download --endpoint=http://localhost:3000/graphql graphql-schema.json",
         "schema:generate": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql"
     },
     "dependencies": {
