@@ -37,7 +37,6 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
                             value="adult"
-                            checked={doctorData.acceptableAgeGroup === "adult"}
                         />
                         <span className="label-text">Только взрослых</span>
                     </label>
@@ -47,7 +46,6 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
                             value="child"
-                            checked={doctorData.acceptableAgeGroup === "child"}
                         />
                         <span className="label-text">Только детей</span>
                     </label>
@@ -57,7 +55,6 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
                             value="both"
-                            checked={doctorData.acceptableAgeGroup === "both"}
                         />
                         <span className="label-text">Взрослых и детей</span>
                     </label>

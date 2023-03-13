@@ -70,7 +70,7 @@ const editDoctorInitialValues = {
     },
     professionalInfo: {
         specializations: [{ id: "" }],
-        acceptableAgeGroup: "Both",
+        acceptableAgeGroup: "both",
         yearsOfExperiance: "",
         specialistCut: "50",
         clinicCut: "50",
@@ -158,7 +158,7 @@ export const mapDoctorDataToEditDoctorFormValues = (
         languagesInfo: doctor.languages,
         photoInfo: doctor.avatar,
         professionalInfo: {
-            acceptableAgeGroup: doctor.acceptableAgeGroup as string,
+            acceptableAgeGroup: String(doctor.acceptableAgeGroup) as string,
             clinicCut: (100 - doctor.doctorPercentage).toString(),
             specialistCut: doctor.doctorPercentage ?? 50,
             specializations: [],

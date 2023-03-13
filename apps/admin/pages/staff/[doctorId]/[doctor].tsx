@@ -14,7 +14,7 @@ import {
     subDays,
     addDays,
     subYears,
-    formatDistance,
+    formatDistanceStrict,
 } from "date-fns";
 import ru from "date-fns/locale/ru";
 import { EDIT_DOCTOR_AVATAR } from "graphql/mutation/editDoctorAvatar";
@@ -195,11 +195,12 @@ const DoctorInfo = ({ doctor }: { doctor: GetDoctorByID_getDoctorByID }) => {
                         <div>
                             <p className="text-gray-400">Стаж работы</p>
                             <p>
-                                {formatDistance(
+                                {formatDistanceStrict(
                                     new Date(doctor.startingExperienceDate),
                                     new Date(),
                                     {
                                         locale: ru,
+                                        addSuffix: false,
                                     },
                                 )}{" "}
                                 стаж работы
