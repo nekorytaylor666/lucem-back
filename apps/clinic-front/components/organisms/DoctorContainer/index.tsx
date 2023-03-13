@@ -10,7 +10,7 @@ interface Props {
 import { GetAllDoctors_getAllDoctors } from "@graphqlTypes/GetAllDoctors";
 import { GET_SERVICE_BY_ID } from "graphql/queries/getServiceById";
 import { useQuery } from "@apollo/client";
-import { formatDistance } from "date-fns";
+import { formatDistanceStrict } from "date-fns";
 import { ru } from "date-fns/locale";
 const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
     const { data: serviceRes, loading: serviceLoading } = useQuery(
@@ -49,11 +49,12 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                         <div className="flex items-center">
                             <p className="font-semibold mr-1">
                                 {" "}
-                                {formatDistance(
+                                {formatDistanceStrict(
                                     new Date(doctor?.startingExperienceDate),
                                     new Date(),
                                     {
                                         locale: ru,
+                                        addSuffix: false,
                                     },
                                 )}{" "}
                             </p>

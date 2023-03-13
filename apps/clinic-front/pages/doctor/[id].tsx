@@ -26,7 +26,7 @@ import {
     GET_REVIEW_OF_DOCTOR_QUERY,
     LEAVE_REVIEW_OF_DOCTOR_MUTATION,
 } from "src/graphql/queries/reviews";
-import { format, formatDistance } from "date-fns";
+import { format, formatDistanceStrict } from "date-fns";
 import { useFormik } from "formik";
 import { GET_SERVICE_BY_ID } from "graphql/queries/getServiceById";
 import { ru } from "date-fns/locale";
@@ -426,11 +426,12 @@ const DoctorGeneralInfo = (props: { doctor: GetDoctorByID_getDoctorByID }) => {
                 <div className="grid grid-cols-3 gap-4">
                     <PropertyBox className=" bg-light-grey flex flex-col items-start justify-center rounded px-4 py-8">
                         <span className="capitalize font-bold text-lg lg:text-2xl">
-                            {formatDistance(
+                            {formatDistanceStrict(
                                 new Date(doctor.startingExperienceDate),
                                 new Date(),
                                 {
                                     locale: ru,
+                                    addSuffix: false,
                                 },
                             )}{" "}
                             опыта работы
