@@ -55,6 +55,7 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                 );
             scheduleDeclaration.push(workWeekSchedule);
         }
+        console.log(scheduleDeclaration);
         return scheduleDeclaration.flat(1);
     };
 
@@ -208,10 +209,11 @@ const convertWorkTimesToWorkWeekScheduleDeclaration = (
             const today = new Date();
             const start = new Date(startTime);
             const end = new Date(endTime);
-            const startHours = getHours(
-                getDay(start) === new Date().getDay() ? today : start,
-            );
+
+            const startHours = getHours(start);
+
             const endHours = getHours(end);
+
             const startMinutes = getMinutes(start);
             const endMinutes = getMinutes(end);
             const startWeekDay = getDay(start);
@@ -220,8 +222,9 @@ const convertWorkTimesToWorkWeekScheduleDeclaration = (
 
             const startDate = setDay(
                 setHours(setMinutes(weekStart, startMinutes), startHours),
-                startWeekDay + 1,
+                startWeekDay,
             );
+
             const isAfterToday = isAfter(startDate, today);
             if (!isAfterToday) {
                 return null;
