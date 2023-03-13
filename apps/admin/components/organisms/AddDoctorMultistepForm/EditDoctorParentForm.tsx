@@ -181,6 +181,7 @@ const EditDoctorParentMultistepForm = ({ doctorId }: { doctorId: string }) => {
             label: "3. Профессиональная информация",
             component: (
                 <ProfessionalInfo
+                    doctorData={doctorData}
                     editDoctor={true}
                     onNext={handleNext}
                     onPrev={handleBack}

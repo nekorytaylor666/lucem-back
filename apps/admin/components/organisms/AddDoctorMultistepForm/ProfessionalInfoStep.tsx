@@ -13,9 +13,11 @@ import { FormStepProps } from "./types";
 
 export const ProfessionalInfo: FC<FormStepProps> = ({
     editDoctor,
+    doctorData,
     onNext,
     onPrev,
 }) => {
+    console.log("editDoctor", editDoctor, doctorData);
     return (
         <div className="space-y-3">
             <p>Профессиональная информация</p>
@@ -34,7 +36,8 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             type="radio"
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
-                            value="Adult"
+                            value="adult"
+                            checked={doctorData.acceptableAgeGroup === "adult"}
                         />
                         <span className="label-text">Только взрослых</span>
                     </label>
@@ -43,7 +46,8 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             type="radio"
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
-                            value="Child"
+                            value="child"
+                            checked={doctorData.acceptableAgeGroup === "child"}
                         />
                         <span className="label-text">Только детей</span>
                     </label>
@@ -52,14 +56,15 @@ export const ProfessionalInfo: FC<FormStepProps> = ({
                             type="radio"
                             name="professionalInfo.acceptableAgeGroup"
                             className="radio"
-                            value="Both"
-                            checked
+                            value="both"
+                            checked={doctorData.acceptableAgeGroup === "both"}
                         />
                         <span className="label-text">Взрослых и детей</span>
                     </label>
                 </div>
                 <div className="">
                     <p>Дата начала карьеры</p>
+
                     <div className="flex gap-8">
                         <div className="flex-1 bg-gray-100 p-3 flex rounded">
                             <Field

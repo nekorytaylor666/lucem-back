@@ -151,6 +151,7 @@ export const mapDoctorDataToEditDoctorFormValues = (
         jobExperienceInfo,
         doctor.experiences,
     );
+    console.log(doctor.startingExperienceDate);
     return {
         educationInfo,
         jobExperienceInfo,
@@ -160,8 +161,11 @@ export const mapDoctorDataToEditDoctorFormValues = (
             acceptableAgeGroup: doctor.acceptableAgeGroup as string,
             clinicCut: (100 - doctor.doctorPercentage).toString(),
             specialistCut: doctor.doctorPercentage ?? 50,
-            specializations: [{ id: "" }],
+            specializations: [],
             yearsOfExperiance: "5",
+            startingExperienceDate:
+                format(new Date(doctor.startingExperienceDate), "yyyy-MM-dd") ??
+                "",
         },
 
         qualificationInfo,
