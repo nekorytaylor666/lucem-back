@@ -226,7 +226,7 @@ const DoctorDetailsInfo = (props: {
                     </p>
                     <div className="flex justify-start mb-6">
                         <p className="font-medium text-3xl tracking-wide border-b border-black">
-                            +7 797 270 70 10
+                            +77081097577
                         </p>
                     </div>
                     <div className="flex items">
@@ -240,7 +240,7 @@ const DoctorDetailsInfo = (props: {
                                 <span>Instagram</span>
                             </div>
                         </Link>
-                        <Link href="https://api.whatsapp.com/send/?phone=77028196393&text&app_absent=0">
+                        <Link href="https://api.whatsapp.com/send/?phone=77972707010&text&app_absent=0">
                             <div className="px-4 py-2 space-x-2 rounded-md border-2 border-main-green flex items-center justify-center text-main-green font-medium text-lg cursor-pointer">
                                 <Image
                                     height="30"

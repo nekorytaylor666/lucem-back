@@ -118,9 +118,9 @@ const AboutPage: React.FC = () => {
                                                     Регистратура
                                                 </p>
                                                 <div>
-                                                    <a href="tel:123-456-7890">
+                                                    <a href="tel:+77081097577">
                                                         <p className="font-normal text-xl lg:text-3xl">
-                                                            +7 797 270 70 10
+                                                            +77081097577
                                                             <div className="border-b border-solid border-gray-400 w-7/12"></div>
                                                         </p>
                                                     </a>

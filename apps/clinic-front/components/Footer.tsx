@@ -64,7 +64,7 @@ const Footer = () => {
                                 Звоните на
                                 <a
                                     className="text-pink-purple"
-                                    href="tel:123-456-7890"
+                                    href="tel:+77081097577"
                                 >
                                     <span>+7 705 297 23 79</span>
                                 </a>

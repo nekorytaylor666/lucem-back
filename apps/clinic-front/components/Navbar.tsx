@@ -101,7 +101,7 @@ const MobileNavbar: React.FC<NavbarProps> = ({ light }) => {
             }`}
         >
             <div className="w-full flex justify-between items-center">
-                <a href="tel:123-456-7890">
+                <a href="tel:+77081097577">
                     <PhoneIcon></PhoneIcon>
                 </a>
                 <Link href="/">
