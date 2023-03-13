@@ -84,17 +84,61 @@ export class BookingService extends BasicService<Booking> {
                   .toDate()
             : _endDate;
 
-        const checkIfWorkTimeExists = doctor.workTimes.find(
-            (val) =>
-                isWithinInterval(new Date(startDate), {
-                    start: val.startTime,
-                    end: val.endTime,
+        // create start date and set current year month but set the day and time from the start date
+
+        //     moment(args.endDate).second(),
+        const checkIfWorkTimeExists = doctor.workTimes.find((val, i) => {
+            const utcStartWork = moment.utc(val.startTime);
+            const utcEndWork = moment.utc(val.endTime);
+            const utcStart = moment(startDate).utc();
+            const utcEnd = moment(endDate).utc();
+            const start = new Date(
+                moment().year(),
+                moment().month(),
+                moment().add(i, 'day').date(),
+                moment(utcStartWork).hour(),
+                moment(utcStartWork).minute(),
+                moment(utcStartWork).second(),
+            );
+            const end = new Date(
+                moment().year(),
+                moment().month(),
+                moment().add(i, 'day').date(),
+                moment(utcEndWork).hour(),
+                moment(utcEndWork).minute(),
+                moment(utcEndWork).second(),
+            );
+
+            const bookingStart = new Date(
+                utcStart.year(),
+                utcStart.month(),
+                utcStart.date(),
+                utcStart.hour(),
+                utcStart.minute(),
+                utcStart.second(),
+            );
+
+            const bookingEnd = new Date(
+                utcEnd.year(),
+                utcEnd.month(),
+                utcEnd.date(),
+                utcEnd.hour(),
+
+                utcEnd.minute(),
+                utcEnd.second(),
+            );
+
+            return (
+                isWithinInterval(bookingStart, {
+                    start,
+                    end,
                 }) &&
-                isWithinInterval(endDate, {
-                    start: val.startTime,
-                    end: val.endTime,
-                }),
-        );
+                isWithinInterval(bookingEnd, {
+                    start,
+                    end,
+                })
+            );
+        });
         if (!checkIfWorkTimeExists)
             throw new ApolloError("he doesn't work during this time");
         const checkIfTimeIsTaken = await this.findOneWithOptions({
