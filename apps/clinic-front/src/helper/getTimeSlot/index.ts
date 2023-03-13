@@ -24,11 +24,12 @@ export const getTimeSlots = (
         endHours > startHours
             ? Math.ceil(endHours - startHours)
             : Math.ceil(startHours - endHours);
-    for (let i = 0; i < periods; i++) {
-        const date = new Date(startDate);
+    const date = new Date(startDate);
+
+    for (let i = 0; i < periods * 2; i++) {
         const timeslot = {
             time: {
-                start: addHours(date, i).toISOString(),
+                start: addMinutes(date, i * 30).toISOString(),
                 end: addMinutes(addHours(date, i), 30).toISOString(),
             },
         };

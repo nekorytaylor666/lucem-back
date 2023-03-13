@@ -67,7 +67,7 @@ const StaffPage = () => {
                 </div>
                 <div className="col-start-6 col-end-9 bg-white rounded dropdown ">
                     <div
-                        tabindex="0"
+                        tabIndex="0"
                         className="flex items-center justify-between bg-white p-2 h-full rounded cursor-pointer"
                     >
                         {currentSpec?.name ?? "Специализация"}
@@ -92,7 +92,10 @@ const StaffPage = () => {
                             <a> Все</a>
                         </li>
                         {specializations?.map((spec) => (
-                            <li onClick={() => setCurrentSpec(spec)}>
+                            <li
+                                key={spec._id}
+                                onClick={() => setCurrentSpec(spec)}
+                            >
                                 <a>{spec.name}</a>
                             </li>
                         ))}
@@ -136,29 +139,39 @@ const DoctorsContainer = ({ specId, searchName }: any) => {
     if (loading) return <></>;
     if (error) return <></>;
     const doctors = data?.getAllDoctors;
+
+    // need to replace filtering with a query to the DB
     let filteredDoctors = doctors;
+
     if (specId) {
         filteredDoctors = doctors?.filter((doctor) =>
             doctor.specializations?.map((spec) => spec._id).includes(specId),
         );
     }
 
-    var re = new RegExp(searchName + ".+$", "i");
+    const re = new RegExp(searchName + ".+$", "i");
     filteredDoctors = filteredDoctors?.filter(function (e, i, a) {
         return e.fullName.search(re) != -1;
     });
+
     return (
         <div className="grid grid-cols-3 gap-4 bg-white p-5 rounded-2xl min-h-screen">
             {filteredDoctors?.map((doctor: any) => (
-                <DoctorCard doctor={doctor} />
+                <DoctorCard key={doctor._id} doctor={doctor} />
             ))}
         </div>
     );
 };
 
+interface DoctorSpecializations {
+    name: string;
+    __typename: string;
+    _id: string;
+}
+
 interface Doctor {
-    fullname: string;
-    specializations: string[];
+    fullName: string;
+    specializations: DoctorSpecializations[];
     avatar: {
         m: string;
     };
@@ -181,7 +194,7 @@ const DoctorCard = ({
                     <p className="text-special-green h-4">В клинике</p>
                     <p className="h-4">{fullName}</p>
                     <p className="text-gray-400 h-4">
-                        {specializations.map((spec) => `${spec.name}, `)}
+                        {specializations.map((spec) => spec.name).join(", ")}
                     </p>
                     <p className="text-gray-400 h-8">101 кабинет</p>
                     <div className="h-64">

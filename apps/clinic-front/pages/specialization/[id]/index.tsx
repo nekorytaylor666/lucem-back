@@ -190,7 +190,6 @@ export const getServerSideProps: GetStaticProps = async (context?) => {
     });
 
     const specialization = allSpecializationsRes.data.getSpecializationById;
-    console.log(specialization.doctors);
     return {
         props: {
             specialization,
