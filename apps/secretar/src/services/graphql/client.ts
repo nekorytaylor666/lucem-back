@@ -10,7 +10,7 @@ let apolloClient: ApolloClient<NormalizedCacheObject> | null = null;
 const createApolloClient = new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: createUploadLink({
-        uri: "http://localhost:3000/graphql",
+        uri: "https://lucem-back-production.up.railway.app/graphql",
         // uri: "http://56bd-93-190-240-68.ngrok.io/graphql",
     }) as any,
     cache: new InMemoryCache(),

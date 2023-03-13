@@ -4,7 +4,7 @@ import axios from "axios";
 import { getCsrfToken, getSession } from "next-auth/client";
 
 const httpLink = createHttpLink({
-    uri: "http://localhost:3000/graphql",
+    uri: "https://lucem-back-production.up.railway.app/graphql",
 });
 
 const client = new ApolloClient({

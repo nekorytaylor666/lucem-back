@@ -4,7 +4,7 @@ documents:
   - "./**/*.ts"
 generates:
   generated.ts:
-    schema: "http://localhost:3000/graphql"
+    schema: "https://lucem-back-production.up.railway.app/graphql"
     plugins:
       - "typescript"
       - "typescript-operations"
