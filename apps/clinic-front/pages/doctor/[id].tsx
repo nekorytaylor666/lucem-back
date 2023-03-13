@@ -240,7 +240,7 @@ const DoctorDetailsInfo = (props: {
                                 <span>Instagram</span>
                             </div>
                         </Link>
-                        <Link href="https://api.whatsapp.com/send/?phone=77972707010&text&app_absent=0">
+                        <Link href="https://api.whatsapp.com/send/?phone=77081097577text&app_absent=0">
                             <div className="px-4 py-2 space-x-2 rounded-md border-2 border-main-green flex items-center justify-center text-main-green font-medium text-lg cursor-pointer">
                                 <Image
                                     height="30"
@@ -299,7 +299,6 @@ const converExperienceToDisplayArray = (
         ["Courses"]: "Курсы и семинары",
     };
 
-    console.log(doctor.experiences);
     // take only first occurence of each experience type
 
     const doctorExperience = doctor?.experiences?.map((experience) => {
@@ -321,7 +320,6 @@ const DoctorExperience = ({
 }) => {
     const doctorExperience = converExperienceToDisplayArray(doctor);
 
-    console.log(doctorExperience);
     return (
         <div>
             {doctorExperience.map((experience) => (
@@ -476,27 +474,31 @@ const PropertyBox = styled.div``;
 export default DoctorPage;
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const { data } = await client.query<GetDoctorByID>({
-        query: GET_DOCTOR_BY_ID,
-        variables: { doctorId: context?.params?.id },
-    });
+    try {
+        const { data } = await client.query<GetDoctorByID>({
+            query: GET_DOCTOR_BY_ID,
+            variables: { doctorId: context?.params?.id },
+        });
 
-    const { data: serviceRes } = await client.query({
-        query: GET_SERVICE_BY_ID,
-        variables: { serviceId: "618c0c4985b2fd7b37e3656e" },
-    });
+        const { data: serviceRes } = await client.query({
+            query: GET_SERVICE_BY_ID,
+            variables: { serviceId: "618c0c4985b2fd7b37e3656e" },
+        });
 
-    const doctor = data.getDoctorByID;
-    const service = serviceRes.getServiceById;
-    const price = service.price;
-    return {
-        props: {
-            doctor,
-            price,
-        },
-        revalidate: 10,
-        notFound: !doctor,
-    };
+        const doctor = data.getDoctorByID;
+        const service = serviceRes.getServiceById;
+        const price = service.price;
+        return {
+            props: {
+                doctor,
+                price,
+            },
+            revalidate: 10,
+            notFound: !doctor,
+        };
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
