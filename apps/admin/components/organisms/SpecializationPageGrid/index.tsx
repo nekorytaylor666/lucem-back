@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import {useMutation} from "@apollo/client";
-import {CreateSpecialization, CreateSpecializationVariables} from "@graphqlTypes/CreateSpecialization";
-import {CREATE_SPECIALIZATION_MUTATION} from "../../../graphql/mutation/createSpecialization";
-import {useFormik} from "formik";
+import { useMutation } from "@apollo/client";
+import {
+    CreateSpecialization,
+    CreateSpecializationVariables,
+} from "@graphqlTypes/CreateSpecialization";
+import { CREATE_SPECIALIZATION_MUTATION } from "../../../graphql/mutation/createSpecialization";
+import { useFormik } from "formik";
 import EditSpecializationModal from "../EditSpecializationModal";
+import { DELETE_SPEC_BY_ID } from "graphql/mutation/deleteSpecialization";
 
 interface SpecializationPageGridProps {
     specializations: any[];
@@ -27,11 +31,14 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
         setShowEditSpecModal(true);
     };
 
+    const [deleteSpec, { loading }] = useMutation(DELETE_SPEC_BY_ID);
+
     return (
         <div className="w-full">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
                 {specializations.map((specialization, index) => {
-                    const secondaryGradientColor = specialization?.colorCodeGradient?.finish;
+                    const secondaryGradientColor =
+                        specialization?.colorCodeGradient?.finish;
                     const router = useRouter();
                     const age = router.query.route;
 
@@ -47,7 +54,8 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
                                 <SpecializationCard
                                     key={index}
                                     gradientColors={[
-                                        specialization?.colorCodeGradient?.start,
+                                        specialization?.colorCodeGradient
+                                            ?.start,
                                         secondaryGradientColor,
                                     ]}
                                     className="rounded-2xl text-white relative overflow-hidden"
@@ -71,7 +79,7 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
                                 </SpecializationCard>
                             </Link>
 
-                            <button
+                            <div
                                 style={{
                                     position: "absolute",
                                     right: 20,
@@ -82,13 +90,32 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
                                     zIndex: 5,
                                     color: "#fff",
                                 }}
-                                onClick={() => {
-                                    handleEditButtonPress(specialization);
-                                    handleEditModalOpenButtonPress();
-                                }}
                             >
-                                Редактировать
-                            </button>
+                                <button
+                                    className=" mr-2"
+                                    onClick={() => {
+                                        handleEditButtonPress(specialization);
+                                        handleEditModalOpenButtonPress();
+                                    }}
+                                >
+                                    Редактировать
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        deleteSpec({
+                                            variables: {
+                                                specializationId:
+                                                    specialization._id,
+                                            },
+                                            onCompleted: () => {
+                                                router.reload();
+                                            },
+                                        });
+                                    }}
+                                >
+                                    Удалить
+                                </button>
+                            </div>
                         </div>
                     );
                 })}
