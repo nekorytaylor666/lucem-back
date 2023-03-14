@@ -37,6 +37,20 @@ function MyApp({
                     src="//code.jivosite.com/widget/9ROCKznjOu"
                     strategy="afterInteractive"
                 ></Script>
+                <Script
+                    id="google-analytics"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+                            gtag('config', 'G-2XEXNJJ8QY', {
+                            page_path: window.location.pathname,
+                            });
+                        `,
+                    }}
+                />
             </DependeciesWrapper>
         </SessionProvider>
     );
