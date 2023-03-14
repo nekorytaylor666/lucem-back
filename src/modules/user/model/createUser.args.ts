@@ -17,7 +17,7 @@ export class CreateUser
     @Field()
     fullName: string;
 
-    @Field()
+    @Field({ nullable: true })
     dateOfBirth: string;
 
     @Field()

@@ -1,4 +1,5 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
+import { ColorCodeGradientInput } from './createSpecialization.args';
 import { Specialization } from './specialization.interface';
 
 @ArgsType()
@@ -16,4 +17,7 @@ export class EditSpecialization
 
     @Field({ nullable: true })
     description: string;
+
+    @Field({ nullable: true })
+    colorCodeGradient: ColorCodeGradientInput;
 }

@@ -27,7 +27,7 @@ export class UserGraph
     @Field()
     email: string;
 
-    @Field()
+    @Field({ nullable: true })
     dateOfBirth: Date;
 
     @Field({ nullable: true })
@@ -52,5 +52,9 @@ export class UserGraph
             this.peculiarities = new PeculiaritiesGraph({
                 ...user.peculiarities,
             });
+        if (user.dateOfBirth == null)
+            this.dateOfBirth = new Date(
+                new Date().setFullYear(new Date().getFullYear() - 18),
+            );
     }
 }
