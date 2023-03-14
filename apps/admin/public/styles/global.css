@@ -13,7 +13,7 @@ body {
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue Regular"), local("TTFirsNeue-Regular"),
-        url("../font/TTFirsNeue-Regular.woff2") format("woff2");
+        url("../font/TTFirsNeue-Regular.ttf");
     font-weight: normal;
     font-style: normal;
 }
@@ -21,14 +21,14 @@ body {
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue DemiBold"), local("TTFirsNeue-DemiBold"),
-        url("../font/TTFirsNeue-DemiBold.woff2") format("woff2");
+        url("../font/TTFirsNeue-DemiBold.ttf");
     font-weight: 600;
     font-style: normal;
 }
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue Italic"), local("TTFirsNeue-Italic"),
-        url("../font/TTFirsNeue-Italic.woff2") format("woff2");
+        url("../font/TTFirsNeue-Italic.ttf");
     font-weight: normal;
     font-style: italic;
 }
@@ -36,7 +36,7 @@ body {
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue Bold"), local("TTFirsNeue-Bold"),
-        url("../font/TTFirsNeue-Bold.woff2") format("woff2");
+        url("../font/TTFirsNeue-Bold.ttf");
     font-weight: bold;
     font-style: normal;
 }
@@ -44,7 +44,7 @@ body {
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue ExtraBold"), local("TTFirsNeue-ExtraBold"),
-        url("../font/TTFirsNeue-ExtraBold.woff2") format("woff2");
+        url("../font/TTFirsNeue-ExtraBold.ttf");
     font-weight: 800;
     font-style: normal;
 }
@@ -52,7 +52,7 @@ body {
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue Medium"), local("TTFirsNeue-Medium"),
-        url("../font/TTFirsNeue-Medium.woff2") format("woff2");
+        url("../font/TTFirsNeue-Medium.ttf");
     font-weight: 500;
     font-style: normal;
 }

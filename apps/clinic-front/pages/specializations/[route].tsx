@@ -16,8 +16,10 @@ interface SpecializationsPageProps {
     specializations: Specialization[];
 }
 const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
-    const { data, loading } = useQuery(GET_SPECIALIZATION);
-
+    const { data, loading } = useQuery(GET_SPECIALIZATION, {
+        fetchPolicy: "no-cache",
+    });
+    console.log(data);
     if (loading) {
         return (
             <div className="h-full w-full flex justify-center items-center">
