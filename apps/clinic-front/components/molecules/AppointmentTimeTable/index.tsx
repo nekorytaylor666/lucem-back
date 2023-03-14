@@ -64,14 +64,15 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
             workWeekScheduleDeclaration().map((day) => {
                 console.log("startTime:", day.startTime);
                 const today = new Date();
-                const currentStartTime = isAfter(day.startTime, today)
-                    ? today
-                    : day.startTime;
+                const currentStartTime =
+                    isAfter(day.startTime, today) &&
+                    today.getDate() === day.startTime.getDate()
+                        ? today
+                        : day.startTime;
                 const resettedStartTime = setMinutes(
                     currentStartTime,
                     getMinutes(currentStartTime) > 30 ? 30 : 0,
                 );
-                console.log(resettedStartTime);
                 return getTimeSlots(
                     resettedStartTime,
                     day.endTime,

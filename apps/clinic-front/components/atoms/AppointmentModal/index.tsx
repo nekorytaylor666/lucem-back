@@ -56,9 +56,7 @@ const AppointmentModal = () => {
         ) {
             ok = false;
         }
-        if (!values.dateOfBirth) {
-            ok = false;
-        }
+
         if (!values.phoneNumber) {
             ok = false;
         }
@@ -135,7 +133,6 @@ const AppointmentModal = () => {
     );
     const [registerUser] = useMutation(REGISTER_USER, {
         variables: {
-            dateOfBirth: new Date(formik.values.dateOfBirth),
             email: formik.values.email,
             fullName: formik.values.firstName + " " + formik.values.lastName,
             phoneNumber: formik.values.phoneNumber,
@@ -291,22 +288,6 @@ const AppointmentModal = () => {
                                 </div>
                             </div>
                             <div className="flex space-x-2">
-                                <div className="flex-1 space-y-2">
-                                    <p className="text-dark-grey">
-                                        Дата рождения пациента
-                                    </p>
-                                    <input
-                                        id="dateOfBirth"
-                                        name="dateOfBirth"
-                                        type="date"
-                                        className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
-                                        placeholder="дд-мм-гггг"
-                                        pattern="дд-мм-гггг"
-                                        defaultValue="дд-мм-гггг"
-                                        value={formik.values.dateOfBirth}
-                                        onChange={formik.handleChange}
-                                    />
-                                </div>
                                 <div className="flex-1 space-y-2">
                                     <p className="text-dark-grey">
                                         Дата и время приема
