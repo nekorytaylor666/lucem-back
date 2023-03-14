@@ -55,8 +55,8 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
                                     key={index}
                                     gradientColors={[
                                         specialization?.colorCodeGradient
-                                            ?.start,
-                                        secondaryGradientColor,
+                                            ?.start ?? "#fff",
+                                        secondaryGradientColor ?? "#fff",
                                     ]}
                                     className="rounded-2xl text-white relative overflow-hidden"
                                     style={{ zIndex: 1 }}
