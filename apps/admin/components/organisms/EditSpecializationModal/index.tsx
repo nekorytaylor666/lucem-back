@@ -30,8 +30,12 @@ export default function EditSpecializationModal({
         setName(initialData.name ?? "");
         setDescription(initialData.description || "");
         setSpecImage(initialData.specImage ?? "");
-        setColorCodeGradientStart(initialData.colorCodeGradient.start ?? "");
-        setColorCodeGradientFinish(initialData.colorCodeGradient.finish ?? "");
+        setColorCodeGradientStart(
+            initialData.colorCodeGradient?.start ?? "#fff",
+        );
+        setColorCodeGradientFinish(
+            initialData.colorCodeGradient?.finish ?? "#fff",
+        );
         setNewImageUploaded(false);
 
         console.log(initialData);
