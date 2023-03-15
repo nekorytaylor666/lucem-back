@@ -27,6 +27,8 @@ export interface Doctor {
     startingExperienceDate: Date;
     workTimes?: WorkTime[];
     cabinet?: string;
+    defaultServiceId?: ObjectId;
+
     isDeleted?: true;
     doctorPercentage?: number;
 }

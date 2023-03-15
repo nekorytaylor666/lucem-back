@@ -12,6 +12,8 @@ import { LanguageGraph } from './utils/language/language.model';
 import { BookingGraph } from 'src/modules/booking/model/booking.model';
 import { Booking } from 'src/modules/booking/model/booking.interface';
 import { Min, Max } from 'class-validator';
+import { ServiceGraph } from 'src/modules/service/model/service.model';
+import { Service } from 'src/modules/service/model/service.interface';
 
 @ObjectType('Doctor')
 export class DoctorGraph
@@ -80,6 +82,8 @@ export class DoctorGraph
     @Field(() => [BookingGraph], { nullable: true })
     upcomingBookings: BookingGraph[];
 
+    @Field(() => ServiceGraph, { nullable: true })
+    defaultService: ServiceGraph;
     @Min(0)
     @Max(100)
     @Field({
@@ -91,6 +95,7 @@ export class DoctorGraph
     constructor(
         doctor: Partial<
             Doctor & {
+                service: Service;
                 deseases?: Desease[];
                 specializations?: Specialization[];
                 upcomingBookings?: Booking[];
@@ -141,7 +146,8 @@ export class DoctorGraph
             );
         if (doctor.doctorPercentage != null)
             this.doctorPercentage = doctor.doctorPercentage;
-
+        if (doctor.service != null)
+            this.defaultService = new ServiceGraph({ ...doctor.service });
         if (doctor.startingExperienceDate != null)
             this.startingExperienceDate = doctor.startingExperienceDate;
     }

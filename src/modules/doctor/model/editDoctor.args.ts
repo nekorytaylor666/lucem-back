@@ -1,5 +1,6 @@
 import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { ObjectId } from 'mongodb';
 import { Modify } from 'src/utils/modifyType';
 import { AcceptableAgeGroup, Doctor } from './doctor.interface';
 import { ExperienceInput } from './utils/experience/experience.input';
@@ -58,6 +59,8 @@ export class EditDoctor
     @Field(() => [WorkTimeInput], { nullable: true })
     workTimes?: WorkTimeInput[];
 
+    @Field(() => String, { nullable: true })
+    defaultServiceId?: ObjectId;
     @Field({ nullable: true })
     cabinet?: string;
 

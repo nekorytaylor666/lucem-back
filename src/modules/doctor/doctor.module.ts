@@ -6,6 +6,8 @@ import { SmartSearchModule } from '../helpers/smartSearch/search.module';
 import { TokenModule } from '../helpers/token/token.module';
 import { UploadFileModule } from '../helpers/uploadFiles/uploadFiles.module';
 import { SecretaryModule } from '../secretary/secretary.module';
+import { ServiceModule } from '../service/service.module';
+import { ServiceService } from '../service/service/service.service';
 import { SpecializationModule } from '../specialization/specialization.module';
 import { UserModule } from '../user/user.module';
 import { DoctorResolver } from './resolver/doctor.resolver';

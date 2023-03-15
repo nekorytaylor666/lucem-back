@@ -16,6 +16,8 @@ import { parseTime } from 'src/utils/parseTime';
 import { removeUndefinedFromObject } from 'src/utils/filterObjectFromNulls';
 import { EditDoctor } from '../model/editDoctor.args';
 import { BookingProgress } from 'src/modules/booking/model/booking.interface';
+import { ServiceService } from 'src/modules/service/service/service.service';
+import { Service } from 'src/modules/service/model/service.interface';
 
 @Injectable()
 export class DoctorService extends BasicService<Doctor> {
@@ -192,6 +194,7 @@ export class DoctorService extends BasicService<Doctor> {
             languages,
             startingExperienceDate,
             cabinet,
+            defaultServiceId,
             acceptableAgeGroup,
         } = args;
         const doctorId = new ObjectId(_doctorId);
@@ -202,6 +205,7 @@ export class DoctorService extends BasicService<Doctor> {
                 (await avatar).createReadStream(),
                 req,
             ));
+
         if (workTimes) {
             const workTime = workTimes.map((val) => {
                 return {
@@ -218,7 +222,7 @@ export class DoctorService extends BasicService<Doctor> {
                 },
             );
         }
-        const doctor: Partial<Doctor> = {
+        const doctor: Partial<Doctor & { service: Service }> = {
             fullName,
             email,
             passwordHASH,
