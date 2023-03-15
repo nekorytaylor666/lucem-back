@@ -166,7 +166,7 @@ export class BookingResolver {
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 1000,
         });
         const bookingsResponce = bookings.map(
             (val) => new BookingGraph({ ...val }),
@@ -363,7 +363,7 @@ export class BookingResolver {
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 1000,
         });
         const bookingsResponce = bookings.map(
             (val) => new BookingGraph({ ...val }),
