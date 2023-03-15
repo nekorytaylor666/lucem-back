@@ -17,6 +17,11 @@ export const GET_DOCTOR_BY_ID = gql`
                 endTime
                 startTime
             }
+            defaultService {
+                name
+                _id
+                price
+            }
             upcomingBookings {
                 _id
                 startDate

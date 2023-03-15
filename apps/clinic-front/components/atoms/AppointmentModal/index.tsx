@@ -36,7 +36,7 @@ interface FormValues {
 const AppointmentModal = () => {
     const [appointmentData, { setShow }] = useAppointment();
     const { show, doctor, time } = appointmentData;
-
+    console.log("doctor", doctor);
     const router = useRouter();
     const modalRef = useRef<HTMLDivElement>(null);
     const validate = (values: FormValues) => {
@@ -120,6 +120,7 @@ const AppointmentModal = () => {
             registerUser();
         },
     });
+
     const [createBooking, { loading: isCreatingBooking }] = useMutation<
         CreateBooking,
         CreateBookingVariables
@@ -128,8 +129,9 @@ const AppointmentModal = () => {
         GET_SERVICE_BY_ID,
         {
             variables: {
-                serviceId: "618c0c4985b2fd7b37e3656e",
+                serviceId: doctor?.defaultService?._id,
             },
+            skip: !doctor?.defaultService?._id,
         },
     );
     const [registerUser, { loading: isRegistering }] = useMutation(
@@ -152,7 +154,7 @@ const AppointmentModal = () => {
                         endDate: new Date(time.end),
                         startDate: new Date(time.start),
                         userId: data.registerUser._id,
-                        serviceId: "618c0c4985b2fd7b37e3656e",
+                        serviceId: doctor?.defaultService?._id,
                     },
                     context: {
                         headers: {
@@ -243,8 +245,8 @@ const AppointmentModal = () => {
                             {!serviceLoading && (
                                 <p className="text-xl text-dark-grey">
                                     Стоимость услуги "
-                                    {serviceRes.getServiceById.name}":{" "}
-                                    {serviceRes.getServiceById.price} тг.
+                                    {serviceRes?.getServiceById?.name}":{" "}
+                                    {serviceRes?.getServiceById?.price} тг.
                                 </p>
                             )}
                         </div>

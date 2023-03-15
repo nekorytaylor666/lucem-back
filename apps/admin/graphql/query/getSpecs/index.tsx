@@ -11,6 +11,8 @@ export const GET_SPECIALIZATIONS = gql`
             }
             services {
                 _id
+                price
+                durationInMinutes
                 name
             }
             photoURL {

@@ -112,6 +112,7 @@ const EditDoctorParentMultistepForm = ({ doctorId }: { doctorId: string }) => {
                 ) as AcceptableAgeGroup,
                 dateOfBirth: values.personalInfo.birthDate,
                 // avatar: values.photoInfo,
+                defaultServiceId: values.defaultServiceId,
                 experiences: createExperienceData([
                     {
                         name: AllowedExperienceAndEducationTypes.Education,

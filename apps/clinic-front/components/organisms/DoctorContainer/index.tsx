@@ -15,21 +15,20 @@ import { ru } from "date-fns/locale";
 import { GET_DOCTOR_BY_ID } from "graphql/queries";
 import { GetDoctorByID } from "@graphqlTypes/GetDoctorByID";
 const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
-    const { data: serviceRes, loading: serviceLoading } = useQuery(
-        GET_SERVICE_BY_ID,
-        {
-            variables: {
-                serviceId: "618c0c4985b2fd7b37e3656e",
-            },
-        },
-    );
-
     const { data, loading } = useQuery<GetDoctorByID>(GET_DOCTOR_BY_ID, {
         variables: { doctorId: doctor._id },
     });
 
     const doctorData = data?.getDoctorByID;
-
+    const { data: serviceRes, loading: serviceLoading } = useQuery(
+        GET_SERVICE_BY_ID,
+        {
+            variables: {
+                serviceId: doctorData?.defaultService?._id,
+            },
+            skip: !doctorData?.defaultService?._id,
+        },
+    );
     return (
         <>
             <div className="rounded-2xl hidden lg:grid grid-cols-3 bg-white shadow-lg my-5 hover:shadow-lg hover:scale-110 transition-all ease-in-out">
@@ -78,11 +77,14 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                         </div>
                         <div>
                             <p className="text-3xl font-bold">
+                                {!serviceRes?.getServiceById && "Нет услуги"}
                                 {!serviceLoading &&
-                                    serviceRes.getServiceById.price}{" "}
-                                тг
+                                    serviceRes?.getServiceById &&
+                                    serviceRes?.getServiceById?.price +
+                                        " " +
+                                        "тг."}{" "}
                             </p>
-                            <p>Стоимость первичного приема</p>
+                            <p>{serviceRes?.getServiceById?.name}</p>
                         </div>
                     </div>
                 </Link>
@@ -96,9 +98,11 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                             </div>
                         </div>
                     ) : (
-                        <AppointmentTimetable
-                            doctor={doctorData}
-                        ></AppointmentTimetable>
+                        Boolean(serviceRes?.getServiceById?.price) && (
+                            <AppointmentTimetable
+                                doctor={doctor}
+                            ></AppointmentTimetable>
+                        )
                     )}
                 </div>
             </div>
@@ -144,9 +148,11 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                 </Link>
 
                 <div className="py-8 space-y-2">
-                    <AppointmentTimetable
-                        doctor={doctor}
-                    ></AppointmentTimetable>
+                    {serviceRes?.getServiceById?._id && (
+                        <AppointmentTimetable
+                            doctor={doctor}
+                        ></AppointmentTimetable>
+                    )}
                 </div>
             </div>
         </>

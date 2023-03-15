@@ -160,6 +160,7 @@ export const mapDoctorDataToEditDoctorFormValues = (
         jobExperienceInfo,
         languagesInfo: doctor.languages,
         photoInfo: doctor.avatar,
+        defaultServiceId: doctor.defaultServiceId,
         professionalInfo: {
             acceptableAgeGroup: doctor.acceptableAgeGroup,
             clinicCut: (100 - doctor.doctorPercentage).toString(),

@@ -27,6 +27,13 @@ export const GET_DOCTOR_BY_ID = gql`
                 language
                 type
             }
+            defaultService {
+                _id
+                name
+                price
+                durationInMinutes
+                description
+            }
             startingExperienceDate
             numOfRatings
             phoneNumber

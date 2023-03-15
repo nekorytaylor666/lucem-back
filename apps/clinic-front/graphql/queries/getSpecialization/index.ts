@@ -62,6 +62,12 @@ export const GET_SPECIALIZATION_BY_ID = gql`
                 phoneNumber
                 rating
                 startingExperienceDate
+                defaultService {
+                    _id
+                    name
+                    price
+                    durationInMinutes
+                }
                 avatar {
                     xl
                 }

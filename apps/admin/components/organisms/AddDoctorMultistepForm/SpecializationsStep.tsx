@@ -22,6 +22,7 @@ import {
 import { GET_DOCTOR_BY_ID } from "graphql/query";
 
 export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
+    const { values, setFieldValue } = useFormikContext();
     const [
         attachDoctorToSpecializationFunction,
         { data: attachDoctorToSpecializationData, loading, error },
@@ -50,6 +51,8 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
         doctorData.specializations,
     );
 
+    const services = specializations.map((el) => el.services).flat(1);
+    const defaultService = doctorData.defaultService;
     useEffect(() => {
         if (data) {
             setSelectedSpecificationId(specializations[0]._id);
@@ -101,7 +104,6 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
                     ))}
                 </select>
             </div>
-
             <div className="flex items-center">
                 <div className="h-px w-full bg-gray-100"></div>
                 <div>
@@ -135,6 +137,27 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
                     </button>
                 </div>
                 <div className="h-px w-full bg-gray-100"></div>
+            </div>
+            <p className="mt-4">Улсуга по умолчанию для записи:</p>
+            <div className="mt-4">
+                <p style={{ fontWeight: 700 }}>
+                    {defaultService?.name ?? "Нет услуги по умолчанию"}
+                </p>
+            </div>
+            <div style={{ marginTop: 20 }}>
+                <select
+                    className="select w-full py-3 bg-gray-100"
+                    onChange={(e) =>
+                        setFieldValue("defaultServiceId", e.target.value)
+                    }
+                >
+                    {services.map((service) => (
+                        <option value={service?._id}>
+                            {service?.name} - {service?.price} тг -{" "}
+                            {service?.durationInMinutes} минут
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <div
