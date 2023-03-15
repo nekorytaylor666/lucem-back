@@ -33,15 +33,6 @@ function MyApp({
                     />
                 </Head>
                 {getLayout(<Component {...pageProps} />)}
-                <noscript>
-                    <div>
-                        <img
-                            src="https://mc.yandex.ru/watch/92815045"
-                            style="position:absolute; left:-9999px;"
-                            alt=""
-                        />
-                    </div>
-                </noscript>
 
                 <Script
                     src="//code.jivosite.com/widget/9ROCKznjOu"
@@ -52,7 +43,6 @@ function MyApp({
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{
                         __html: `
-   <script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -64,8 +54,6 @@ function MyApp({
         trackLinks:true,
         accurateTrackBounce:true
    });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/92815045" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
                         `,
                     }}
                 />
