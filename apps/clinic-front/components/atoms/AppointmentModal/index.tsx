@@ -120,9 +120,10 @@ const AppointmentModal = () => {
             registerUser();
         },
     });
-    const [createBooking] = useMutation<CreateBooking, CreateBookingVariables>(
-        CREATE_BOOKING,
-    );
+    const [createBooking, { loading: isCreatingBooking }] = useMutation<
+        CreateBooking,
+        CreateBookingVariables
+    >(CREATE_BOOKING);
     const { data: serviceRes, loading: serviceLoading } = useQuery(
         GET_SERVICE_BY_ID,
         {
@@ -131,35 +132,39 @@ const AppointmentModal = () => {
             },
         },
     );
-    const [registerUser] = useMutation(REGISTER_USER, {
-        variables: {
-            email: formik.values.email,
-            fullName: formik.values.firstName + " " + formik.values.lastName,
-            phoneNumber: formik.values.phoneNumber,
-            password: formik.values.password,
-        },
-        onError: (err) => {
-            console.log(err.message);
-        },
-        onCompleted: async (data) => {
-            await createBooking({
-                variables: {
-                    doctorId: doctor?._id,
-                    endDate: new Date(time.end),
-                    startDate: new Date(time.start),
-                    userId: data.registerUser._id,
-                    serviceId: "618c0c4985b2fd7b37e3656e",
-                },
-                context: {
-                    headers: {
-                        Authorization: data.registerUser.token,
+    const [registerUser, { loading: isRegistering }] = useMutation(
+        REGISTER_USER,
+        {
+            variables: {
+                email: formik.values.email,
+                fullName:
+                    formik.values.firstName + " " + formik.values.lastName,
+                phoneNumber: formik.values.phoneNumber,
+                password: formik.values.password,
+            },
+            onError: (err) => {
+                console.log(err.message);
+            },
+            onCompleted: async (data) => {
+                await createBooking({
+                    variables: {
+                        doctorId: doctor?._id,
+                        endDate: new Date(time.end),
+                        startDate: new Date(time.start),
+                        userId: data.registerUser._id,
+                        serviceId: "618c0c4985b2fd7b37e3656e",
                     },
-                },
-                onError: (err) => {},
-            });
-            router.push("/success");
+                    context: {
+                        headers: {
+                            Authorization: data.registerUser.token,
+                        },
+                    },
+                    onError: (err) => {},
+                });
+                router.push("/success");
+            },
         },
-    });
+    );
 
     if (!show) {
         return <></>;
@@ -347,59 +352,17 @@ const AppointmentModal = () => {
                             </div>
                             <div className="flex-1">
                                 <button
+                                    disabled={
+                                        isCreatingBooking || isRegistering
+                                    }
                                     type="submit"
                                     className="bg-pink-purple w-full px-2 py-3 text-white rounded"
                                 >
-                                    Подтвердить
+                                    {isCreatingBooking || isRegistering
+                                        ? "Загрузка..."
+                                        : "Записаться"}
                                 </button>
                             </div>
-                            {/* {appointmentSent ? (
-                                <div>
-                                    {seconds > 0 ? (
-                                        <p className="text-pink-purple text-sm">
-                                            Отправить еще раз через{" "}
-                                            <span>{seconds}</span> секунд
-                                        </p>
-                                    ) : (
-                                        <button
-                                            className="bg-pink-purple w-full px-2 py-3 text-white rounded"
-                                            onClick={resetSms}
-                                        >
-                                            Переотправить
-                                        </button>
-                                    )}
-                                    <p className="text-dark-grey">Код из SMS</p>
-                                    <div className="flex space-x-2">
-                                        <div className="flex-1">
-                                            <input
-                                                type="numeric"
-                                                className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
-                                                value={smsCode}
-                                                onChange={(e) =>
-                                                    setSmsCode(e.target.value)
-                                                }
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <button
-                                                className="bg-pink-purple w-full px-2 py-3 text-white rounded"
-                                                onClick={checkVerificationCode}
-                                            >
-                                                Подтвердить
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div>
-                                    <button
-                                        className="bg-pink-purple w-full px-2 py-3 text-white rounded"
-                                        onClick={sendVerificationCode}
-                                    >
-                                        Отправить код подтверждения
-                                    </button>
-                                </div>
-                            )} */}
                         </form>
                     </div>
                 </motion.div>
