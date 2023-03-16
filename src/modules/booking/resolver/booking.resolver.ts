@@ -286,7 +286,7 @@ export class BookingResolver {
         const bookings = await paginate({
             cursor: bookingsCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 1000,
         });
         const bookingsResponce = bookings.map(
             (val) => new BookingGraph({ ...val }),
@@ -302,20 +302,20 @@ export class BookingResolver {
         @CurrentUserGraph() user: { _id: ObjectId },
         @Args('bookingId', { type: () => String }) bookingId: string,
     ) {
-        const findQuery: Partial<Booking> =
+        const findQuery: any =
             payload.role === TokenRoles.User
                 ? {
-                      userId: user._id,
-                      _id: new ObjectId(bookingId),
+                      userId: { $eq: user._id },
+                      _id: { $eq: new ObjectId(bookingId) },
                   }
                 : payload.role === TokenRoles.Doctor
                 ? {
-                      doctorId: user._id,
-                      _id: new ObjectId(bookingId),
+                      doctorId: { $eq: user._id },
+                      _id: { $eq: new ObjectId(bookingId) },
                   }
                 : payload.role === TokenRoles.Admin
                 ? {
-                      _id: new ObjectId(bookingId),
+                      _id: { $eq: new ObjectId(bookingId) },
                   }
                 : undefined;
         const booking = await this.bookingService.updateOne({
