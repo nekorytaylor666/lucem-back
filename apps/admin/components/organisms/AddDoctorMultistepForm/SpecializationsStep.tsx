@@ -141,7 +141,14 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
             <p className="mt-4">Улсуга по умолчанию для записи:</p>
             <div className="mt-4">
                 <p style={{ fontWeight: 700 }}>
-                    {defaultService?.name ?? "Нет услуги по умолчанию"}
+                    {defaultService?.name
+                        ? defaultService?.name +
+                          " - " +
+                          defaultService?.price +
+                          " тг - " +
+                          defaultService?.durationInMinutes +
+                          " минут"
+                        : "Нет услуги по умолчанию"}
                 </p>
             </div>
             <div style={{ marginTop: 20 }}>
