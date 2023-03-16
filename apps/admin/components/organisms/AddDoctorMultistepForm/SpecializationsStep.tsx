@@ -56,7 +56,7 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
     useEffect(() => {
         if (data) {
             setSelectedSpecificationId(specializations[0]._id);
-            console.log(specializations);
+            setFieldValue("defaultServiceId", services[0]._id);
         }
     }, [data]);
 
