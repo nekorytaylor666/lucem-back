@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AdminModule } from 'src/modules/admin/admin.module';
 import { DoctorModule } from 'src/modules/doctor/doctor.module';
 import { SecretaryModule } from 'src/modules/secretary/secretary.module';
-import { ServiceModule } from 'src/modules/service/service.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { TokenModule } from '../token/token.module';
 
@@ -14,6 +13,7 @@ import { TokenModule } from '../token/token.module';
         AdminModule,
         SecretaryModule,
     ],
+    providers: [TokenModule],
     exports: [
         UserModule,
         DoctorModule,

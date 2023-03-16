@@ -23,9 +23,9 @@ import { Service } from 'src/modules/service/model/service.interface';
 export class DoctorService extends BasicService<Doctor> {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
-        private deseaseService: DeseaseService,
         @Inject('SMARTSEARCH_CONNECTION') private client,
         private fileUploadService: ImageUploadService,
+        private serviceService: ServiceService,
     ) {
         super();
         this.dbService = this.database.collection('doctor');
@@ -205,7 +205,9 @@ export class DoctorService extends BasicService<Doctor> {
                 (await avatar).createReadStream(),
                 req,
             ));
-
+        const service = await this.serviceService.findOne({
+            _id: new ObjectId(defaultServiceId),
+        });
         if (workTimes) {
             const workTime = workTimes.map((val) => {
                 return {
@@ -222,12 +224,13 @@ export class DoctorService extends BasicService<Doctor> {
                 },
             );
         }
-        const doctor: Partial<Doctor & { service: Service }> = {
+        const doctor: Partial<Doctor & { defaultService: Service }> = {
             fullName,
             email,
             passwordHASH,
             languages,
             description,
+            defaultService: service,
             startingExperienceDate,
             cabinet,
             experiences,

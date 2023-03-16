@@ -24,6 +24,7 @@ import { DoctorService } from './service/doctor.service';
         forwardRef(() => AdminModule),
         forwardRef(() => SpecializationModule),
         forwardRef(() => SecretaryModule),
+        forwardRef(() => ServiceModule),
     ],
     providers: [DoctorService, DoctorResolver],
     exports: [DoctorService],

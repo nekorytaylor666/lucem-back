@@ -95,7 +95,7 @@ export class DoctorGraph
     constructor(
         doctor: Partial<
             Doctor & {
-                service: Service;
+                defaultService: Service;
                 deseases?: Desease[];
                 specializations?: Specialization[];
                 upcomingBookings?: Booking[];
@@ -146,8 +146,10 @@ export class DoctorGraph
             );
         if (doctor.doctorPercentage != null)
             this.doctorPercentage = doctor.doctorPercentage;
-        if (doctor.service != null)
-            this.defaultService = new ServiceGraph({ ...doctor.service });
+        if (doctor.defaultService != null)
+            this.defaultService = new ServiceGraph({
+                ...doctor.defaultService,
+            });
         if (doctor.startingExperienceDate != null)
             this.startingExperienceDate = doctor.startingExperienceDate;
     }
