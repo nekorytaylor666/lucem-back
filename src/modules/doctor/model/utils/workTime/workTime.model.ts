@@ -19,7 +19,7 @@ export class WorkTimeGraph implements WorkTime {
     @Field(() => GraphQLISODateTime)
     endTime: Date;
 
-    @Field(() => Boolean)
+    @Field(() => Boolean, { nullable: true })
     isActive: boolean;
 
     constructor(workTime: Partial<WorkTime>) {
