@@ -44,6 +44,7 @@ export const GET_DOCTOR_BY_ID = gql`
             }
             workTimes {
                 endTime
+                isActive
                 startTime
             }
         }

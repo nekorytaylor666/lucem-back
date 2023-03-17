@@ -16,7 +16,7 @@ export const EDIT_DOCTOR_MUTATION = gql`
         $startingExperienceDate: DateTime
         $workTimes: [WorkTimeInput!]
         $cabinet: String
-        $defaultServiceId: String!
+        $defaultServiceId: String
     ) {
         editDoctor(
             doctorId: $doctorId

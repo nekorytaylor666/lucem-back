@@ -117,15 +117,27 @@ export type EditDoctorFormSchema = typeof editDoctorInitialValues;
 export const mapDoctorDataToEditDoctorFormValues = (
     doctor,
 ): EditDoctorFormSchema => {
+    // if less than 5 items in array, add empty items to array
+    const addEmptyItems = (array, length) => {
+        if (array.length < length) {
+            const emptyItems = Array.from(
+                { length: length - array.length },
+                () => ({ startTime: "", endTime: "", isActive: false }),
+            );
+            return [...array, ...emptyItems];
+        }
+        return array;
+    };
     const workTimes = doctor.workTimes
-        ? {
-              startTime: format(
-                  new Date(doctor.workTimes[0].startTime),
-                  "HH:mm",
-              ),
-              endTime: format(new Date(doctor.workTimes[0].endTime), "HH:mm"),
-          }
-        : { startTime: "", endTime: "" };
+        ? addEmptyItems(
+              doctor.workTimes.map((workTime) => ({
+                  startTime: format(new Date(workTime.startTime), "HH:mm"),
+                  endTime: format(new Date(workTime.endTime), "HH:mm"),
+                  isActive: workTime.isActive,
+              })),
+              7,
+          )
+        : addEmptyItems([], 7);
 
     console.log("doctor", doctor);
 

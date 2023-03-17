@@ -35,10 +35,6 @@ function MyApp({
                 {getLayout(<Component {...pageProps} />)}
 
                 <Script
-                    src="//code.jivosite.com/widget/9ROCKznjOu"
-                    strategy="afterInteractive"
-                ></Script>
-                <Script
                     id="yandex"
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{

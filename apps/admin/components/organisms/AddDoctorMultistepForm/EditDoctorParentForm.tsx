@@ -134,10 +134,7 @@ const EditDoctorParentMultistepForm = ({ doctorId }: { doctorId: string }) => {
                 phoneNumber: values.contactInfo.workPhone,
                 startingExperienceDate:
                     values.professionalInfo.startingExperienceDate,
-                workTimes: createWorkTimesFromStartEndTimes(
-                    values.workTimes.startTime,
-                    values.workTimes.endTime,
-                ),
+                workTimes: createWorkTimesFromStartEndTimes(values.workTimes),
             },
             context: {
                 headers: {

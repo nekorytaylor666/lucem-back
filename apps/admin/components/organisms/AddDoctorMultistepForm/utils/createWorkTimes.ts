@@ -14,44 +14,66 @@ export const parseTime = (time: string) => {
 interface WorkTime {
     startTime: string;
     endTime: string;
+    isActive: boolean;
 }
 
 export const createWorkTimesFromStartEndTimes = (
-    startTimeString: string,
-    endTimeString: string,
+    workTimes: WorkTime[],
 ): WorkTime[] => {
-    const startTime = parseTime(startTimeString);
-    const endTime = parseTime(endTimeString);
-    const workTimes = [];
-    const lastWorkDayIndex = 6;
+    const lastWorkDayIndex = 7;
     const defaultYear = 2020;
-    for (
-        //start from monday
-        let weekDayIndex = 1;
-        weekDayIndex < lastWorkDayIndex;
-        weekDayIndex++
-    ) {
-        //we are setting hours and minutes in Date UTC constructor to avoid timezone issues. Set day of date fns is for weekday since we are setting day of week
-        const workDay = {
+
+    const payload = workTimes.map((el, weekDayIndex) => {
+        const startTime = parseTime(el.startTime);
+        const endTime = parseTime(el.endTime);
+        console.log("payloa item", el.isActive);
+        return {
             startTime: setDay(
-                new Date(
-                    defaultYear,
-                    0,
-                    0,
+                setHours(
+                    setMinutes(new Date(), startTime.minutes),
                     startTime.hours,
-                    startTime.minutes,
-                    0,
                 ),
                 weekDayIndex,
-                { weekStartsOn: 1 },
+                { weekStartsOn: 0 },
             ).toISOString(),
             endTime: setDay(
-                new Date(defaultYear, 0, 0, endTime.hours, endTime.minutes, 0),
+                setHours(
+                    setMinutes(new Date(), endTime.minutes),
+                    endTime.hours,
+                ),
                 weekDayIndex,
-                { weekStartsOn: 1 },
+                { weekStartsOn: 0 },
             ).toISOString(),
+            isActive: el.isActive,
         };
-        workTimes.push(workDay);
-    }
-    return workTimes;
+    });
+    // for (
+    //     //start from monday
+    //     let weekDayIndex = 0;
+    //     weekDayIndex < lastWorkDayIndex;
+    //     weekDayIndex++
+    // ) {
+    //     //we are setting hours and minutes in Date UTC constructor to avoid timezone issues. Set day of date fns is for weekday since we are setting day of week
+    //     const workDay = {
+    //         startTime: setDay(
+    //             new Date(
+    //                 defaultYear,
+    //                 0,
+    //                 0,
+    //                 startTime.hours,
+    //                 startTime.minutes,
+    //                 0,
+    //             ),
+    //             weekDayIndex,
+    //             { weekStartsOn: 1 },
+    //         ).toISOString(),
+    //         endTime: setDay(
+    //             new Date(defaultYear, 0, 0, endTime.hours, endTime.minutes, 0),
+    //             weekDayIndex,
+    //             { weekStartsOn: 1 },
+    //         ).toISOString(),
+    //     };
+    //     workTimes.push(workDay);
+    // }
+    return payload;
 };

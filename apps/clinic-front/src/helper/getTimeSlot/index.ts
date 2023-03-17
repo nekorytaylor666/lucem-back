@@ -5,7 +5,8 @@ export const getTimeSlots = (
     startDate: string | Date,
     endDate: string | Date,
     upcomingBookings: GetAllDoctors_getAllDoctors_upcomingBookings[],
-): { time: { start: string; end: string }; isBooked: boolean }[] => {
+    isActive: boolean,
+): { time: { start: string; end: string }; isBooked: boolean; isActive }[] => {
     const bookings = upcomingBookings?.map((booking) => {
         return {
             startDate: booking.startDate,
@@ -32,6 +33,7 @@ export const getTimeSlots = (
                 start: addMinutes(date, i * 30).toISOString(),
                 end: addMinutes(addHours(date, i), 30).toISOString(),
             },
+            isActive,
         };
         const formattedTimeSlot = format(
             new Date(timeslot.time.start),
@@ -43,6 +45,7 @@ export const getTimeSlots = (
         timeSlots.push({
             ...timeslot,
             isBooked,
+            isActive,
         });
     }
 

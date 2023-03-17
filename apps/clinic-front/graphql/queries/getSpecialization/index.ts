@@ -82,6 +82,7 @@ export const GET_SPECIALIZATION_BY_ID = gql`
                 workTimes {
                     endTime
                     startTime
+                    isActive
                 }
             }
             photoURL {

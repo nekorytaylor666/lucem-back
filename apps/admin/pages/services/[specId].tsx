@@ -77,11 +77,14 @@ const ServicesList = ({
     } = useRouter();
     const [showAddServiceModal, setShowAddServiceModal] = useState(false);
     const [showEditServiceModal, setShowEditServiceModal] = useState(false);
-    const [selectedSpecialization, setSelectedSpecialization] = useState<any>("");
+    const [selectedSpecialization, setSelectedSpecialization] =
+        useState<any>("");
     const [selectedService, setSelectedService] = useState<any>(null);
 
     const servicesCountPerPage = 10;
-    const paginationCount = Math.ceil(specialization.services.length / servicesCountPerPage);
+    const paginationCount = Math.ceil(
+        specialization.services.length / servicesCountPerPage,
+    );
     const [selectedPageNumber, setSelectedPageNumber] = useState(1);
     const [servicesStartIndex, setServicesStartIndex] = useState(0);
     const [servicesEndIndex, setServicesEndIndex] = useState(10);
@@ -89,10 +92,10 @@ const ServicesList = ({
         specialization.services.filter(
             (item: any, index: number) =>
                 index >= servicesStartIndex && index < servicesEndIndex,
-        )
+        ),
     );
     const paginationValues = [];
-    for(let i = 0; i < paginationCount; i++){
+    for (let i = 0; i < paginationCount; i++) {
         paginationValues.push(i + 1);
     }
 
@@ -101,7 +104,7 @@ const ServicesList = ({
             specialization.services.filter(
                 (item: any, index: number) =>
                     index >= servicesStartIndex && index < servicesEndIndex,
-            )
+            ),
         );
     }, [servicesStartIndex, servicesEndIndex]);
 
@@ -109,7 +112,9 @@ const ServicesList = ({
         <>
             <div className="p-5 rounded-2xl bg-white shadow-md space-y-3 mt-5">
                 <div className="flex justify-between">
-                    <p className="text-2xl font-medium">{specialization.name}</p>
+                    <p className="text-2xl font-medium">
+                        {specialization.name}
+                    </p>
                     <button
                         onClick={() => {
                             setShowAddServiceModal(true);
@@ -194,7 +199,12 @@ const ServicesList = ({
     );
 };
 
-const PaginationBlock = ({ value, itemsPerPage, setStartIndex, setEndIndex }) => {
+const PaginationBlock = ({
+    value,
+    itemsPerPage,
+    setStartIndex,
+    setEndIndex,
+}) => {
     return (
         <div
             style={{

@@ -55,14 +55,12 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                 );
             scheduleDeclaration.push(workWeekSchedule);
         }
-        console.log(scheduleDeclaration);
         return scheduleDeclaration.flat(1);
     };
 
     const workWeekSchedule = useMemo(
         () =>
             workWeekScheduleDeclaration().map((day) => {
-                console.log("startTime:", day.startTime);
                 const today = new Date();
                 const currentStartTime =
                     isAfter(day.startTime, today) &&
@@ -77,6 +75,7 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                     resettedStartTime,
                     day.endTime,
                     doctor.upcomingBookings,
+                    day.isActive,
                 );
             }),
         [workWeekScheduleDeclaration],
@@ -171,7 +170,8 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                 </div>
                 <TimetableGrid>
                     {workWeekSchedule[selectedDay]?.map((val, i) => {
-                        return (
+                        console.log(val.isActive);
+                        return val.isActive ? (
                             <TimeContainer
                                 key={i}
                                 show={(() =>
@@ -192,7 +192,7 @@ const AppointmentTimetable: React.FC<AppointmentTimetableProps> = ({
                                 isBooked={val.isBooked}
                                 setShow={() => setShow(!appointmentData.show)}
                             />
-                        );
+                        ) : null;
                     })}
                 </TimetableGrid>
             </div>
@@ -220,12 +220,13 @@ const convertWorkTimesToWorkWeekScheduleDeclaration = (
     addWeek = 0,
 ) => {
     return workTimes
-        .map(({ startTime, endTime }) => {
+        .map(({ startTime, endTime, isActive }) => {
             const weekStart = addWeeks(new Date(), addWeek);
             const today = new Date();
             const start = new Date(startTime);
             const end = new Date(endTime);
 
+            console.log(start.toString(), end.toString(), isActive);
             const startHours = getHours(start);
 
             const endHours = getHours(end);
@@ -254,6 +255,7 @@ const convertWorkTimesToWorkWeekScheduleDeclaration = (
                     setHours(setMinutes(weekStart, endMinutes), endHours),
                     endWeekDay,
                 ),
+                isActive,
             };
         })
         .filter((val) => val);
