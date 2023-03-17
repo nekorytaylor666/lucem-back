@@ -8,6 +8,7 @@ import {
 export interface WorkTime {
     startTime: Date;
     endTime: Date;
+    isActive?: boolean;
 }
 
 @ObjectType('WorkTime')
@@ -18,9 +19,13 @@ export class WorkTimeGraph implements WorkTime {
     @Field(() => GraphQLISODateTime)
     endTime: Date;
 
+    @Field(() => Boolean)
+    isActive: boolean;
+
     constructor(workTime: Partial<WorkTime>) {
         if (workTime.startTime != null) this.startTime = workTime.startTime;
         if (workTime.endTime != null) this.endTime = workTime.endTime;
+        if (workTime.isActive != null) this.isActive = workTime.isActive;
     }
 }
 
@@ -31,4 +36,7 @@ export class WorkTimeInput implements WorkTime {
 
     @Field(() => GraphQLISODateTime)
     endTime: Date;
+
+    @Field(() => Boolean, { nullable: true })
+    isActive: boolean;
 }

@@ -208,11 +208,13 @@ export class DoctorService extends BasicService<Doctor> {
         const service = await this.serviceService.findOne({
             _id: new ObjectId(defaultServiceId),
         });
+        console.log(workTimes);
         if (workTimes) {
             const workTime = workTimes.map((val) => {
                 return {
                     startTime: parseTime(val.startTime),
                     endTime: parseTime(val.endTime),
+                    isActive: val.isActive,
                 } as WorkTime;
             });
             await this.dbService.updateOne(
