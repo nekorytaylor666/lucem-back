@@ -5,7 +5,7 @@ export const GET_REVIEW_OF_DOCTOR_QUERY = gql`
         getCommentsOfDoctor(page: 1, doctorId: $doctorId) {
             _id
             dateCreated
-
+            fakeName
             rating
             text
             user {

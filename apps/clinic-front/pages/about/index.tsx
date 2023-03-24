@@ -140,7 +140,7 @@ const AboutPage: React.FC = () => {
                                                         </p>
                                                     </div>
                                                 </Link>
-                                                <Link href="https://api.whatsapp.com/send/?phone=77028196393&text&app_absent=0">
+                                                <Link href="https://api.whatsapp.com/send/?phone=77081097577&text=Добрый день&type=phone_number&app_absent=0">
                                                     <div className="w-full flex py-1 px-5 space-x-2 border-2 border-special-green rounded-md cursor-pointer items-center">
                                                         <Image
                                                             width={30}

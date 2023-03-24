@@ -186,7 +186,9 @@ const ReviewsContainer = () => {
                     <div className=" p-4 bg-base-200 ">
                         <div className="mb-4">
                             <p className=" font-semibold text-lg">
-                                {review?.user?.fullname ?? "Аноним"}{" "}
+                                {review.fakeName ??
+                                    review.user.fullName ??
+                                    "Аноним"}{" "}
                                 <span className=" font-bold text-success">
                                     {review.rating}/10
                                 </span>
@@ -240,7 +242,7 @@ const DoctorDetailsInfo = (props: {
                                 <span>Instagram</span>
                             </div>
                         </Link>
-                        <Link href="https://api.whatsapp.com/send/?phone=77081097577text&app_absent=0">
+                        <Link href="https://api.whatsapp.com/send/?phone=77081097577&text=Добрый день&type=phone_number&app_absent=0">
                             <div className="px-4 py-2 space-x-2 rounded-md border-2 border-main-green flex items-center justify-center text-main-green font-medium text-lg cursor-pointer">
                                 <Image
                                     height="30"
