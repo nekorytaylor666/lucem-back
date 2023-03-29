@@ -7,7 +7,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: "TT Firs Neue";
+    font-family: "TT Firs Neue", sans-serif;
 }
 
 @font-face {
@@ -24,6 +24,11 @@ body {
         url("../font/TTFirsNeue-DemiBold.ttf");
     font-weight: 600;
     font-style: normal;
+}
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("Noto Sans");
+    unicode-range: U+400-4FF;
 }
 @font-face {
     font-family: "TT Firs Neue";

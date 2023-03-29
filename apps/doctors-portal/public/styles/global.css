@@ -17,7 +17,11 @@ body {
     font-weight: normal;
     font-style: normal;
 }
-
+@font-face {
+    font-family: "TT Firs Neue";
+    src: local("Noto Sans");
+    unicode-range: U+400-4FF;
+}
 @font-face {
     font-family: "TT Firs Neue";
     src: local("TT Firs Neue DemiBold"), local("TTFirsNeue-DemiBold"),
