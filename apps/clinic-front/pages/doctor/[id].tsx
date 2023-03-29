@@ -352,10 +352,6 @@ const PricesInfo = ({ price = 6000 }) => {
                     <span className="font-bold text-3xl">{price} ₸</span>
                     <span>Первичный прием</span>
                 </div>
-                <div className="flex flex-col items-start">
-                    <span className="font-bold text-3xl">4000₸</span>
-                    <span>Повторный прием</span>
-                </div>
             </div>
 
             <p className="flex-1 flex-col flex items-start">

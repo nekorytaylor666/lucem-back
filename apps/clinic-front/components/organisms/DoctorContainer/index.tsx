@@ -133,8 +133,15 @@ const DoctorContainer: React.FC<Props> = ({ doctor }: Props) => {
                             </p>
                         </div>
                         <div>
-                            <p className="text-3xl font-bold">6000 тг</p>
-                            <p>Стоимость первичного приема</p>
+                            <p className="text-3xl font-bold">
+                                {!serviceRes?.getServiceById && "Нет услуги"}
+                                {!serviceLoading &&
+                                    serviceRes?.getServiceById &&
+                                    serviceRes?.getServiceById?.price +
+                                        " " +
+                                        "тг."}{" "}
+                            </p>
+                            <p>{serviceRes?.getServiceById?.name}</p>
                         </div>
                     </div>
                 </Link>

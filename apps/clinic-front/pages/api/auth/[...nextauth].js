@@ -39,6 +39,7 @@ const providers = [
             const email = credentials?.email;
             const password = credentials?.password;
 
+            console.log("credentials", email, password);
             try {
                 const loginRes = await client.mutate({
                     mutation: LOGIN_USER,
@@ -55,6 +56,7 @@ const providers = [
                     return null;
                 }
             } catch (error) {
+                console.log(error);
                 return null;
             }
         },

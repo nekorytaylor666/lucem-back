@@ -22,6 +22,9 @@ export const GET_MAINPAGE = gql`
                 name
             }
             rating
+            numOfRatings
+            startingExperienceDate
+            rating
             acceptableAgeGroup
             avatar {
                 xl

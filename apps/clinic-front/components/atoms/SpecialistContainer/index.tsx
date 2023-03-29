@@ -2,6 +2,8 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Doctor } from "custom_typings/doctor";
+import { formatDistanceStrict } from "date-fns";
+import { ru } from "date-fns/locale";
 
 interface SpecialistContainerProps {
     doctor: Doctor;
@@ -19,14 +21,24 @@ const SpecialistContainer: React.FC<SpecialistContainerProps> = ({
                         </p>
                     </div>
                     <div className="text-sm mt-4">
-                        <p className="font-semibold">33 лет</p>
+                        <p className="font-semibold">
+                            {" "}
+                            {formatDistanceStrict(
+                                new Date(doctor.startingExperienceDate),
+                                new Date(),
+                                {
+                                    locale: ru,
+                                    addSuffix: false,
+                                },
+                            )}
+                        </p>
                         <p>Опыт работы</p>
                     </div>
                     <div className="text-sm">
                         <p className="text-special-green font-semibold">
-                            {doctor.rating}/10
+                            {doctor?.rating?.toPrecision(2)} / 10
                         </p>
-                        <p>Рейтинг на основе 212 отзывов</p>
+                        <p>Рейтинг на основе {doctor.numOfRatings} отзывов</p>
                     </div>
                 </div>
                 <img
