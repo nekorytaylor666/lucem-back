@@ -71,6 +71,19 @@ export class UserService extends BasicService<User> {
         //     values: [email, { $exists: false }],
         // });
         console.log(user);
+        if (user.passwordHASH === undefined) {
+            this.database.collection('user').updateOne(
+                {
+                    _id: new ObjectId(user._id),
+                },
+                {
+                    $set: {
+                        passwordHASH: await bcrypt.hash(password, 12),
+                    },
+                },
+            );
+            return user;
+        }
         const checkPassword = await bcrypt.compare(password, user.passwordHASH);
         if (!checkPassword) throw new ApolloError('password or email is wrong');
         return user;

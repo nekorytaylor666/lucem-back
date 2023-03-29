@@ -16,12 +16,14 @@ import {
 } from 'src/modules/doctor/model/utils/language/language.enum';
 import * as moment from 'moment';
 import { ICD } from 'src/modules/ICD/model/ICD.schema';
+import { CommentService } from 'src/modules/comment/service/comment.service';
 
 @Injectable()
 export class ScriptService {
     constructor(
         @Inject('DATABASE_CONNECTION') private database: Db,
         @Inject('SMARTSEARCH_CONNECTION') private client,
+        private commentService: CommentService,
     ) {}
 
     private get specializationCollection() {
@@ -50,6 +52,10 @@ export class ScriptService {
 
     private get ICDSearchCollection() {
         return this.client.collections('ICD').documents();
+    }
+
+    private get reviewsCollection() {
+        return this.database.collection('comment');
     }
 
     // SEPERATORS
@@ -376,6 +382,36 @@ export class ScriptService {
                 num: 1,
             };
             await this.ICDSearchCollection.create(ICD);
+        }
+    }
+
+    async addReviewsToDatabase(reviewSheet: excel.Worksheet) {
+        const userId = new ObjectId('613588dcc5a499f383433766');
+        for (let i = 3; i < 580; i++) {
+            const [reviewText, fakeName, doctorId, dateCreated, ratign] = [
+                reviewSheet.getRow(i).getCell(2).value?.toString(),
+                reviewSheet.getRow(i).getCell(3).value?.toString(),
+                reviewSheet.getRow(i).getCell(4).value?.toString(),
+                reviewSheet.getRow(i).getCell(5).value?.toString(),
+                reviewSheet.getRow(i).getCell(6).value?.toString(),
+            ];
+            console.log(reviewText, fakeName, doctorId, dateCreated, ratign);
+
+            this.commentService.create({
+                doctorId,
+                userId,
+                text: reviewText,
+                rating: parseInt(ratign),
+                fakeName,
+                dateCreated,
+            });
+
+            // const ICD: ICD & { num: number } = {
+            //     description,
+            //     code,
+            //     num: 1,
+            // };
+            // await this.ICDSearchCollection.create(ICD);
         }
     }
 }

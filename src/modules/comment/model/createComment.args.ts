@@ -16,6 +16,12 @@ export class CreateComment
     @Field({ nullable: true })
     text?: string;
 
+    @Field(() => String, { nullable: true })
+    fakeName?: string;
+
+    @Field(() => String, { nullable: true })
+    dateCreated?: string;
+
     @Field(() => Int)
     rating: number;
 

@@ -14,6 +14,7 @@ export interface Comment {
     userId: ObjectId;
     commentParentId: ObjectId;
     dateCreated: Date;
+    fakeName?: string;
 }
 
 @ObjectType('Comment')
@@ -40,6 +41,9 @@ export class CommentGraph
 
     @Field(() => UserGraph)
     user: UserGraph;
+
+    @Field(() => String, { nullable: true })
+    fakeName?: string;
 
     @Field({ nullable: true })
     text?: string;
@@ -83,6 +87,9 @@ export class CommentGraph
             this.dependentComments = comment.dependentComments.map(
                 (val) => new CommentGraph({ ...val }),
             );
+
+        if (comment.fakeName != null) this.fakeName = comment.fakeName;
+
         if (comment.doctor != null)
             this.doctor = new DoctorGraph({ ...comment.doctor });
     }

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import moment from 'moment';
 import { Db, ObjectId } from 'mongodb';
 import { BasicService } from 'src/modules/helpers/basic.service';
 import { DATABASE_CONNECTION } from 'src/modules/helpers/database/mongo.provider';
@@ -31,6 +32,7 @@ export class CommentService extends BasicService<Comment> {
             commentParentId: _commentParentId,
             doctorId: _doctorId,
             userId: _userId,
+            dateCreated,
         } = args;
         const [commentParentId, doctorId, userId] = [
             _commentParentId && new ObjectId(_commentParentId),
@@ -41,11 +43,12 @@ export class CommentService extends BasicService<Comment> {
             ...args,
             _id: new ObjectId(),
             commentParentId,
-            dateCreated: new Date(),
+            dateCreated: new Date(dateCreated),
             doctorId,
             userId,
         };
         removeUndefinedFromObject(comment);
+        console.log(comment);
         await this.insertOne(comment);
         return comment;
     }

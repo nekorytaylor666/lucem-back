@@ -76,4 +76,16 @@ export class ScriptResolver {
         this.scriptService.addICDToSmartSearch(ICDWorkSheet);
         return 'string';
     }
+
+    @Mutation(() => String)
+    async reviewsScript() {
+        const pathToReviewsSheets = join(process.cwd(), 'comments.xlsx');
+        const reviewsWorkbook = new excel.Workbook();
+        const reviewsWorkSheets = await reviewsWorkbook.xlsx.readFile(
+            pathToReviewsSheets,
+        );
+        const reviewsWorkSheet = reviewsWorkSheets.getWorksheet('Лист1');
+        this.scriptService.addReviewsToDatabase(reviewsWorkSheet);
+        return 'string';
+    }
 }

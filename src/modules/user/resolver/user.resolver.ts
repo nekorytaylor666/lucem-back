@@ -97,6 +97,7 @@ export class UserResolver {
         @Args('email', { type: () => String }) email: string,
         @Args('password', { type: () => String }) password: string,
     ) {
+        console.log('loginUser', email, password);
         const user = await this.userService.login({ email, password });
         const token = this.tokenService.create({
             user: {
