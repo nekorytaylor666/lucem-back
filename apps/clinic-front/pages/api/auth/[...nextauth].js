@@ -12,53 +12,55 @@ const providers = [
                 label: "email",
                 type: "text",
             },
-            password: { label: "password", type: "text" },
+            code: { label: "code", type: "text" },
         },
         async authorize(credentials) {
             // Add logic here to look up the user from the credentials supplied
-            // const phoneNumber = credentials?.phoneNumber;
-            // const code = credentials?.code;
-            // try {
-            //     const checkSmsRes = await client.mutate({
-            //         mutation: CHECK_SMS_VERIFICATION,
-            //         variables: {
-            //             phoneNumber,
-            //             code,
-            //         },
-            //     });
-            //     const user = checkSmsRes.data?.checkSMSVerificationCode;
-            //     if (user) {
-            //         return user;
-            //     } else {
-            //         return null;
-            //     }
-            // } catch (error) {
-            //     return null;
-            // }
-
-            const email = credentials?.email;
-            const password = credentials?.password;
-
-            console.log("credentials", email, password);
+            const phoneNumber = credentials?.phoneNumber;
+            const code = credentials?.code;
+            console.log("credentials", phoneNumber, code);
             try {
-                const loginRes = await client.mutate({
-                    mutation: LOGIN_USER,
+                const checkSmsRes = await client.mutate({
+                    mutation: CHECK_SMS_VERIFICATION,
                     variables: {
-                        email,
-                        password,
+                        phoneNumber,
+                        code,
                     },
                 });
-                const user = loginRes.data?.loginUser;
-                console.log(user);
+                console.log(checkSmsRes);
+                const user = checkSmsRes.data?.checkSMSVerificationCode;
                 if (user) {
                     return user;
                 } else {
                     return null;
                 }
             } catch (error) {
-                console.log(error);
                 return null;
             }
+
+            // const email = credentials?.email;
+            // const password = credentials?.password;
+
+            // console.log("credentials", email, password);
+            // try {
+            //     const loginRes = await client.mutate({
+            //         mutation: LOGIN_USER,
+            //         variables: {
+            //             email,
+            //             password,
+            //         },
+            //     });
+            //     const user = loginRes.data?.loginUser;
+            //     console.log(user);
+            //     if (user) {
+            //         return user;
+            //     } else {
+            //         return null;
+            //     }
+            // } catch (error) {
+            //     console.log(error);
+            //     return null;
+            // }
         },
         session: {
             strategy: "jwt",

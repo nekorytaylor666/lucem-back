@@ -31,38 +31,37 @@ interface FormValues {
     dateOfBirth: string;
     phoneNumber: string;
     password: string;
+    code: string;
 }
 
 const AppointmentModal = () => {
     const [appointmentData, { setShow }] = useAppointment();
     const { show, doctor, time } = appointmentData;
-    console.log("doctor", doctor);
     const router = useRouter();
     const modalRef = useRef<HTMLDivElement>(null);
     const validate = (values: FormValues) => {
-        let ok = true;
+        const errors = {} as any;
 
         if (!values.firstName) {
-            ok = false;
+            errors.firstName = "Обязательное поле";
         }
 
         if (!values.lastName) {
-            ok = false;
+            errors.lastName = "Обязательное поле";
         }
         if (!values.email) {
-            ok = false;
+            errors.email = "Обязательное поле";
         } else if (
             !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
         ) {
-            ok = false;
+            errors.email = "Введите корректный email";
         }
 
         if (!values.phoneNumber) {
-            ok = false;
+            errors.phoneNumber = "Обязательное поле";
         }
 
-        console.log("validation", ok);
-        return ok;
+        return errors;
     };
     const initialValues: FormValues = {
         firstName: "",
@@ -71,12 +70,13 @@ const AppointmentModal = () => {
         dateOfBirth: "",
         phoneNumber: "",
         password: "",
+        code: "",
     };
     const formik = useFormik({
         initialValues,
+        validate,
         onSubmit: (values) => {
-            // console.log(values);
-            registerUser();
+            sendVerSMS({ variables: { phoneNumber: values.phoneNumber } });
         },
     });
 
@@ -84,6 +84,7 @@ const AppointmentModal = () => {
     const [appointmentSent, setAppointmentSent] = useState(false);
     const [seconds, setSeconds] = useState(30);
     const [token, setToken] = useState("");
+    const [codeSent, setCodeSent] = useState(false);
     useEffect(() => {
         if (seconds > 0 && appointmentSent) {
             setTimeout(() => setSeconds(seconds - 1), 1000);
@@ -104,12 +105,12 @@ const AppointmentModal = () => {
             console.log(err.message);
         },
         onCompleted: () => {
-            setAppointmentSent(!appointmentSent);
+            setCodeSent(true);
         },
     });
     const [checkSMSVerification] = useMutation(CHECK_SMS_VERIFICATION, {
         variables: {
-            code: smsCode,
+            code: formik.values.code,
             phoneNumber: formik.values.phoneNumber,
         },
         onError: (err) => {
@@ -254,16 +255,6 @@ const AppointmentModal = () => {
                             onSubmit={formik.handleSubmit}
                             className="space-y-4"
                         >
-                            {/* <div className="space-y-2">
-                                <p className="text-dark-grey">
-                                    Дата и время приема
-                                </p>
-                                <input
-                                    type="text"
-                                    className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
-                                    value="8 июня, четверг, 13:00"
-                                />
-                            </div> */}
                             <div className="flex space-x-2">
                                 <div className="flex-1 space-y-2">
                                     <p className="text-dark-grey">
@@ -273,7 +264,7 @@ const AppointmentModal = () => {
                                         id="firstName"
                                         name="firstName"
                                         type="text"
-                                        className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
+                                        className="input input-bordered w-full"
                                         placeholder="Имя"
                                         value={formik.values.firstName}
                                         onChange={formik.handleChange}
@@ -287,7 +278,7 @@ const AppointmentModal = () => {
                                         id="lastName"
                                         name="lastName"
                                         type="text"
-                                        className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
+                                        className="input input-bordered w-full"
                                         placeholder="Фамилия"
                                         value={formik.values.lastName}
                                         onChange={formik.handleChange}
@@ -301,7 +292,8 @@ const AppointmentModal = () => {
                                     </p>
                                     <input
                                         type="text"
-                                        className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
+                                        disabled
+                                        className="input input-bordered w-full"
                                         value={`${getDayName(
                                             time.start,
                                         )}, ${getDate(time.start)}, ${getTime(
@@ -318,7 +310,7 @@ const AppointmentModal = () => {
                                     id="email"
                                     name="email"
                                     type="email"
-                                    className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
+                                    className="input input-bordered w-full"
                                     placeholder="example@email.com"
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
@@ -333,13 +325,52 @@ const AppointmentModal = () => {
                                     id="phoneNumber"
                                     name="phoneNumber"
                                     type="tel"
-                                    className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
+                                    className="input input-bordered w-full"
                                     placeholder="+7 ("
                                     value={formik.values.phoneNumber}
                                     onChange={formik.handleChange}
                                 />
                             </div>
-                            <div className="space-y-2">
+                            {codeSent && (
+                                <>
+                                    <div className="space-y-2">
+                                        <p className="text-dark-grey">
+                                            Код подтверждения
+                                        </p>
+                                        <input
+                                            id="code"
+                                            name="code"
+                                            type="text"
+                                            className="input input-bordered w-full max-w-xs"
+                                            placeholder=""
+                                            value={formik.values.code}
+                                            onChange={formik.handleChange}
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className={
+                                            "btn btn-primary w-full btn-lg py-4"
+                                        }
+                                        onClick={() => checkSMSVerification()}
+                                    >
+                                        Отправить код подтверждения
+                                    </button>
+                                </>
+                            )}
+                            {!codeSent && (
+                                <button
+                                    type="button"
+                                    className={
+                                        "btn btn-primary w-full btn-lg py-4"
+                                    }
+                                    disabled={codeSent}
+                                    onClick={() => sendVerSMS()}
+                                >
+                                    Отправить код подтверждения
+                                </button>
+                            )}
+                            {/* <div className="space-y-2">
                                 <p className="text-dark-grey">
                                     Пароль от личного кабинета
                                 </p>
@@ -351,8 +382,8 @@ const AppointmentModal = () => {
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                 />
-                            </div>
-                            <div className="flex-1">
+                            </div> */}
+                            {/* <div className="flex-1">
                                 <button
                                     disabled={
                                         isCreatingBooking || isRegistering
@@ -364,7 +395,7 @@ const AppointmentModal = () => {
                                         ? "Загрузка..."
                                         : "Записаться"}
                                 </button>
-                            </div>
+                            </div> */}
                         </form>
                     </div>
                 </motion.div>
