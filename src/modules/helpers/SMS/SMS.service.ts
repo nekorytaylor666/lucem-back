@@ -13,9 +13,10 @@ export class SMSService {
     async sendVerificationSMS(args: { code: string; phoneNumber: string }) {
         const { code, phoneNumber } = args;
         const api_key = this.configService.get('MOBIZON_API_KEY');
+        console.log(api_key);
         const send = await this.httpService
             .post(
-                `https://api.mobizon.kz/service/Message/SendSmsMessage?recipient=${phoneNumber}&text=%D0%A2%D0%9E%D0%9E%20%D0%93%D0%B5%D1%84%D0%B5%D1%81%D1%82%20your%20verification%20code%20${code}&api=v1&apiKey=${api_key}&from=LucemClinic`,
+                `https://api.mobizon.kz/service/Message/SendSmsMessage?recipient=${phoneNumber}&text=lucem%3a%20%d0%b2%d0%b0%d1%88%20%d0%ba%d0%be%d0%b4%20-%20${code}&api=v1&apiKey=${api_key}&from=Lucem`,
                 {},
                 {
                     headers: {
