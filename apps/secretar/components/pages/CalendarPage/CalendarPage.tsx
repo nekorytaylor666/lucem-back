@@ -4,29 +4,22 @@ import "@fullcalendar/timegrid/main.css";
 import FullCalendar, { EventContentArg } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import styled from "styled-components";
-import Modal from "components/atoms/Modal";
 import { useRecoilState } from "recoil";
 import { format, getHours, subYears } from "date-fns";
-import ru from "date-fns/locale/ru";
 import { useRouter } from "next/router";
 import { doctorEventsState } from "@recoil/atoms/doctorEvents";
 import { CalendarEvent, getTemplate } from "@core/lib/events";
 import { PatientEntity } from "@core/types/patient/IPatient";
 import { BookingProgress } from "@core/types/bookings/IBookings";
-import Link from "next/link";
 import { startSessionMutation } from "@src/api/mutations/session";
 import { getDoctorTokens } from "@src/utils/getToken";
 import { useQuery } from "@apollo/client";
 import { cancelBooking } from "@src/api/mutations/cancel-bookings";
-import { GET_UPCOMING_BOOKINGS } from "@src/api/queries/getUpcomingBookings";
 import AppointmentModal from "components/atoms/AppointmentModal";
 import { useAppointment } from "@recoil/hooks/useAppointment";
 import { GET_DOCTORS_SEARCH } from "@src/api/queries/getDoctorSearch";
 import { GetDoctorSearch } from "@graphqlTypes/GetDoctorSearch";
-import {
-    GetBookingsByDate,
-    GetBookingsByDateVariables,
-} from "@graphqlTypes/GetBookingsByDate";
+
 import { addMonths } from "date-fns";
 import { useDisclosure } from "@chakra-ui/react";
 import { AppointmentDetailModal } from "./components/AppointmentDetailModal";
@@ -144,6 +137,12 @@ const CalendarPage: React.FC = () => {
                     dayHeaderClassNames="font-light text-left text-dark-grey w-full"
                     slotLabelClassNames="font-light text-left text-dark-grey w-full"
                     locale={{ code: "ru" }}
+                    views={{
+                        timeGridWeek: {
+                            type: "timeGrid",
+                            duration: { days: 3 },
+                        },
+                    }}
                     editable={true}
                     eventMinHeight={100}
                     allDaySlot={false}
@@ -183,7 +182,7 @@ const CalendarPage: React.FC = () => {
                               )
                             : 21,
                     }}
-                    slotDuration={{ minutes: 30 }}
+                    slotDuration={{ minutes: 15 }}
                     eventContent={renderEventContent}
                     eventClick={({ event }) => {
                         if (event.extendedProps.type === "On") {
