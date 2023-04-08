@@ -67,7 +67,7 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
                         </div>
                     </div>
                 </div>
-                <div className="container p-8 pt-0">
+                <div className="container p-2 lg:p-8 pt-0">
                     <div className="tabs tabs-boxed mb-4 bg-white">
                         <a
                             onClick={() => setActiveTabe("grid")}
