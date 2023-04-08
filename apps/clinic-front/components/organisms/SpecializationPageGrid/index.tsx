@@ -54,10 +54,13 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
             </Link>
         );
     };
+    const sortedSpecializations = specializations.sort((a, b) =>
+        a.name.localeCompare(b.name, "ru"),
+    );
     return (
-        <div className="container mx-auto">
+        <div className=" ">
             <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 p-4">
-                {specializations.map(renderSpecCard)}
+                {sortedSpecializations.map(renderSpecCard)}
             </div>
         </div>
     );

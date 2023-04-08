@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Navbar from "components/Navbar";
 import Search from "components/atoms/Search";
@@ -11,6 +11,7 @@ import client from "@/client/apollo-client";
 import { GET_SPECIALIZATION } from "graphql/queries";
 import { Specialization } from "custom_typings/specialization";
 import { useQuery } from "@apollo/client";
+import SpecializationTextGrid from "components/organisms/SpecializationPageGrid/grid";
 
 interface SpecializationsPageProps {
     specializations: Specialization[];
@@ -19,6 +20,7 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
     const { data, loading } = useQuery(GET_SPECIALIZATION, {
         fetchPolicy: "no-cache",
     });
+    const [activeTabe, setActiveTabe] = useState("grid");
     console.log(data);
     if (loading) {
         return (
@@ -65,8 +67,37 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <SpecializationPageGrid specializations={specializations} />
+                <div className="container p-8 pt-0">
+                    <div className="tabs tabs-boxed mb-4 bg-white">
+                        <a
+                            onClick={() => setActiveTabe("grid")}
+                            className={
+                                "tab tab-lg " +
+                                (activeTabe === "grid" ? "tab-active" : "")
+                            }
+                        >
+                            Сетка
+                        </a>
+                        <a
+                            onClick={() => setActiveTabe("cards")}
+                            className={
+                                "tab tab-lg " +
+                                (activeTabe === "cards" ? "tab-active" : "")
+                            }
+                        >
+                            Карты
+                        </a>
+                    </div>
+                    {activeTabe === "cards" && (
+                        <SpecializationTextGrid
+                            specializations={specializations}
+                        />
+                    )}
+                    {activeTabe === "grid" && (
+                        <SpecializationPageGrid
+                            specializations={specializations}
+                        />
+                    )}
                 </div>
             </div>
             <Footer />
