@@ -118,19 +118,20 @@ const UpcomingBookingCard = ({
     return (
         <div className=" shadow-lg rounded-lg p-4 w-full">
             <div>
-                <p className="text-xl">{booking.service.name}</p>
+                <p className="text-xl">{booking?.service.name}</p>
                 <p className="text-base-300">
                     {format(
-                        new Date(booking.startDate),
+                        new Date(booking?.startDate),
                         "dd MMM yyyy - HH:mm",
                         {
                             locale: ru,
                         },
                     )}{" "}
-                    - {booking.service.price}₸
+                    - {booking?.service.price}₸
                 </p>
             </div>
             <div className="w-full border my-2 border-base-300"></div>
+
             <div className="grid grid-cols-2 gap-4">
                 <img
                     className="w-full"
@@ -141,7 +142,7 @@ const UpcomingBookingCard = ({
                     <div>
                         <p className="text-base-300">Доктор</p>
                         <p className="text-xl font-medium">
-                            {booking.doctor.fullName}
+                            {booking.doctor?.fullName}
                         </p>
                     </div>
                 </div>

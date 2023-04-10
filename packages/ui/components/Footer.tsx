@@ -18,7 +18,7 @@ const Footer = () => {
           </p>
           <p>
             Звоните на{" "}
-            <span className="text-pink-purple">+7 705 297 23 79</span>
+            <span className="text-pink-purple">+7 708 109 75 77</span>
           </p>
         </div>
         <p className="text-dark-grey">© ТОО «Lucem», 2021</p>

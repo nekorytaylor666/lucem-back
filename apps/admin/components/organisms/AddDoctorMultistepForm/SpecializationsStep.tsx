@@ -43,20 +43,37 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
         refetchQueries: [GET_DOCTOR_BY_ID],
     });
 
+    useEffect(() => {
+        if (doctorData) {
+            setDoctorSpecializations(doctorData.specializations);
+        }
+    }, [doctorData]);
+
     const { data } = useQuery<GetSpecializations>(GET_SPECIALIZATIONS);
-    const specializations = data?.getSpecializations ?? [];
+    const specializationsRes = data?.getSpecializations ?? [];
 
     const [selectedSpecificationId, setSelectedSpecificationId] = useState("");
-    const [doctorSpecializations, setDoctorSpecializations] = useState(
-        doctorData.specializations,
-    );
+    const [doctorSpecializations, setDoctorSpecializations] = useState([]);
+    const specializations = specializationsRes
+        .map((el) => el)
+        .sort((a, b) => a.name.localeCompare(b.name, "ru"));
 
-    const services = specializations.map((el) => el.services).flat(1);
+    const services = specializations
+        .filter((el) =>
+            doctorData.specializations.map((item) => item._id).includes(el._id),
+        )
+        .map((el) => el.services)
+        .flat(1)
+        .sort((a, b) => a.name.localeCompare(b.name, "ru"));
+
     const defaultService = doctorData.defaultService;
     useEffect(() => {
         if (data) {
             setSelectedSpecificationId(specializations[0]._id);
-            setFieldValue("defaultServiceId", services[0]._id);
+            setFieldValue(
+                "defaultServiceId",
+                doctorData.specializations[0]._id,
+            );
         }
     }, [data]);
 
@@ -114,11 +131,6 @@ export const SpecializationsStep = ({ doctorData, onNext, onPrev, onAdd }) => {
                                 (item) => item._id === selectedSpecificationId,
                             );
                             if (idx === -1) {
-                                // setDoctorSpecializations([
-                                //     ...doctorSpecializations,
-                                //     { id: selectedSpecificationId },
-                                // ]);
-
                                 attachDoctorToSpecializationFunction({
                                     variables: {
                                         doctorId: doctorData._id,

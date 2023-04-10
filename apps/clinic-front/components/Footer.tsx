@@ -66,7 +66,7 @@ const Footer = () => {
                                     className="text-pink-purple"
                                     href="tel:+77081097577"
                                 >
-                                    <span>+7 705 297 23 79</span>
+                                    <span>+7 708 109 75 77</span>
                                 </a>
                             </p>
                         </div>

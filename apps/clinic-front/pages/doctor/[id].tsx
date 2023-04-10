@@ -212,14 +212,26 @@ const DoctorDetailsInfo = (props: {
     price: number;
 }) => {
     const { doctor, price } = props;
-
+    const { data: serviceRes, loading: serviceLoading } = useQuery(
+        GET_SERVICE_BY_ID,
+        {
+            variables: {
+                serviceId: doctor?.defaultService?._id,
+            },
+            skip: !doctor?.defaultService?._id,
+        },
+    );
+    const service = serviceRes?.getServiceById;
     return (
         <div>
             <ElevatedContainer className="rounded-xl p-6 mb-12">
                 <AppointmentTimetable doctor={doctor}></AppointmentTimetable>
             </ElevatedContainer>
             <div className="mb-8">
-                <PricesInfo price={price}></PricesInfo>
+                <PricesInfo
+                    price={service?.price}
+                    serviceName={service?.name}
+                ></PricesInfo>
             </div>
             <div>
                 <ElevatedContainer className="rounded-xl p-6 mb-12">
@@ -344,27 +356,16 @@ const DoctorExperience = ({
     );
 };
 
-const PricesInfo = ({ price = 6000 }) => {
+const PricesInfo = ({ price = 6000, serviceName }) => {
     return (
-        <div className=" grid grid-cols-1 lg:grid-cols-2 items-start gap-4 ">
-            <div className="flex flex-col items-start bg-light-grey p-4 rounded-md mr-6">
-                <div className="flex flex-col items-star mb-6">
+        <div className=" grid grid-cols-1 lg:grid-cols-1 items-start gap-4 ">
+            <div className="flex flex-col items-start bg-light-grey p-4 rounded-md">
+                <div className="flex flex-col items-star">
+                    <h3 className="font-bold text-2xl mb-2">Цена за услугу:</h3>
                     <span className="font-bold text-3xl">{price} ₸</span>
-                    <span>Первичный прием</span>
+                    <span>{serviceName}</span>
                 </div>
             </div>
-
-            <p className="flex-1 flex-col flex items-start">
-                <span className="mb-4">
-                    Если вы были на приеме у данного врача более 6 месяцев назад
-                    или не были вовсе — вам автоматически будет назначет
-                    Первичный прием.
-                </span>
-                <span>
-                    Если вы были у данного врача в течение 6 месяцев — вам
-                    автоматически будет назначен Повторный прием.
-                </span>
-            </p>
         </div>
     );
 };

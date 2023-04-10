@@ -19,7 +19,7 @@ const Footer = () => {
                     <p>
                         Звоните на{" "}
                         <span className="text-pink-purple">
-                            +7 705 297 23 79
+                            +7 708 109 75 77
                         </span>
                     </p>
                 </div>
