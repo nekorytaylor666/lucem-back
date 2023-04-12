@@ -36,7 +36,7 @@ export class SpecializationGraph
     @Field(() => [DoctorGraph])
     doctors: DoctorGraph[];
 
-    @Field(() => [ServiceGraph])
+    @Field(() => [ServiceGraph], { nullable: true })
     services: ServiceGraph[];
 
     constructor(specialization: Partial<SpecializationAddictive>) {

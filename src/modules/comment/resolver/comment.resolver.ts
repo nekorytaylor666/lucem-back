@@ -59,7 +59,7 @@ export class CommentResolver {
         const comments = await paginate({
             cursor: commentsCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 1000,
         });
         const commentsResponce = comments.map(
             (val) => new CommentGraph({ ...val }),

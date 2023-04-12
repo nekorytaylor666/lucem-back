@@ -113,7 +113,7 @@ export class AppointmentBlankResolver {
         const _appointmentBlanks = await paginate({
             cursor: appointmentBlanksCursor,
             page: 1,
-            elementsPerPage: 10,
+            elementsPerPage: 1000,
         });
         const appointmentBlanks: AppointmentBlankArg[] =
             _appointmentBlanks.map<AppointmentBlankArg>((blank) => {

@@ -151,7 +151,7 @@ export class SessionResolver {
         const sessions = await paginate({
             cursor: sessionCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 100000,
         });
         const sessionsResponce = sessions.map(
             (val) => new SessionGraph({ ...val }),
@@ -177,7 +177,7 @@ export class SessionResolver {
         const sessions = await paginate({
             cursor: sessionsCursor,
             page,
-            elementsPerPage: 15,
+            elementsPerPage: 10000,
         });
         return sessions;
     }
@@ -201,7 +201,7 @@ export class SessionResolver {
         const sessions = await paginate({
             cursor: sessionsCursor,
             page,
-            elementsPerPage: 10,
+            elementsPerPage: 10000,
         });
         const sessionsResponce = sessions.map(
             (val) => new SessionGraph({ ...val }),
@@ -267,7 +267,7 @@ export class SessionResolver {
         const sessions = await paginate({
             cursor: sessionsCursor,
             page,
-            elementsPerPage: 15,
+            elementsPerPage: 10000,
         });
         const sessionsResponce = sessions.map(
             (val) => new SessionGraph({ ...val }),
