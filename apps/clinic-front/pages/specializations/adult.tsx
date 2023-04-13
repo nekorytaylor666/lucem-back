@@ -14,25 +14,28 @@ import { useQuery } from "@apollo/client";
 import SpecializationTextGrid from "components/organisms/SpecializationPageGrid/grid";
 
 interface SpecializationsPageProps {
-    specializations: Specialization[];
+    specializationsProp: Specialization[];
 }
-const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
-    const { data, loading } = useQuery(GET_SPECIALIZATION, {
-        fetchPolicy: "no-cache",
-    });
+const SpecializationsPage: React.FC<SpecializationsPageProps> = ({
+    specializationsProp,
+}) => {
+    // const { data, loading } = useQuery(GET_SPECIALIZATION, {
+    //     fetchPolicy: "no-cache",
+    // });
+    const specializations = [...specializationsProp];
     const [activeTabe, setActiveTabe] = useState("grid");
-    console.log(data);
-    if (loading) {
-        return (
-            <div className="h-full w-full flex justify-center items-center">
-                <div className="lds-ripple">
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
-        );
-    }
-    const specializations = data.getSpecializations;
+    // console.log(data);
+    // if (loading) {
+    //     return (
+    //         <div className="h-full w-full flex justify-center items-center">
+    //             <div className="lds-ripple">
+    //                 <div></div>
+    //                 <div></div>
+    //             </div>
+    //         </div>
+    //     );
+    // }
+    // const specializations = data.getSpecializations;
     return (
         <Layout>
             <div className="bg-white">
@@ -105,4 +108,14 @@ const SpecializationsPage: React.FC<SpecializationsPageProps> = () => {
     );
 };
 
+export async function getStaticProps(context) {
+    const { data } = await client.query({ query: GET_SPECIALIZATION });
+
+    const specializations = data.getSpecializations;
+    return {
+        props: {
+            specializationsProp: specializations,
+        }, // will be passed to the page component as props
+    };
+}
 export default SpecializationsPage;
