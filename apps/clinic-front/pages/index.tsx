@@ -17,21 +17,6 @@ import { useQuery } from "@apollo/client";
 import client from "@/client/apollo-client";
 
 const HomePage: React.FC = ({ specializations, doctors }) => {
-    const usedSpecializations = useAllSpecializations();
-    const { data, loading } = useQuery(GET_MAINPAGE);
-    if (loading) {
-        return (
-            <div className="h-full w-full flex justify-center items-center">
-                <div className="lds-ripple">
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
-        );
-    }
-
-    usedSpecializations[1].setSpecializations(specializations);
-
     return (
         <Layout>
             <div className="container">

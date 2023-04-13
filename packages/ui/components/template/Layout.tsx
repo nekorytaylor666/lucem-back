@@ -2,9 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const variants = {
-  hidden: { opacity: 0, x: -200 },
-  enter: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 200 },
+  hidden: { opacity: 0 },
+  enter: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 const Layout: React.FC = ({ children }) => (
