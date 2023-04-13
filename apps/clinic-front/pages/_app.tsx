@@ -8,6 +8,8 @@ import { SessionProvider } from "next-auth/react";
 import withAuth from "components/hocs/withAuth";
 import Script from "next/script";
 import Head from "next/head";
+import { Partytown } from "@builder.io/partytown/react";
+
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -32,9 +34,11 @@ function MyApp({
                         type="image/png"
                     />
                 </Head>
-                {getLayout(<Component {...pageProps} />)}
+                <Partytown debug={true} forward={["dataLayer.push"]} />
 
-                <Script
+                {getLayout(<Component {...pageProps} />)}
+                <script
+                    type="text/partytown"
                     id="yandex"
                     strategy="afterInteractive"
                     dangerouslySetInnerHTML={{

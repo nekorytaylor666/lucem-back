@@ -14,8 +14,9 @@ import Layout from "components/template/Layout";
 import { useAllSpecializations } from "@recoil/hooks";
 import { GET_MAINPAGE } from "graphql/queries/getMainPage";
 import { useQuery } from "@apollo/client";
+import client from "@/client/apollo-client";
 
-const HomePage: React.FC = (props) => {
+const HomePage: React.FC = ({ specializations, doctors }) => {
     const usedSpecializations = useAllSpecializations();
     const { data, loading } = useQuery(GET_MAINPAGE);
     if (loading) {
@@ -28,8 +29,7 @@ const HomePage: React.FC = (props) => {
             </div>
         );
     }
-    const specializations = data.getSpecializations;
-    const doctors = data.getAllDoctors;
+
     usedSpecializations[1].setSpecializations(specializations);
 
     return (
@@ -58,11 +58,6 @@ const HomePage: React.FC = (props) => {
                 </div>
 
                 <Footer />
-                {/* 
-                
-               
-             
-            */}
             </div>
         </Layout>
     );
@@ -120,6 +115,31 @@ const MobileHeader = () => {
     );
 };
 
+export async function getStaticProps() {
+    // Call an external API endpoint to get posts.
+    // You can use any data fetching library
+    try {
+        const { data, error } = await client.query({ query: GET_MAINPAGE });
+        console.log(error);
+        const specializations = data.getSpecializations;
+        const doctors = data.getAllDoctors;
+
+        return {
+            props: {
+                specializations,
+                doctors,
+            },
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            props: {
+                specializations: [],
+                doctors: [],
+            },
+        };
+    }
+}
 const LadyContainer = styled.div`
     background-image: url("/icons/dna-background-image.svg");
     background-size: contain;

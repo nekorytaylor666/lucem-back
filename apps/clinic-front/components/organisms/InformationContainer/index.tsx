@@ -1,9 +1,21 @@
 import React from "react";
 import Image from "next/image";
-import { YMaps, Map, Placemark } from "react-yandex-maps";
 import ImageGallery from "components/molecules/ImageGallery";
 import { isMobile } from "react-device-detect";
+import dynamic from "next/dynamic";
 
+const MapNoSSR = dynamic(
+    () => import("react-yandex-maps").then((mod) => mod.Map),
+    { ssr: false },
+);
+const PlacemarkNoSSR = dynamic(
+    () => import("react-yandex-maps").then((mod) => mod.Placemark),
+    { ssr: false },
+);
+const YMapsNoSSR = dynamic(
+    () => import("react-yandex-maps").then((mod) => mod.YMaps),
+    { ssr: false },
+);
 const InformationContainer = () => {
     const imageGallery = [
         "/images/interior/cosmetology.jpg",
@@ -54,9 +66,9 @@ const InformationContainer = () => {
             </div>
             {!isMobile && (
                 <div className="hidden lg:block rounded-lg h-96 w-full m-4">
-                    <YMaps>
+                    <YMapsNoSSR>
                         <div className="w-full rounded-l h-96">
-                            <Map
+                            <MapNoSSR
                                 state={{
                                     center: [51.1426652, 71.4808272],
                                     zoom: 18,
@@ -64,12 +76,12 @@ const InformationContainer = () => {
                                 width="100%"
                                 height="100%"
                             >
-                                <Placemark
+                                <PlacemarkNoSSR
                                     geometry={[51.1426652, 71.4808272]}
                                 />
-                            </Map>
+                            </MapNoSSR>
                         </div>
-                    </YMaps>
+                    </YMapsNoSSR>
                 </div>
             )}
             <div className="flex flex-col items-start gap-2 w-full py-4 px-4 lg:p-6 bg-gray-100 rounded-xl">

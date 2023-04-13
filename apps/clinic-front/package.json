@@ -17,11 +17,12 @@
         "cypress:open": "cypress open",
         "cypress:run": "cypress run --config video=false",
         "cypress:test": "start-server-and-test start http://localhost:3000 cypress:run",
-        "schema:download": "npx apollo service:download --endpoint=https://lucem-back-production.up.railway.app/graphql graphql-schema.json",
+        "schema:download": "npx apollo service:download --endpoint=http://localhost:3000/graphql graphql-schema.json",
         "schema:generate": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql"
     },
     "dependencies": {
         "@apollo/client": "^3.4.10",
+        "@builder.io/partytown": "^0.8.0",
         "@next/bundle-analyzer": "^10.0.5",
         "axios": "^0.21.1",
         "daisyui": "^1.16.2",
