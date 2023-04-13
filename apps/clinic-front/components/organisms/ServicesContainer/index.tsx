@@ -8,7 +8,7 @@ const ServicesContainer = () => {
             title: "Записаться на прием к терапевту",
             subTitle: "",
             imageUrl: "/images/specs/therapy.png",
-            url: "/specializations",
+            url: "/specialization/6220a6057b99531c60b75a14",
             exist: true,
         },
         {
@@ -16,7 +16,7 @@ const ServicesContainer = () => {
             title: "Пройти диагностику",
             subTitle: "УЗИ органов всего тела",
             imageUrl: "/images/specs/diagnostic.png",
-            url: "/specializations",
+            url: "/specialization/6220a6d7c901555cecfd5089",
             exist: true,
         },
         {
@@ -25,7 +25,7 @@ const ServicesContainer = () => {
             subTitle: "",
 
             imageUrl: "/images/specs/cosmetology.png",
-            url: "/specializations",
+            url: "/specialization/6220a6057b99531c60b75a16",
             exist: true,
         },
         {
@@ -34,7 +34,7 @@ const ServicesContainer = () => {
             subTitle: "",
 
             imageUrl: "/images/specs/glasses.png",
-            url: "/specializations",
+            url: "/specialization/6220a6057b99531c60b75a0d",
             exist: true,
         },
     ];
