@@ -12,8 +12,11 @@ interface SpecializationPageGridProps {
 const SpecializationTextGrid: React.FC<SpecializationPageGridProps> = ({
     specializations,
 }) => {
-    // alphabetically sort specializations and then group them by first letter
-    const sortedSpecializations = specializations.sort((a, b) =>
+    const specializationsWithDoctors = specializations.filter(
+        (specialization) => specialization.doctors.length > 0,
+    );
+
+    const sortedSpecializations = specializationsWithDoctors.sort((a, b) =>
         a.name.localeCompare(b.name),
     );
     const groupedSpecializations = sortedSpecializations.reduce((acc, curr) => {

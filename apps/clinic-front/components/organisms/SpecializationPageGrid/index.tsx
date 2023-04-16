@@ -54,7 +54,10 @@ const SpecializationPageGrid: React.FC<SpecializationPageGridProps> = ({
             </Link>
         );
     };
-    const sortedSpecializations = specializations.sort((a, b) =>
+    const specializationsWithDoctors = specializations.filter(
+        (specialization) => specialization.doctors.length > 0,
+    );
+    const sortedSpecializations = specializationsWithDoctors.sort((a, b) =>
         a.name.localeCompare(b.name, "ru"),
     );
     return (
