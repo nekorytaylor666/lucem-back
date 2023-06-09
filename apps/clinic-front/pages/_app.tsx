@@ -9,6 +9,7 @@ import withAuth from "components/hocs/withAuth";
 import Script from "next/script";
 import Head from "next/head";
 import { Partytown } from "@builder.io/partytown/react";
+import { Toaster } from "react-hot-toast";
 
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode;
@@ -37,6 +38,7 @@ function MyApp({
                 <Partytown debug={true} forward={["dataLayer.push"]} />
 
                 {getLayout(<Component {...pageProps} />)}
+                <Toaster />
                 <script
                     type="text/partytown"
                     id="yandex"

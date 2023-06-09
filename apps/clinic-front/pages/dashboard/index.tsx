@@ -16,6 +16,8 @@ import {
     GetUpcomingBookings_getUpcomingBookings,
     GetUpcomingBookings_getUpcomingBookings_doctor,
 } from "src/graphql/queries/__generated__/GetUpcomingBookings";
+import { AddToCalendarButton } from "add-to-calendar-button-react";
+
 const bookingsType = [
     { label: "Предстоящие", value: "Upcoming" },
     { label: "Завершенные", value: "Done" },
@@ -115,6 +117,7 @@ const UpcomingBookingCard = ({
 }: {
     booking: GetUpcomingBookings_getUpcomingBookings;
 }) => {
+    const onBookingCancel = () => {};
     return (
         <div className=" shadow-lg rounded-lg p-4 w-full">
             <div>
@@ -146,6 +149,34 @@ const UpcomingBookingCard = ({
                         </p>
                     </div>
                 </div>
+            </div>
+            <div className="flex justify-end">
+                <AddToCalendarButton
+                    label="Добавить в календарь"
+                    language="ru"
+                    hideBackground
+                    listStyle="modal"
+                    hideBranding
+                    name={booking?.service.name}
+                    startDate={format(
+                        new Date(booking?.startDate),
+                        "yyyy-MM-dd",
+                        {
+                            locale: ru,
+                        },
+                    )}
+                    startTime={format(new Date(booking?.startDate), "HH:mm", {
+                        locale: ru,
+                    })}
+                    endDate={format(new Date(booking?.endDate), "yyyy-MM-dd", {
+                        locale: ru,
+                    })}
+                    endTime={format(new Date(booking?.endDate), "HH:mm", {
+                        locale: ru,
+                    })}
+                    options={["Apple", "Google"]}
+                    timeZone="Asia/Almaty"
+                ></AddToCalendarButton>
             </div>
         </div>
     );

@@ -76,7 +76,7 @@ const SpecializationPage: React.FC<SpecializationPageProps> = ({
                                 <Search />
                             </div>
                             <div className="w-full mb-8 text-white">
-                                <h1 className="text-3xl font-bold mb-4">
+                                <h1 className="text-3xl font-bold mb-4 w-full">
                                     {specialization?.name}
                                 </h1>
                                 <p className="text-xs text-left">
@@ -89,7 +89,7 @@ const SpecializationPage: React.FC<SpecializationPageProps> = ({
                                 <div className="grid mx-auto grid-cols-2 mb-8">
                                     <Search />
                                 </div>
-                                <div className="w-1/2 mb-8 text-white">
+                                <div className="w-2/3 mb-8 text-white">
                                     <h1 className="text-7xl font-bold mb-4">
                                         {specialization?.name}
                                     </h1>

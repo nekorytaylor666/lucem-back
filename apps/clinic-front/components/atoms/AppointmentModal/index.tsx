@@ -3,7 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { useFormik } from "formik";
 import {
     CREATE_BOOKING,
@@ -24,6 +24,10 @@ import {
     CreateBooking_createBooking,
 } from "@graphqlTypes/CreateBooking";
 import { GET_SERVICE_BY_ID } from "graphql/queries/getServiceById";
+import { GET_USER_BY_PHONE_NUMBER } from "graphql/queries/getUserByPhoneNumber/getUserByPhoneNumber";
+import { toast } from "react-hot-toast";
+import InitialBookingForm from "./InitialBookingForm";
+import UnregistredBookingForm from "./UnregisteredBookingForm";
 interface FormValues {
     firstName: string;
     lastName: string;
@@ -37,8 +41,11 @@ interface FormValues {
 const AppointmentModal = () => {
     const [appointmentData, { setShow }] = useAppointment();
     const { show, doctor, time } = appointmentData;
+    const [isUnregistred, setIsUnregistred] = useState(false);
+
     const router = useRouter();
     const modalRef = useRef<HTMLDivElement>(null);
+
     const validate = (values: FormValues) => {
         const errors = {} as any;
 
@@ -80,11 +87,13 @@ const AppointmentModal = () => {
         },
     });
 
-    const [smsCode, setSmsCode] = useState("");
+    const [existingUser, setExistingUser] = useState();
     const [appointmentSent, setAppointmentSent] = useState(false);
     const [seconds, setSeconds] = useState(30);
     const [token, setToken] = useState("");
     const [codeSent, setCodeSent] = useState(false);
+    const [loadingBooking, setLoadingBooking] = useState(false);
+    const [unregisteredNumber, setUnregisteredNumber] = useState("");
     useEffect(() => {
         if (seconds > 0 && appointmentSent) {
             setTimeout(() => setSeconds(seconds - 1), 1000);
@@ -97,6 +106,17 @@ const AppointmentModal = () => {
         }
     };
 
+    const [
+        getUserByPhoneNumber,
+        {
+            loading: isLoadingUserByPhoneNumber,
+            error: errorGetUserByPhoneNumber,
+        },
+    ] = useLazyQuery(GET_USER_BY_PHONE_NUMBER, {
+        variables: {
+            phoneNumber: formik.values.phoneNumber,
+        },
+    });
     const [sendVerSMS] = useMutation(SEND_VER_SMS, {
         variables: {
             phoneNumber: formik.values.phoneNumber,
@@ -114,11 +134,50 @@ const AppointmentModal = () => {
             phoneNumber: formik.values.phoneNumber,
         },
         onError: (err) => {
-            console.log(err.message);
+            toast("Неправильный код", {
+                icon: "🚨",
+            });
         },
-        onCompleted: (data) => {
+        onCompleted: async (data) => {
+            setLoadingBooking(true);
             setToken(data.checkSMSVerificationCode.token);
-            registerUser();
+            const res = await getUserByPhoneNumber();
+
+            if (res.error) {
+                setIsUnregistred(true);
+                setLoadingBooking(false);
+                toast("Заполните данные для записи", {
+                    icon: "🚨",
+                });
+                return;
+            }
+            const user = res.data.getUserByPhoneNumber;
+            await createBooking({
+                variables: {
+                    doctorId: doctor?._id,
+                    endDate: new Date(time.end),
+                    startDate: new Date(time.start),
+                    userId: user._id,
+                    serviceId: doctor?.defaultService?._id,
+                },
+                context: {
+                    headers: {
+                        Authorization: data.checkSMSVerificationCode.token,
+                    },
+                },
+                onError: (err) => {
+                    toast("Произошла ошибка, попробуйте еще раз", {
+                        icon: "🚨",
+                    });
+                },
+                onCompleted: () => {
+                    setLoadingBooking(false);
+                    toast("Вы успешно записались на прием", {
+                        icon: "👏",
+                    });
+                    router.push("/success");
+                },
+            });
         },
     });
 
@@ -135,39 +194,13 @@ const AppointmentModal = () => {
             skip: !doctor?.defaultService?._id,
         },
     );
-    const [registerUser, { loading: isRegistering }] = useMutation(
-        REGISTER_USER,
-        {
-            variables: {
-                email: formik.values.email,
-                fullName:
-                    formik.values.firstName + " " + formik.values.lastName,
-                phoneNumber: formik.values.phoneNumber,
-                password: formik.values.password,
-            },
-            onError: (err) => {
-                console.log(err.message);
-            },
-            onCompleted: async (data) => {
-                await createBooking({
-                    variables: {
-                        doctorId: doctor?._id,
-                        endDate: new Date(time.end),
-                        startDate: new Date(time.start),
-                        userId: data.registerUser._id,
-                        serviceId: doctor?.defaultService?._id,
-                    },
-                    context: {
-                        headers: {
-                            Authorization: data.registerUser.token,
-                        },
-                    },
-                    onError: (err) => {},
-                });
-                router.push("/success");
-            },
-        },
-    );
+
+    const onUnregisterUserDetectedHandler = (payload: {
+        phoneNumber: string;
+    }) => {
+        setUnregisteredNumber(payload.phoneNumber);
+        setIsUnregistred(true);
+    };
 
     if (!show) {
         return <></>;
@@ -187,7 +220,7 @@ const AppointmentModal = () => {
                     animate={{ y: [0, -20, 0], opacity: 1 }}
                     transition={{ type: "spring", duration: 0.5 }}
                 >
-                    <div className="py-8 px-6 bg-gray-100 rounded-2xl w-full lg:w-5/12 space-y-4 overflow-y-scroll max-h-screen lg:h-auto">
+                    <div className="py-8 px-6 bg-white rounded-2xl w-full lg:w-5/12 space-y-4 overflow-y-scroll max-h-screen lg:h-auto">
                         <div className="flex justify-between">
                             <div>
                                 <p className="text-3xl font-bold">
@@ -218,7 +251,7 @@ const AppointmentModal = () => {
                             </div>
                         </div>
                         <div className="flex">
-                            <div className="flex-1 flex flex-col items-center">
+                            <div className="flex-1 flex flex-col items-center ">
                                 <Image
                                     width={216}
                                     height={163}
@@ -251,152 +284,37 @@ const AppointmentModal = () => {
                                 </p>
                             )}
                         </div>
-                        <form
-                            onSubmit={formik.handleSubmit}
-                            className="space-y-4"
-                        >
-                            <div className="flex space-x-2">
-                                <div className="flex-1 space-y-2">
-                                    <p className="text-dark-grey">
-                                        Имя пациента
-                                    </p>
-                                    <input
-                                        id="firstName"
-                                        name="firstName"
-                                        type="text"
-                                        className="input input-bordered w-full"
-                                        placeholder="Имя"
-                                        value={formik.values.firstName}
-                                        onChange={formik.handleChange}
-                                    />
-                                </div>
-                                <div className="flex-1 space-y-2">
-                                    <p className="text-dark-grey">
-                                        Фамилия пациента
-                                    </p>
-                                    <input
-                                        id="lastName"
-                                        name="lastName"
-                                        type="text"
-                                        className="input input-bordered w-full"
-                                        placeholder="Фамилия"
-                                        value={formik.values.lastName}
-                                        onChange={formik.handleChange}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex space-x-2">
-                                <div className="flex-1 space-y-2">
-                                    <p className="text-dark-grey">
-                                        Дата и время приема
-                                    </p>
-                                    <input
-                                        type="text"
-                                        disabled
-                                        className="input input-bordered w-full"
-                                        value={`${getDayName(
-                                            time.start,
-                                        )}, ${getDate(time.start)}, ${getTime(
-                                            time.start,
-                                        )}`}
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
+                        <div className="flex space-x-2">
+                            <div className="flex-1 space-y-2">
                                 <p className="text-dark-grey">
-                                    Email для получения записи в календаре
+                                    Дата и время приема
                                 </p>
                                 <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
+                                    type="text"
+                                    disabled
                                     className="input input-bordered w-full"
-                                    placeholder="example@email.com"
-                                    value={formik.values.email}
-                                    onChange={formik.handleChange}
+                                    value={`${getDayName(
+                                        time.start,
+                                    )}, ${getDate(time.start)}, ${getTime(
+                                        time.start,
+                                    )}`}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <p className="text-dark-grey">
-                                    Телефон для подтверждения записи
-                                </p>
-                                <InputMask
-                                    mask="+7 (999) 999-99-99"
-                                    id="phoneNumber"
-                                    name="phoneNumber"
-                                    type="tel"
-                                    className="input input-bordered w-full"
-                                    placeholder="+7 ("
-                                    value={formik.values.phoneNumber}
-                                    onChange={formik.handleChange}
-                                />
-                            </div>
-                            {codeSent && (
-                                <>
-                                    <div className="space-y-2">
-                                        <p className="text-dark-grey">
-                                            Код подтверждения
-                                        </p>
-                                        <input
-                                            id="code"
-                                            name="code"
-                                            type="text"
-                                            className="input input-bordered w-full max-w-xs"
-                                            placeholder=""
-                                            value={formik.values.code}
-                                            onChange={formik.handleChange}
-                                        />
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className={
-                                            "btn btn-primary w-full btn-lg py-4"
-                                        }
-                                        onClick={() => checkSMSVerification()}
-                                    >
-                                        Отправить код подтверждения
-                                    </button>
-                                </>
-                            )}
-                            {!codeSent && (
-                                <button
-                                    type="button"
-                                    className={
-                                        "btn btn-primary w-full btn-lg py-4"
-                                    }
-                                    disabled={codeSent}
-                                    onClick={() => sendVerSMS()}
-                                >
-                                    Отправить код подтверждения
-                                </button>
-                            )}
-                            {/* <div className="space-y-2">
-                                <p className="text-dark-grey">
-                                    Пароль от личного кабинета
-                                </p>
-                                <input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    className="px-2 py-3 w-full border border-gray-300 focus:outline-none focus:border-pink-purple rounded"
-                                    value={formik.values.password}
-                                    onChange={formik.handleChange}
-                                />
-                            </div> */}
-                            {/* <div className="flex-1">
-                                <button
-                                    disabled={
-                                        isCreatingBooking || isRegistering
-                                    }
-                                    type="submit"
-                                    className="bg-pink-purple w-full px-2 py-3 text-white rounded"
-                                >
-                                    {isCreatingBooking || isRegistering
-                                        ? "Загрузка..."
-                                        : "Записаться"}
-                                </button>
-                            </div> */}
-                        </form>
+                        </div>
+                        {!isUnregistred && (
+                            <InitialBookingForm
+                                appointmentData={appointmentData}
+                                onUnregisterUserDetected={
+                                    onUnregisterUserDetectedHandler
+                                }
+                            ></InitialBookingForm>
+                        )}
+                        {isUnregistred && (
+                            <UnregistredBookingForm
+                                appointmentData={appointmentData}
+                                phoneNumber={unregisteredNumber}
+                            ></UnregistredBookingForm>
+                        )}
                     </div>
                 </motion.div>
             </Background>
@@ -413,12 +331,6 @@ const Background = styled.div`
     justify-content: center;
     align-items: center;
     z-index: 30;
-`;
-
-const StyledModalContainer = styled.div`
-    position: absolute;
-    z-index: auto;
-    max-hegiht: 100%;
 `;
 
 export default AppointmentModal;
