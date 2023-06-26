@@ -4404,6 +4404,20 @@ acorn@^8.0.4, acorn@^8.2.4, acorn@^8.4.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.8.0.tgz#88c0187620435c7f6015803f5539dae05a9dbea8"
   integrity sha512-QOxyigPVrpZ2GXT+PFyZTl6TtOFc5egxHIP9IlQ+RbupQuX4RkT/Bee4/kQuC02Xkzg84JcT7oLYtDIQxp+v7w==
 
+add-to-calendar-button-react@^2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/add-to-calendar-button-react/-/add-to-calendar-button-react-2.2.7.tgz#ec709a861abf5b941f0076d043867ce129e8a9db"
+  integrity sha512-7km76KeVM9Ttl7KJNOnwxACs8OPPF5lt53jzjT1lTC4g5lB/POGnm1OH8S7825XrtIgfjg5rO7jQpkWfXyYAMg==
+  dependencies:
+    add-to-calendar-button "^2.2.9"
+
+add-to-calendar-button@^2.2.9:
+  version "2.2.9"
+  resolved "https://registry.yarnpkg.com/add-to-calendar-button/-/add-to-calendar-button-2.2.9.tgz#be34d7073b04c77534a5fdb72826554eb960b140"
+  integrity sha512-RtMko9V9IEgbNcNO5Pu9JmDFPMmvXeYj8fAfsHZiWe+HlfvHUoIC246Nnw64Sb83d9XXBI440Oe6ABv4mjTGmg==
+  dependencies:
+    timezones-ical-library "^1.7.0"
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
@@ -7826,6 +7840,11 @@ globule@^1.0.0:
     glob "~7.1.1"
     lodash "^4.17.21"
     minimatch "~3.0.2"
+
+goober@^2.1.10:
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.1.13.tgz#e3c06d5578486212a76c9eba860cbc3232ff6d7c"
+  integrity sha512-jFj3BQeleOoy7t93E9rZ2de+ScC4lQICLwiAQmKMg9F6roKGaLSHoCDYKkWlSafg138jejvq/mTdvmnwDQgqoQ==
 
 got@^9.6.0:
   version "9.6.0"
@@ -11302,6 +11321,13 @@ react-focus-lock@2.5.2:
     use-callback-ref "^1.2.5"
     use-sidecar "^1.0.5"
 
+react-hot-toast@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/react-hot-toast/-/react-hot-toast-2.4.1.tgz#df04295eda8a7b12c4f968e54a61c8d36f4c0994"
+  integrity sha512-j8z+cQbWIM5LY37pR6uZR6D4LfseplqnuAO4co4u8917hBUvXlEqyP1ZzqVLcqoyUesZZv/ImreoCeHVDpE5pQ==
+  dependencies:
+    goober "^2.1.10"
+
 react-i18next@^11.7.3:
   version "11.18.3"
   resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.18.3.tgz#50211810bcc9fdea2d70c8aefdfff5f1eb39a923"
@@ -12690,6 +12716,11 @@ through@2, through@^2.3.6, through@^2.3.8, through@~2.3, through@~2.3.1:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
+
+timezones-ical-library@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/timezones-ical-library/-/timezones-ical-library-1.7.0.tgz#441dba27a3847bbb541169a02f518708aed1191c"
+  integrity sha512-br8FzW7l3zTFVqUjnQ1g8+v3YKUKx8mtvApmG+bgJqcD4d2r3g5EQ19iBUhALbnSa3zm11OX6tc0LZ+6c33xAA==
 
 tiny-invariant@^1.0.6:
   version "1.2.0"
