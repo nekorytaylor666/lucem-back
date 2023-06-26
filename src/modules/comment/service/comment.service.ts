@@ -12,7 +12,7 @@ import { CreateComment } from '../model/createComment.args';
 export class CommentService extends BasicService<Comment> {
     constructor(@Inject(DATABASE_CONNECTION) private database: Db) {
         super();
-        this.dbService = this.database.collection('comment');
+        this.userCollectonDbService = this.database.collection('comment');
         // this.basicLookups = [
         //     {
         //         from: 'user',
@@ -54,7 +54,7 @@ export class CommentService extends BasicService<Comment> {
     }
 
     getOfDoctor(doctorId: ObjectId) {
-        const cursor = this.dbService.aggregate<
+        const cursor = this.userCollectonDbService.aggregate<
             Comment & {
                 user: User;
                 dependentComments: Comment[];

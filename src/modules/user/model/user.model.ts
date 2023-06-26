@@ -18,13 +18,13 @@ export class UserGraph
     @Field()
     _id: string;
 
-    @Field()
+    @Field({ nullable: true })
     fullName: string;
 
-    @Field()
+    @Field({ nullable: true })
     phoneNumber: string;
 
-    @Field()
+    @Field({ nullable: true })
     email: string;
 
     @Field({ nullable: true })

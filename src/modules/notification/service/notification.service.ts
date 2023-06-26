@@ -24,7 +24,7 @@ export class NotificationService extends BasicService<Notification> {
         private calendarService: CalendarService,
     ) {
         super();
-        this.dbService = this.database.collection('notification');
+        this.userCollectonDbService = this.database.collection('notification');
     }
 
     private senderMail = this.configService.get('CLINIC_MAIL_USERNAME');
@@ -216,7 +216,9 @@ export class NotificationService extends BasicService<Notification> {
         const aggregation = aggregateUnfiltered.filter(
             (val) => val !== undefined,
         );
-        const notificationCursor = await this.dbService.aggregate(aggregation);
+        const notificationCursor = await this.userCollectonDbService.aggregate(
+            aggregation,
+        );
         return notificationCursor;
     }
 }

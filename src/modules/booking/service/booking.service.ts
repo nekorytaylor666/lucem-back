@@ -15,7 +15,8 @@ import { isWithinInterval, parseISO } from 'date-fns';
 export class BookingService extends BasicService<Booking> {
     constructor(@Inject('DATABASE_CONNECTION') private database: Db) {
         super();
-        this.dbService = this.database.collection<Booking>('booking');
+        this.userCollectonDbService =
+            this.database.collection<Booking>('booking');
         this.basicLookups = [
             {
                 from: 'user',

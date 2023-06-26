@@ -50,14 +50,18 @@ export class UserResolver {
         @Args('phoneNumber', { type: () => String }) phoneNumber: string,
         @Args('code', { type: () => String }) code: string,
     ): Promise<UserGraph> {
-        const checkSmsVer = await this.userService.checkSMSVerification({
-            phoneNumber,
-            code,
-        });
-        const userGraph: UserGraph = new UserGraph({
-            ...checkSmsVer,
-        });
-        return userGraph;
+        try {
+            const checkSmsVer = await this.userService.checkSMSVerification({
+                phoneNumber,
+                code,
+            });
+            const userGraph: UserGraph = new UserGraph({
+                ...checkSmsVer,
+            });
+            return userGraph;
+        } catch (error) {
+            throw new ApolloError(error);
+        }
     }
 
     @Mutation(() => UserGraph)
@@ -65,31 +69,29 @@ export class UserResolver {
         @Args() args: CreateUser,
         @CurrentTokenPayload() payload: Token,
     ) {
-        // if user exists return user
-        const user = await this.userService.findOne({
-            phoneNumber: args.phoneNumber.replace(/\D/g, ''),
-        });
-        if (user) {
-            const token = this.tokenService.create({
-                user: {
-                    ...user,
-                    _id: user._id.toHexString(),
-                },
-                role: TokenRoles.User,
-            });
-            const userWithToken = { ...user, token };
-            const userResponce = new UserGraph({ ...userWithToken });
-            return userResponce;
-        }
-        const insertPhoneNumber = await this.userService.insertOne({
+        const emptyUserWithPhoneNumber = await this.userService.findOne({
             phoneNumber: args.phoneNumber.replace(/\D/g, ''),
         } as any);
         const createUser = await this.userService.createUser({
             ...args,
-            _id: insertPhoneNumber.toHexString(),
+            _id: emptyUserWithPhoneNumber._id.toHexString(),
         });
 
         const userResponce = new UserGraph({ ...createUser });
+        return userResponce;
+    }
+
+    // check if user exists by phone number
+    @Query(() => UserGraph)
+    async getUserByPhoneNumber(
+        @Args('phoneNumber', { type: () => String }) phoneNumber: string,
+    ) {
+        const user = await this.userService.findOne({
+            phoneNumber: phoneNumber.replace(/\D/g, ''),
+        });
+        // if user not found throw error since we create user by phone number we need to check if other info was filled
+        if (!user.email) throw new ApolloError('user not found');
+        const userResponce = new UserGraph({ ...user });
         return userResponce;
     }
 

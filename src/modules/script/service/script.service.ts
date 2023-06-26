@@ -17,6 +17,7 @@ import {
 import * as moment from 'moment';
 import { ICD } from 'src/modules/ICD/model/ICD.schema';
 import { CommentService } from 'src/modules/comment/service/comment.service';
+import { DoctorService } from 'src/modules/doctor/service/doctor.service';
 
 @Injectable()
 export class ScriptService {
@@ -24,6 +25,7 @@ export class ScriptService {
         @Inject('DATABASE_CONNECTION') private database: Db,
         @Inject('SMARTSEARCH_CONNECTION') private client,
         private commentService: CommentService,
+        private doctorService: DoctorService,
     ) {}
 
     private get specializationCollection() {
@@ -388,22 +390,27 @@ export class ScriptService {
     async addReviewsToDatabase(reviewSheet: excel.Worksheet) {
         const userId = new ObjectId('613588dcc5a499f383433766');
         for (let i = 3; i < 580; i++) {
-            const [reviewText, fakeName, doctorId, dateCreated, ratign] = [
+            const [reviewText, fakeName, doctorId, dateCreated, rating] = [
                 reviewSheet.getRow(i).getCell(2).value?.toString(),
                 reviewSheet.getRow(i).getCell(3).value?.toString(),
                 reviewSheet.getRow(i).getCell(4).value?.toString(),
                 reviewSheet.getRow(i).getCell(5).value?.toString(),
                 reviewSheet.getRow(i).getCell(6).value?.toString(),
             ];
-            console.log(reviewText, fakeName, doctorId, dateCreated, ratign);
+            console.log(reviewText, fakeName, doctorId, dateCreated, rating);
 
             this.commentService.create({
                 doctorId,
                 userId,
                 text: reviewText,
-                rating: parseInt(ratign),
+                rating: parseInt(rating),
                 fakeName,
                 dateCreated,
+            });
+            await this.doctorService.updateOne({
+                find: { _id: new ObjectId(doctorId) },
+                update: { numberOfRatings: 1, sumOfRatings: parseInt(rating) },
+                method: '$inc',
             });
 
             // const ICD: ICD & { num: number } = {

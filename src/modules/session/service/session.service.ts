@@ -11,7 +11,7 @@ export class SessionService extends BasicService<Session> {
         private database: Db,
     ) {
         super();
-        this.dbService = this.database.collection('session');
+        this.userCollectonDbService = this.database.collection('session');
         this.basicLookups = [
             {
                 from: 'service',

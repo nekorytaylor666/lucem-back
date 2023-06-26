@@ -28,7 +28,7 @@ export class DoctorService extends BasicService<Doctor> {
         private serviceService: ServiceService,
     ) {
         super();
-        this.dbService = this.database.collection('doctor');
+        this.userCollectonDbService = this.database.collection('doctor');
         this.basicLookups = [
             {
                 from: 'specialization',
@@ -131,7 +131,8 @@ export class DoctorService extends BasicService<Doctor> {
             workTimes,
             cabinet,
         };
-        const insertDoctorResponse = await this.dbService.insertOne(doctor);
+        const insertDoctorResponse =
+            await this.userCollectonDbService.insertOne(doctor);
         const insertDoctorId = insertDoctorResponse.insertedId;
 
         const insertDoctor = await this.findOneWithOptions({
@@ -217,7 +218,7 @@ export class DoctorService extends BasicService<Doctor> {
                     isActive: val.isActive,
                 } as WorkTime;
             });
-            await this.dbService.updateOne(
+            await this.userCollectonDbService.updateOne(
                 { _id: doctorId },
                 {
                     $set: {
@@ -264,7 +265,7 @@ export class DoctorService extends BasicService<Doctor> {
     }
 
     async listWithAddictives() {
-        const doctors = await this.dbService
+        const doctors = await this.userCollectonDbService
             .aggregate<
                 Doctor & {
                     specializations?: Specialization[];

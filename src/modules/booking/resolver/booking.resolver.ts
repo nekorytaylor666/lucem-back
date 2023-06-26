@@ -39,34 +39,78 @@ export class BookingResolver {
         private notificationService: NotificationService,
     ) {}
 
+    // @Mutation(() => BookingGraph)
+    // @Roles('user', 'doctor')
+    // @UseGuards(PreAuthGuard)
+    // async createBooking(
+    //     @Args() args: CreateBooking,
+    //     @CurrentUserGraph()
+    //     _user: User,
+    //     @CurrentTokenPayload() payload: Token,
+    // ) {
+    //     const doctor = await this.doctorService.findOne({
+    //         _id: new ObjectId(args.doctorId),
+    //     });
+    //     const service = await this.serviceService.findOne({
+    //         _id: new ObjectId(args.serviceId),
+    //     });
+    //     const createBooking =
+    //         payload.role === TokenRoles.User
+    //             ? await this.bookingService.create({
+    //                   ...args,
+    //                   doctor,
+    //                   userId: _user._id.toHexString(),
+    //                   service,
+    //               })
+    //             : await this.bookingService.create({
+    //                   ...args,
+    //                   doctor,
+    //                   service,
+    //               });
+    //     const bookingResponce = new BookingGraph({ ...createBooking });
+    //     const user = await this.userService.findOne({
+    //         _id: createBooking.userId,
+    //     });
+    //     try {
+    //         await Promise.all([
+    //             this.notificationService.setMailNotification({
+    //                 user,
+    //                 service,
+    //                 booking: createBooking,
+    //                 dateToSend: createBooking.startDate,
+    //                 currentDate: new Date(),
+    //                 doctor,
+    //             }),
+    //             this.notificationService.calendarNotification({
+    //                 user,
+    //                 service,
+    //                 booking: createBooking,
+    //                 doctor,
+    //             }),
+    //             this.notificationService.create({
+    //                 type: NotificationTypes.NewBooking,
+    //                 bookingId: createBooking._id,
+    //             }),
+    //         ]);
+    //     } catch (e) {}
+    //     return bookingResponce;
+    // }
+
     @Mutation(() => BookingGraph)
     @Roles('user', 'doctor')
     @UseGuards(PreAuthGuard)
-    async createBooking(
-        @Args() args: CreateBooking,
-        @CurrentUserGraph()
-        _user: User,
-        @CurrentTokenPayload() payload: Token,
-    ) {
+    async createBooking(@Args() args: CreateBooking) {
         const doctor = await this.doctorService.findOne({
             _id: new ObjectId(args.doctorId),
         });
         const service = await this.serviceService.findOne({
             _id: new ObjectId(args.serviceId),
         });
-        const createBooking =
-            payload.role === TokenRoles.User
-                ? await this.bookingService.create({
-                      ...args,
-                      doctor,
-                      userId: _user._id.toHexString(),
-                      service,
-                  })
-                : await this.bookingService.create({
-                      ...args,
-                      doctor,
-                      service,
-                  });
+        const createBooking = await this.bookingService.create({
+            ...args,
+            doctor,
+            service,
+        });
         const bookingResponce = new BookingGraph({ ...createBooking });
         const user = await this.userService.findOne({
             _id: createBooking.userId,

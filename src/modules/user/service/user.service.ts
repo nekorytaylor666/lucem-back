@@ -21,11 +21,11 @@ export class UserService extends BasicService<User> {
         private photoUploadService: ImageUploadService,
     ) {
         super();
-        this.dbService = this.database.collection('user');
+        this.userCollectonDbService = this.database.collection('user');
     }
 
     async list() {
-        return await this.dbService.find().toArray();
+        return await this.userCollectonDbService.find().toArray();
     }
     async checkSMSVerification(args: { phoneNumber: string; code: string }) {
         const { phoneNumber, code } = args;
@@ -35,7 +35,7 @@ export class UserService extends BasicService<User> {
         );
         if (code !== originalCode) throw new ApolloError('The code is wrong');
         const insertPhoneNumber = (
-            await this.dbService.findOneAndUpdate(
+            await this.userCollectonDbService.findOneAndUpdate(
                 { phoneNumber: filteredPhoneNumber },
                 {
                     $set: {
@@ -101,7 +101,7 @@ export class UserService extends BasicService<User> {
         const phoneNumber = _phoneNumber.replace(/\D/g, '');
         const dateOfBirth = new Date(_dateOfBirth);
         const passwordHASH = await bcrypt.hash(password, 12);
-        const insertUser = await this.dbService.findOneAndUpdate(
+        const insertUser = await this.userCollectonDbService.findOneAndUpdate(
             { _id: new ObjectId(_id), phoneNumber },
             {
                 $set: {

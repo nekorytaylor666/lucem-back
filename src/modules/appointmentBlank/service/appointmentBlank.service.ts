@@ -20,7 +20,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         private doctorService: DoctorService,
     ) {
         super();
-        this.dbService = this.database.collection(
+        this.userCollectonDbService = this.database.collection(
             this.appointmentBlankCollection,
         );
     }
@@ -268,7 +268,7 @@ export class AppointmentBlankService extends BasicService<AppointmentBlank> {
         //     .skip(15 * (page - 1))
         //     .limit(15 * (page + 1))
         //     .toArray();
-        const appointmentBlanks = await this.dbService.aggregate<
+        const appointmentBlanks = await this.userCollectonDbService.aggregate<
             AppointmentBlank & {
                 complaintDoctor?: Doctor;
                 inspectionsDoctors?: Doctor[];

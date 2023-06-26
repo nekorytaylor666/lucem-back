@@ -16,7 +16,7 @@ export class ServiceService extends BasicService<Service> {
         @Inject('SMARTSEARCH_CONNECTION') private client,
     ) {
         super();
-        this.dbService = this.database.collection('service');
+        this.userCollectonDbService = this.database.collection('service');
         this.basicLookups = [
             {
                 from: 'doctor',
@@ -90,7 +90,7 @@ export class ServiceService extends BasicService<Service> {
     }
 
     async findUnshownServices(userId: ObjectId) {
-        const service = await this.dbService
+        const service = await this.userCollectonDbService
             .aggregate<Service>([
                 {
                     $match: {
@@ -130,7 +130,7 @@ export class ServiceService extends BasicService<Service> {
             service.map(async (val) => {
                 return await Promise.all(
                     val.showServices.map(async (val) => {
-                        return await this.dbService.findOne({
+                        return await this.userCollectonDbService.findOne({
                             _id: val,
                         });
                     }),

@@ -7,7 +7,7 @@ import {
 } from 'mongodb';
 
 export abstract class BasicService<T extends any = Record<string, unknown>> {
-    protected dbService: Collection<T>;
+    protected userCollectonDbService: Collection<T>;
     basicLookups: {
         from: string;
         localField?: keyof T | string;
@@ -20,12 +20,14 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         isArray: boolean;
     }[];
     async findOne(args: Partial<T>) {
-        const document = await this.dbService.findOne<T>(args);
+        const document = await this.userCollectonDbService.findOne<T>(args);
         return document;
     }
 
     async find(args: Partial<T>) {
-        const documents = await this.dbService.find<T>(args).toArray();
+        const documents = await this.userCollectonDbService
+            .find<T>(args)
+            .toArray();
         return documents;
     }
 
@@ -33,7 +35,9 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const { fields, values } = args;
         const query: any = {};
         fields.map((val, ind) => (query[val] = values[ind]));
-        const document = await this.dbService.findOne<T>(query as T);
+        const document = await this.userCollectonDbService.findOne<T>(
+            query as T,
+        );
         return document;
     }
 
@@ -41,7 +45,9 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const { fields, values } = args;
         const query: any = {};
         fields.map((val, ind) => (query[val] = values[ind]));
-        const documents = await this.dbService.find<T>(query as T).toArray();
+        const documents = await this.userCollectonDbService
+            .find<T>(query as T)
+            .toArray();
         return documents;
     }
 
@@ -49,7 +55,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const { fields, values } = args;
         const query: any = {};
         fields.map((val, ind) => (query[val] = values[ind]));
-        const cursor = await this.dbService.find<T>(query as T);
+        const cursor = await this.userCollectonDbService.find<T>(query as T);
         return cursor;
     }
 
@@ -63,7 +69,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const updateQuery = {
             [method]: update,
         };
-        const document = await this.dbService.findOneAndUpdate(
+        const document = await this.userCollectonDbService.findOneAndUpdate(
             find,
             updateQuery,
             {
@@ -99,7 +105,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const updateQuery = {
             [method]: updateFieldsValues,
         };
-        const document = await this.dbService.findOneAndUpdate(
+        const document = await this.userCollectonDbService.findOneAndUpdate(
             findQuery,
             updateQuery,
             {
@@ -127,7 +133,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const updateQuery = {
             [method]: updateFieldsValues,
         };
-        const responce = await this.dbService.updateMany(
+        const responce = await this.userCollectonDbService.updateMany(
             findQuery,
             updateQuery,
         );
@@ -135,12 +141,14 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
     }
 
     async insertOne(args: T): Promise<ObjectId> {
-        const document = await this.dbService.insertOne(args as any);
+        const document = await this.userCollectonDbService.insertOne(
+            args as any,
+        );
         return document.insertedId;
     }
 
     findCursor(args: Partial<T>): FindCursor<T> {
-        const cursor = this.dbService.find<T>(args);
+        const cursor = this.userCollectonDbService.find<T>(args);
         return cursor;
     }
 
@@ -203,7 +211,7 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const aggregation = aggregationUnfiltered.filter(
             (val) => val !== undefined,
         );
-        const cursor = this.dbService.aggregate<U>(aggregation);
+        const cursor = this.userCollectonDbService.aggregate<U>(aggregation);
         return cursor;
     }
 
@@ -213,9 +221,12 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         find?: Partial<{ [Property in keyof T]: any }>;
     }) {
         const { find, elementsPerPage, maxNumOfElements } = args;
-        const documents = await this.dbService.countDocuments(find, {
-            limit: maxNumOfElements,
-        });
+        const documents = await this.userCollectonDbService.countDocuments(
+            find,
+            {
+                limit: maxNumOfElements,
+            },
+        );
         const pages = Math.round(documents / elementsPerPage);
         return pages;
     }
@@ -223,11 +234,11 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
     async list() {
         // create list of all documents and make specialization a massive of strings instead of objects
 
-        return this.dbService.find().toArray();
+        return this.userCollectonDbService.find().toArray();
     }
 
     async deleteOne(find: Filter<T>): Promise<boolean> {
-        const doctor = await this.dbService.deleteOne(find);
+        const doctor = await this.userCollectonDbService.deleteOne(find);
         return Boolean(doctor.deletedCount);
     }
 
@@ -238,12 +249,16 @@ export abstract class BasicService<T extends any = Record<string, unknown>> {
         const { fields, values } = args;
         const query: any = {};
         fields.map((val, ind) => (query[val] = values[ind]));
-        const deleteResponce = await this.dbService.deleteMany(query);
+        const deleteResponce = await this.userCollectonDbService.deleteMany(
+            query,
+        );
         return deleteResponce.acknowledged;
     }
 
     async countDocuments(args: Filter<T>) {
-        const numOfDocuments = await this.dbService.countDocuments(args);
+        const numOfDocuments = await this.userCollectonDbService.countDocuments(
+            args,
+        );
         return numOfDocuments;
     }
 }

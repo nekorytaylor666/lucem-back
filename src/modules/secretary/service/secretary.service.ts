@@ -10,7 +10,7 @@ import { CreateSecretary } from '../model/createSecretary.args';
 export class SecretaryService extends BasicService<Secretary> {
     constructor(@Inject(DATABASE_CONNECTION) private database: Db) {
         super();
-        this.dbService = this.database.collection('secretary');
+        this.userCollectonDbService = this.database.collection('secretary');
     }
 
     async create(args: CreateSecretary) {

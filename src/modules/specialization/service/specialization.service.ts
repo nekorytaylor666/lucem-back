@@ -17,7 +17,7 @@ export class SpecializationService extends BasicService<Specialization> {
         private photoUploadService: ImageUploadService,
     ) {
         super();
-        this.dbService =
+        this.userCollectonDbService =
             this.database.collection<Specialization>('specialization');
         this.basicLookups = [
             {
@@ -138,7 +138,7 @@ export class SpecializationService extends BasicService<Specialization> {
         doctorId: ObjectId;
     }) {
         const { specializationIds, doctorId } = args;
-        await this.dbService.updateMany(
+        await this.userCollectonDbService.updateMany(
             { _id: { $in: specializationIds } },
             {
                 $addToSet: { doctorIds: doctorId },
