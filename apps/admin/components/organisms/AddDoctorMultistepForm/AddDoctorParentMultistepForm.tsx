@@ -53,7 +53,6 @@ const ParentMultistepForm = () => {
     );
 
     const formatExperienceData = (values: RegisterDoctorFormSchema) => {
-        console.log("before format:", values);
         const experience: ExperienceDataInput[] = values.jobExperienceInfo.map(
             (item) => {
                 return {
