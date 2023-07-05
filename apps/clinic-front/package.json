@@ -21,7 +21,7 @@
         "schema:generate": "npx apollo codegen:generate --localSchemaFile=graphql-schema.json --target=typescript --tagName=gql"
     },
     "dependencies": {
-        "@apollo/client": "^3.4.10",
+        "@apollo/client": "^3.7.16",
         "@builder.io/partytown": "^0.8.0",
         "@next/bundle-analyzer": "^10.0.5",
         "add-to-calendar-button-react": "^2.2.7",
