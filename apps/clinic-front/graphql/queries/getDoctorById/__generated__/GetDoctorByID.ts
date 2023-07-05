@@ -9,10 +9,18 @@ import { AllowedExperienceAndEducationTypes } from "./../../../../__generated__/
 // GraphQL query operation: GetDoctorByID
 // ====================================================
 
+export interface GetDoctorByID_getDoctorByID_defaultService {
+  __typename: "Service";
+  price: number;
+  _id: string;
+  name: string;
+}
+
 export interface GetDoctorByID_getDoctorByID_workTimes {
   __typename: "WorkTime";
   endTime: any;
   startTime: any;
+  isActive: boolean | null;
 }
 
 export interface GetDoctorByID_getDoctorByID_upcomingBookings {
@@ -56,6 +64,7 @@ export interface GetDoctorByID_getDoctorByID {
   phoneNumber: string;
   rating: number | null;
   startingExperienceDate: any | null;
+  defaultService: GetDoctorByID_getDoctorByID_defaultService | null;
   workTimes: GetDoctorByID_getDoctorByID_workTimes[] | null;
   upcomingBookings: GetDoctorByID_getDoctorByID_upcomingBookings[] | null;
   experiences: GetDoctorByID_getDoctorByID_experiences[] | null;

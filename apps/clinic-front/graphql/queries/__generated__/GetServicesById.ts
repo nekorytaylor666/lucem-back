@@ -9,6 +9,7 @@
 
 export interface GetServicesById_getServiceById {
   __typename: "Service";
+  _id: string;
   price: number;
   name: string;
 }

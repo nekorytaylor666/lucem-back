@@ -13,6 +13,10 @@ export const GET_DOCTOR_BY_ID = gql`
             phoneNumber
             rating
             startingExperienceDate
+            defaultService {
+                price
+                _id
+            }
             workTimes {
                 endTime
                 startTime

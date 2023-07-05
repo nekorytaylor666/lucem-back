@@ -13,9 +13,24 @@ export interface GetSpecializationById_getSpecializationById_colorCodeGradient {
   finish: string | null;
 }
 
+export interface GetSpecializationById_getSpecializationById_doctors_defaultService {
+  __typename: "Service";
+  _id: string;
+  name: string;
+  price: number;
+  durationInMinutes: number | null;
+}
+
 export interface GetSpecializationById_getSpecializationById_doctors_avatar {
   __typename: "PhotoURL";
   xl: string | null;
+}
+
+export interface GetSpecializationById_getSpecializationById_doctors_upcomingBookings {
+  __typename: "Booking";
+  _id: string;
+  startDate: any;
+  endDate: any;
 }
 
 export interface GetSpecializationById_getSpecializationById_doctors_specializations {
@@ -27,6 +42,7 @@ export interface GetSpecializationById_getSpecializationById_doctors_workTimes {
   __typename: "WorkTime";
   endTime: any;
   startTime: any;
+  isActive: boolean | null;
 }
 
 export interface GetSpecializationById_getSpecializationById_doctors {
@@ -39,7 +55,10 @@ export interface GetSpecializationById_getSpecializationById_doctors {
   numOfRatings: number;
   phoneNumber: string;
   rating: number | null;
+  startingExperienceDate: any | null;
+  defaultService: GetSpecializationById_getSpecializationById_doctors_defaultService | null;
   avatar: GetSpecializationById_getSpecializationById_doctors_avatar | null;
+  upcomingBookings: GetSpecializationById_getSpecializationById_doctors_upcomingBookings[] | null;
   specializations: GetSpecializationById_getSpecializationById_doctors_specializations[] | null;
   workTimes: GetSpecializationById_getSpecializationById_doctors_workTimes[] | null;
 }

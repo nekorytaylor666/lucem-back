@@ -27,6 +27,7 @@ export interface GetAllDoctors_getAllDoctors_specializations {
 export interface GetAllDoctors_getAllDoctors_workTimes {
   __typename: "WorkTime";
   endTime: any;
+  isActive: boolean | null;
   startTime: any;
 }
 

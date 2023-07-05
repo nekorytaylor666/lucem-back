@@ -44,6 +44,8 @@ export interface GetMainPage_getAllDoctors {
   description: string | null;
   specializations: GetMainPage_getAllDoctors_specializations[] | null;
   rating: number | null;
+  numOfRatings: number;
+  startingExperienceDate: any | null;
   acceptableAgeGroup: string | null;
   avatar: GetMainPage_getAllDoctors_avatar | null;
 }

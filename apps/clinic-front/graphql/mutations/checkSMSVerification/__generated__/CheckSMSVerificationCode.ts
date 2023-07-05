@@ -11,7 +11,7 @@ export interface CheckSMSVerificationCode_checkSMSVerificationCode {
   __typename: "User";
   _id: string;
   token: string | null;
-  phoneNumber: string;
+  phoneNumber: string | null;
 }
 
 export interface CheckSMSVerificationCode {

@@ -18,7 +18,6 @@ export interface RegisterUser {
 }
 
 export interface RegisterUserVariables {
-  dateOfBirth: string;
   email: string;
   fullName: string;
   phoneNumber: string;

@@ -474,18 +474,13 @@ export default DoctorPage;
 
 export const getStaticProps: GetStaticProps = async (context) => {
     try {
-        const { data } = await client.query<GetDoctorByID>({
+        const { data } = await client.query<any>({
             query: GET_DOCTOR_BY_ID,
             variables: { doctorId: context?.params?.id },
         });
 
-        const { data: serviceRes } = await client.query({
-            query: GET_SERVICE_BY_ID,
-            variables: { serviceId: "618c0c4985b2fd7b37e3656e" },
-        });
-
         const doctor = data.getDoctorByID;
-        const service = serviceRes.getServiceById;
+        const service = doctor.defaultService;
         const price = service.price;
         return {
             props: {
@@ -496,18 +491,29 @@ export const getStaticProps: GetStaticProps = async (context) => {
             notFound: !doctor,
         };
     } catch (error) {
-        console.log(error);
+        console.log("lol");
+        return {
+            notFound: true,
+            props: {
+                doctor: {},
+                price: 0,
+            },
+        };
     }
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const allDoctorsRes = await client.query({ query: GET_ALL_DOCTORS });
-    const allDoctors: Doctor[] = allDoctorsRes.data.getAllDoctors;
-    const paths = allDoctors.map((doc) => ({
-        params: { id: doc._id },
-    }));
-    return {
-        paths,
-        fallback: "blocking",
-    };
+    try {
+        const allDoctorsRes = await client.query({ query: GET_ALL_DOCTORS });
+        const allDoctors: Doctor[] = allDoctorsRes.data.getAllDoctors;
+        const paths = allDoctors.map((doc) => ({
+            params: { id: doc._id },
+        }));
+        return {
+            paths,
+            fallback: false,
+        };
+    } catch (error) {
+        console.log(JSON.stringify(error, null, 2));
+    }
 };
