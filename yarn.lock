@@ -1087,12 +1087,19 @@
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.14.0", "@babel/runtime@^7.14.5", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.9", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4":
   version "7.18.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
   integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
   dependencies:
     regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.20.13":
+  version "7.22.6"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.6.tgz#57d64b9ae3cff1d67eb067ae117dac087f5bd438"
+  integrity sha512-wDb5pWm4WDdF6LFUde3Jl8WzPA+3ZbxYqkC6xAXuD3irdEHN1k0NfTRrJD8ZD378SJ61miMLCqIOXYhd8x+AJQ==
+  dependencies:
+    regenerator-runtime "^0.13.11"
 
 "@babel/template@^7.18.10", "@babel/template@^7.18.6", "@babel/template@^7.3.3":
   version "7.18.10"
@@ -3309,10 +3316,10 @@
   resolved "https://registry.yarnpkg.com/@panva/asn1.js/-/asn1.js-1.0.0.tgz#dd55ae7b8129e02049f009408b97c61ccf9032f6"
   integrity sha512-UdkG3mLEqXgnlKsWanWcgb6dOjUzJ+XC5f+aWw30qrtjxeNUSfKX1cd5FBzOaXQumoe9nIqeZUvrRJS03HCCtw==
 
-"@panva/hkdf@^1.0.0":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@panva/hkdf/-/hkdf-1.0.2.tgz#bab0f09d09de9fd83628220d496627681bc440d6"
-  integrity sha512-MSAs9t3Go7GUkMhpKC44T58DJ5KGk2vBo+h1cqQeqlMfdGkxaVB78ZWpv9gYi/g2fa4sopag9gJsNvS8XGgWJA==
+"@panva/hkdf@^1.0.2":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@panva/hkdf/-/hkdf-1.1.1.tgz#ab9cd8755d1976e72fc77a00f7655a64efe6cd5d"
+  integrity sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==
 
 "@peculiar/asn1-schema@^2.1.6":
   version "2.3.0"
@@ -5910,10 +5917,10 @@ convert-source-map@^1.4.0, convert-source-map@^1.5.0, convert-source-map@^1.6.0,
   dependencies:
     safe-buffer "~5.1.1"
 
-cookie@^0.4.1:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
-  integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
+cookie@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
+  integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
 
 copy-descriptor@^0.1.0:
   version "0.1.1"
@@ -9290,10 +9297,10 @@ jose@^1.27.2:
   dependencies:
     "@panva/asn1.js" "^1.0.0"
 
-jose@^4.1.2, jose@^4.1.4:
-  version "4.8.3"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-4.8.3.tgz#5a754fb4aa5f2806608d083f438e6916b11087da"
-  integrity sha512-7rySkpW78d8LBp4YU70Wb7+OTgE3OwAALNVZxhoIhp4Kscp+p/fBkdpxGAMKxvCAMV4QfXBU9m6l9nX/vGwd2g==
+jose@^4.11.4, jose@^4.14.1:
+  version "4.14.4"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.14.4.tgz#59e09204e2670c3164ee24cbfe7115c6f8bff9ca"
+  integrity sha512-j8GhLiKmUAh+dsFXlX1aJCbt5KMibuKb+d7j1JaOJG6s2UjX1PQlW+OKB/sD4a/5ZYF4RcmYmLSndOoU3Lt/3g==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
@@ -10131,21 +10138,6 @@ natural-orderby@^2.0.1, natural-orderby@^2.0.3:
   resolved "https://registry.yarnpkg.com/natural-orderby/-/natural-orderby-2.0.3.tgz#8623bc518ba162f8ff1cdb8941d74deb0fdcc016"
   integrity sha512-p7KTHxU0CUrcOXe62Zfrb5Z13nLvPhSWR/so3kFulUQU0sgUll2Z0LwpsLN351eOOD+hRGu/F1g+6xDfPeD++Q==
 
-next-auth@4.0.5:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.0.5.tgz#a41cdbe41f8a8dad42f4b3fb510ef1fb7035667e"
-  integrity sha512-POrV6c29Uu3+kVhOe8h3go2ytjeB2jPdW4GJwudUbK6OB++dkpT6yialmm8whM7hyoW4Xy3FbsoldGn8bVHhYg==
-  dependencies:
-    "@babel/runtime" "^7.15.4"
-    "@panva/hkdf" "^1.0.0"
-    cookie "^0.4.1"
-    jose "^4.1.2"
-    oauth "^0.9.15"
-    openid-client "^5.0.2"
-    preact "^10.5.14"
-    preact-render-to-string "^5.1.19"
-    uuid "^8.3.2"
-
 next-auth@^3.29.0:
   version "3.29.10"
   resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-3.29.10.tgz#2667af749afee0f62c23f10e162a895306afd22b"
@@ -10163,6 +10155,21 @@ next-auth@^3.29.0:
     preact "^10.4.1"
     preact-render-to-string "^5.1.14"
     querystring "^0.2.0"
+
+next-auth@^4.22.1:
+  version "4.22.1"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.22.1.tgz#1ea5084e38867966dc6492a71c6729c8f5cfa96b"
+  integrity sha512-NTR3f6W7/AWXKw8GSsgSyQcDW6jkslZLH8AiZa5PQ09w1kR8uHtR9rez/E9gAq/o17+p0JYHE8QjF3RoniiObA==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    "@panva/hkdf" "^1.0.2"
+    cookie "^0.5.0"
+    jose "^4.11.4"
+    oauth "^0.9.15"
+    openid-client "^5.4.0"
+    preact "^10.6.3"
+    preact-render-to-string "^5.1.19"
+    uuid "^8.3.2"
 
 next-compose-plugins@^2.2.1:
   version "2.2.1"
@@ -10421,7 +10428,7 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-hash@^2.0.1, object-hash@^2.2.0:
+object-hash@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.2.0.tgz#5ad518581eefc443bd763472b8ff2e9c2c0d54a5"
   integrity sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==
@@ -10518,10 +10525,10 @@ object.values@^1.1.0, object.values@^1.1.5:
     define-properties "^1.1.3"
     es-abstract "^1.19.1"
 
-oidc-token-hash@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/oidc-token-hash/-/oidc-token-hash-5.0.1.tgz#ae6beec3ec20f0fd885e5400d175191d6e2f10c6"
-  integrity sha512-EvoOtz6FIEBzE+9q253HsLCVRiK/0doEJ2HCvvqMQb3dHZrP3WlJKYtJ55CRTw4jmYomzH4wkPuCj/I3ZvpKxQ==
+oidc-token-hash@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/oidc-token-hash/-/oidc-token-hash-5.0.3.tgz#9a229f0a1ce9d4fc89bcaee5478c97a889e7b7b6"
+  integrity sha512-IF4PcGgzAr6XXSff26Sk/+P4KZFJVuHAJZj3wgO3vX2bMdNVp/QXTP3P7CEm9V1IdG8lDLY3HhiqpsE/nOwpPw==
 
 once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
@@ -10554,15 +10561,15 @@ opener@^1.5.2:
   resolved "https://registry.yarnpkg.com/opener/-/opener-1.5.2.tgz#5d37e1f35077b9dcac4301372271afdeb2a13598"
   integrity sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==
 
-openid-client@^5.0.2:
-  version "5.1.8"
-  resolved "https://registry.yarnpkg.com/openid-client/-/openid-client-5.1.8.tgz#3a24910288b32c32f548fb6e391f44178ce6370f"
-  integrity sha512-EPxJY6bT7YIYQEXSGxRC5flQ3GUhLy98ufdto6+BVBrFGPmwjUpy4xBcYuU/Wt9nPkO/3EgljBrr6Ezx4lp1RQ==
+openid-client@^5.4.0:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/openid-client/-/openid-client-5.4.2.tgz#8692bcc2a40ef3426c5ba5c11f7493599e93ccc7"
+  integrity sha512-lIhsdPvJ2RneBm3nGBBhQchpe3Uka//xf7WPHTIglery8gnckvW7Bd9IaQzekzXJvWthCMyi/xVEyGW0RFPytw==
   dependencies:
-    jose "^4.1.4"
+    jose "^4.14.1"
     lru-cache "^6.0.0"
-    object-hash "^2.0.1"
-    oidc-token-hash "^5.0.1"
+    object-hash "^2.2.0"
+    oidc-token-hash "^5.0.3"
 
 optimism@^0.16.1:
   version "0.16.1"
@@ -11013,10 +11020,15 @@ preact-render-to-string@^5.1.14, preact-render-to-string@^5.1.19:
   dependencies:
     pretty-format "^3.8.0"
 
-preact@^10.4.1, preact@^10.5.14:
+preact@^10.4.1:
   version "10.10.1"
   resolved "https://registry.yarnpkg.com/preact/-/preact-10.10.1.tgz#df67e4348f50fc6ad2e11e813553f15c6543176b"
   integrity sha512-cXljG59ylGtSLismoLojXPAGvnh2ipQr3BYz9KZQr+1sdASCT+sR/v8dSMDS96xGCdtln2wHfAHCnLJK+XcBNg==
+
+preact@^10.6.3:
+  version "10.15.1"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.15.1.tgz#a1de60c9fc0c79a522d969c65dcaddc5d994eede"
+  integrity sha512-qs2ansoQEwzNiV5eAcRT1p1EC/dmEzaATVDJNiB3g2sRDWdA7b7MurXdJjB2+/WQktGWZwxvDrnuRFbWuIr64g==
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -11541,6 +11553,11 @@ regenerate@^1.4.2:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.13.11:
+  version "0.13.11"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
+  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
 
 regenerator-runtime@^0.13.4:
   version "0.13.9"

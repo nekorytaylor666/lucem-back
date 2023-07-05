@@ -34,7 +34,7 @@
         "framer-motion": "^4.1.17",
         "graphql": "^15.5.3",
         "next": "^12.2.5",
-        "next-auth": "4.0.5",
+        "next-auth": "^4.22.1",
         "next-compose-plugins": "^2.2.1",
         "next-i18next": "^7.0.1",
         "prettier": "^2.2.1",
